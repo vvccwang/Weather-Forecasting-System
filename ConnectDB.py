@@ -45,10 +45,10 @@ class ConnectDB():
             'app': 'weather.history',
             'weaid': cityid,
             'date': hisdate,
-            'appkey': '58433',
-            # 'appkey': '58300',
-            'sign': '2f6f16436696acab39e15d3a14065f85',
-            # 'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
+            # 'appkey': '58433',
+            'appkey': '58300',
+            # 'sign': '2f6f16436696acab39e15d3a14065f85',
+            'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
             'format': 'json',
         }
         params = urlencode(params)
@@ -110,7 +110,7 @@ def getDatesByTimes(sDateStr, eDateStr):
     return list
 
 # 历史日期
-datalist=getDatesByTimes('2020-02-12','2021-04-10')
+datalist=getDatesByTimes('2021-02-11','2021-04-10')
 # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
 citylist=['311','811','936','1281','2087','2347','2348','2349']
 
