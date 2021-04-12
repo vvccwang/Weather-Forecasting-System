@@ -8,20 +8,10 @@ import json,urllib.request
 from urllib.parse import urlencode
 
 class ConnectDB():
-    # 打开数据库连接
+    # 打开数据库连接，使用cursor()方法创建一个游标对象cursor
     def __init__(self):
         self.db= pymysql.connect(host="localhost", user="root", password="v9ningmeng", database="weatherdata")
-    # 使用cursor()方法创建一个游标对象cursor
         self.cursor = self.db.cursor()
-    # # 使用execute()方法执行SQL查询
-    #     self.cursor.execute("SELECT VERSION()")
-    # # 使用 fetchone() 方法获取单条数据.
-    #     versioninfo = self.cursor.fetchone()
-    #     print("Database version : %s " % versioninfo)
-
-    # 存储需要更新的每日单条数据
-        self.New_weadata=[]
-
 
     def UpdateData(self,cityid,date,weadata):
         pass
@@ -36,9 +26,13 @@ class ConnectDB():
     def ChangeData(self,cityid,date,keyname,value):
         pass
 
+    # 从数据库删除指定条件的信息，根据要求编辑
     def DeleteData(self):
+        self.cursor.execute("DELETE FROM weatherinfo WHERE cityid = 811")
+        self.db.commit()
         pass
 
+    # 获取指定日期和城市的天气数据，插入数据库
     def GetHisData(self,hisdate,cityid):
         url = 'http://api.k780.com'
         params = {
@@ -67,31 +61,12 @@ class ConnectDB():
                     value_list.append(wd_dict['weatid'])
                     value_list.append(wd_dict['wind'])
                     value_list.append(wd_dict['winp'][:-1])
-                    # value_list = [cityid]
-                    # value_list.append(wd_dict['uptime'])
-                    # # print(wd_dict['uptime'])
-                    # value_list.append(int(wd_dict['temp']))
-                    # value_list.append(int(wd_dict['humidity'][:-1]))
-                    # value_list.append(int(wd_dict['aqi']))
-                    # value_list.append(int(wd_dict['weatid']))
-                    # value_list.append(wd_dict['wind'])
-                    # value_list.append(int(wd_dict['winp'][:-1]))
-                    # for va in value_list:
-                    #     print(va)
-                    # uptime=wd_dict['uptime']
-                    # temp=wd_dict['temp']
-                    # hum=wd_dict['humidity']
-                    # aqi=wd_dict['aqi']
-                    # weather=wd_dict['weatid']
-                    # windtype=wd_dict['wind']
-                    # windlevel=wd_dict['winp']
-                    # print(uptime, temp, hum, aqi, weather, windtype, windlevel)
-                    # print(value_list)
+                    print(value_list)
                     self.cursor.execute("INSERT INTO weatherinfo VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",value_list)
                     self.db.commit()
-
             else:
-                print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR')
+                print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
+                return 0
         else:
             print('Request nowapi fail.')
 
@@ -99,6 +74,7 @@ class ConnectDB():
     def closeDB(self):
         self.db.close()
 
+# 获取两个日期之间的所有日期
 def getDatesByTimes(sDateStr, eDateStr):
     list = []
     datestart = datetime.datetime.strptime(sDateStr, '%Y-%m-%d')
@@ -110,17 +86,19 @@ def getDatesByTimes(sDateStr, eDateStr):
     return list
 
 # 历史日期
-datalist=getDatesByTimes('2021-02-11','2021-04-10')
+datalist=getDatesByTimes('2020-03-02','2021-04-11')
 # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
-citylist=['311','811','936','1281','2087','2347','2348','2349']
 
 R1=ConnectDB()
+# R1.DeleteData()
+# R1.GetHisData('2021-02-23','311')
 
-for city in citylist:
-    for data in datalist:
-        R1.GetHisData(data,city)
-        print(data,'ok')
-    print(city,'ok')
+for data in datalist:
+    f=R1.GetHisData(data,'936')
+    if f==0:
+        break
+    print(data,'ok')
+print('811','ok')
 # R1.QuaryWeaType()
 R1.closeDB()
 
