@@ -1,4 +1,4 @@
-from Dao import oper_database
+import oper_database
 
 r=oper_database.ConnectDB()
 

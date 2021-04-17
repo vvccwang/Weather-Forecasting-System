@@ -2,7 +2,6 @@
 连接MySQL数据库
 '''
 import datetime
-import Dao
 import pymysql
 import json,urllib.request
 from urllib.parse import urlencode
