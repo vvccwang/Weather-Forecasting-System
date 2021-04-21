@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import * #QMainWindow,QApplication,QDesktopWidget,QHBoxLayout,QVBoxLayout,QPushButton,QWidget,QLabel
-from PyQt5.QtGui import QIcon,QFont,QPalette,QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon,QFont,QPalette,QPixmap,QIntValidator,QDoubleValidator,QRegExpValidator
+from PyQt5.QtCore import Qt,QRegExp
 
 class FirstMainWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -142,6 +142,7 @@ class FirstMainWindow(QMainWindow):
         print('当鼠标单击label4时，触发')
 
 
+#对话框QDialog
 class FirstQDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -155,7 +156,32 @@ class FirstQDialog(QDialog):
         nameLineEdit=QLineEdit(self)
 
         #设置输入框没有输入时的默认提示 setPlaceholdrText
-        nameLineEdit.setPlaceholderText('id')
+        nameLineEdit.setPlaceholderText('id，数字与字母类型')
+
+        #整数校验器 范围 0-9999
+        intValidator=QIntValidator(self)
+        intValidator.setRange(0,9999)
+
+        #浮点校验器 精度小数点后两位
+        doubleValidator=QDoubleValidator(self)
+        doubleValidator.setRange(-360,360)
+        #标准显示法
+        doubleValidator.setNotation(QDoubleValidator.StandardNotation)
+        #显示精度 小数点后两位
+        doubleValidator.setDecimals(2)
+
+        #字符和数字
+        reg = QRegExp('[a-zA-Z0-9]+$')
+        validator=QRegExpValidator(self)
+        validator.setRegExp(reg)
+
+        #设置校验器
+        # nameLineEdit.setValidator(intValidator)  #整数
+        # nameLineEdit.setValidator(doubleValidator) #浮点数
+        nameLineEdit.setValidator(validator) #字符或者数字
+
+
+
 
         '''
         QLineEdit：
@@ -166,20 +192,27 @@ class FirstQDialog(QDialog):
                 Normal = 0
                 Password = 2
                 PasswordEchoOnEdit = 3
+            2.校验器，设置输入的类型格式长度等
+                
         '''
         #设置伙伴控件
         nameLabel.setBuddy(nameLineEdit)
 
         passwordLabel = QLabel('&Password', self)
         passwordLineEdit = QLineEdit(self)
+
+        #设置回显模式
         passwordLineEdit.setEchoMode(2)
         # passwordLineEdit.setEchoMode(QLineEdit.Password) #两种方法
 
         # 设置伙伴控件
         passwordLabel.setBuddy(passwordLineEdit)
 
+        #设置按钮
         btnOK=QPushButton('&OK')
         btnCancel=QPushButton('&Cancel')
+
+
 
         #设置栅格布局
         mainLayout=QGridLayout(self)
@@ -192,12 +225,44 @@ class FirstQDialog(QDialog):
         mainLayout.addWidget(btnOK,2,0)
         mainLayout.addWidget(btnCancel,2,2)
 
+
+class DialogDemo(QMainWindow):
+    def __init__(self):
+        super(DialogDemo,self).__init__()
+        self.iniUI()
+
+    def iniUI(self):
+        self.setWindowTitle('QDialog案例')
+        self.resize(300,200)
+
+        self.button = QPushButton(self)
+        self.button.setText('弹出对话框')
+        self.button.move(50,50)
+        self.button.clicked.connect(self.showDialog)
+
+    def showDialog(self):
+        dialog=QDialog()
+        button = QPushButton('确定',dialog)
+        button.clicked.connect(dialog.close)
+        button.move(50,50)
+        dialog.setWindowTitle('对话框')
+        #以模式状态显示，即窗口弹出时mainwindow的控件不可用
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        dialog.exec()
+
+
 if __name__ == '__main__':
     app=QApplication(sys.argv)
     app.setWindowIcon(QIcon('image/logo.jpg'))
     # mainWindow = FirstMainWindow()
     # mainWindow.center()
     # mainWindow.show()
+
     mainDialog=FirstQDialog()
     mainDialog.show()
     sys.exit(app.exec())
+
+    # DialogDemo=DialogDemo()
+    # DialogDemo.show()
+    # sys.exit(app.exec())

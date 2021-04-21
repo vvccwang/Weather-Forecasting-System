@@ -12,6 +12,10 @@ class ConnectDB():
         # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
         self.citylist=['311','811','936','1281','2087','2347','2348','2349']
 
+    # 关闭数据库连接
+    def closeDB(self):
+        self.db.close()
+
     # 根据城市id和时间，查询天气情况
     def QuaryWeaData(self,cityid,startdatetime,enddatetime):
         sql="SELECT * FROM weatherinfo WHERE cityid = "+cityid+" AND uptime BETWEEN '"+startdatetime+" 00:00:00' AND '"+enddatetime+" 23:59:59'"
@@ -20,10 +24,12 @@ class ConnectDB():
         list=[]
         for i in self.data:
             list.append(i)
+        self.closeDB()
         return list
 
     # 更改数据库中的气象数据,暂时无用
     def ChangeData(self,cityid,date,keyname,value):
+        self.closeDB()
         pass
 
     # 从数据库删除指定条件的信息，根据要求编辑
@@ -31,6 +37,7 @@ class ConnectDB():
         sql="DELETE FROM weatherinfo WHERE uptime BETWEEN '"+startdatetime+" 00:00:00' AND '"+enddatetime+" 23:59:59'"
         self.cursor.execute(sql)
         self.db.commit()
+        self.closeDB()
         pass
 
     # 获取两个日期间的日期列表
@@ -77,6 +84,7 @@ class ConnectDB():
                     # print(value_list)
                     self.cursor.execute("INSERT INTO weatherinfo VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",value_list)
                     self.db.commit()
+                    self.closeDB()
             else:
                 print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
                 if a_result['msgid']=='1000701':
@@ -101,9 +109,23 @@ class ConnectDB():
         for dl in datelist:
             for cid in self.citylist:
                 flag=self.GetHisData(dl,cid)
+
+        self.closeDB()
         pass
 
-    # 关闭数据库连接
-    def closeDB(self):
-        self.db.close()
+    # return：账户不存在0、账户存在密码不正确-1、密码正确1
+    def login(self,name,passwprd):
+        sql = "SELECT password FROM user WHERE username = '"+name+"'"
+        self.cursor.execute(sql)
+        realpwd = self.cursor.fetchone()
+
+        self.closeDB()
+        if realpwd == None:
+            return 0
+        elif passwprd == realpwd[0]:
+            return 1
+        else:
+            return -1
+
+
 

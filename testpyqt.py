@@ -1,4 +1,7 @@
 import sys
+
+from PyQt5.QtGui import QIcon
+
 import test_main1
 from PyQt5.QtWidgets import QApplication,QWidget,QMainWindow
 
@@ -6,6 +9,7 @@ from PyQt5.QtWidgets import QApplication,QWidget,QMainWindow
 if __name__ == '__main__':
 
     app=QApplication(sys.argv)
+    app.setWindowIcon(QIcon('GUI/image/logo.jpg'))
     # w=QWidget()
     # w.resize(1000, 500)
     # #     移动窗口
@@ -22,6 +26,7 @@ if __name__ == '__main__':
     login_ui.setupUi(login_page)
     login_page.show()
     sys.exit(app.exec())
+
 
 
 
