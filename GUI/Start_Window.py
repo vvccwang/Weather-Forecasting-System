@@ -2,6 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from Dao import oper_database
+import oper_database
 
 
 class FirstMainWindow(QMainWindow):
@@ -80,6 +82,10 @@ class FirstMainWindow(QMainWindow):
         self.pushButton_predict.setText("气象预测")
         self.buttonLayout.addWidget(self.pushButton_predict)
 
+        self.pushButton_signout = QPushButton()
+        self.pushButton_signout.setText("退出登录")
+        self.buttonLayout.addWidget(self.pushButton_signout)
+
         self.Layout.addWidget(self.topwidget)
 
         # 设置stackedWidget
@@ -142,15 +148,38 @@ class FirstMainWindow(QMainWindow):
         self.pushButton_quary.clicked.connect(self.on_pushButton_quary_clicked)
         self.pushButton_updata.clicked.connect(self.on_pushButton_updata_clicked)
         self.pushButton_analyse.clicked.connect(self.on_pushButton_analyse_clicked)
-        self.pushButton_analyse.clicked.connect(self.on_pushButton_predict_clicked)
+        self.pushButton_predict.clicked.connect(self.on_pushButton_predict_clicked)
+        self.pushButton_signout.clicked.connect(self.on_pushButton_signout_clicked)
 
-
+    #登录验证
     def on_pushButton_login_clicked(self):
+        username=self.lineEdit_ID.text()
+        password=self.lineEdit_PWD.text()
+        dc=oper_database.ConnectDB()
+        f=dc.login(username,password)
+        if f==1:
+            message="当前用户："+self.lineEdit_ID.text()
+            self.statusBar().showMessage(message)
+            # 窗口最大化
+            self.showMaximized()
+            self.stackedWidget_start.setCurrentIndex(1)
+        elif f==-1:
+            QMessageBox.critical(self,'ERROR','密码错误')
+            # print('密码错误')
+            # pass
+        else:
+            QMessageBox.critical(self, 'ERROR', '账户不存在')
+            # print('账户不存在')
+            # pass
+
+    #退出登录
+    def on_pushButton_signout_clicked(self):
+        # self.lineEdit_ID.setText('')
+        self.lineEdit_PWD.setText('')
+        self.statusBar().showMessage("欢迎使用")
         # 窗口最大化
-        message="当前用户："+self.lineEdit_ID.text()
-        self.statusBar().showMessage(message)
-        self.showMaximized()
-        self.stackedWidget_start.setCurrentIndex(1)
+        self.showNormal()
+        self.stackedWidget_start.setCurrentIndex(0)
 
     # 按钮一：打开第一个面板
     def on_pushButton_quary_clicked(self):
@@ -167,6 +196,5 @@ class FirstMainWindow(QMainWindow):
     # 按钮四：打开第四个面板
     def on_pushButton_predict_clicked(self):
         self.stackedWidget.setCurrentIndex(3)
-
 
 
