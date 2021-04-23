@@ -255,12 +255,12 @@ class DialogDemo(QMainWindow):
 if __name__ == '__main__':
     app=QApplication(sys.argv)
     app.setWindowIcon(QIcon('image/logo.jpg'))
-    # mainWindow = FirstMainWindow()
-    # mainWindow.center()
-    # mainWindow.show()
+    mainWindow = FirstMainWindow()
+    mainWindow.center()
+    mainWindow.show()
 
-    mainDialog=FirstQDialog()
-    mainDialog.show()
+    # mainDialog=FirstQDialog()
+    # mainDialog.show()
     sys.exit(app.exec())
 
     # DialogDemo=DialogDemo()
