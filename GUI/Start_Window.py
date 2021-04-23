@@ -66,6 +66,10 @@ class FirstMainWindow(QMainWindow):
 
         self.buttonLayout = QHBoxLayout(self.topwidget) #水平布局
 
+        self.pushButton_mainpage = QPushButton()
+        self.pushButton_mainpage.setText("主页")
+        self.buttonLayout.addWidget(self.pushButton_mainpage)
+
         self.pushButton_quary = QPushButton()
         self.pushButton_quary.setText("数据查询")
         self.buttonLayout.addWidget(self.pushButton_quary)
@@ -91,6 +95,16 @@ class FirstMainWindow(QMainWindow):
         # 设置stackedWidget
         self.stackedWidget = QStackedWidget()
         self.Layout.addWidget(self.stackedWidget)
+
+        #设置主面板
+        self.form_main = QWidget()
+        self.formLayout_main = QHBoxLayout(self.form_main)
+        self.label0 = QLabel()
+        self.label0.setText("主页")
+        self.label0.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+        self.label0.setAlignment(Qt.AlignCenter)
+        self.label0.setFont(QFont("Roman times", 50, QFont.Bold))
+        self.formLayout_main.addWidget(self.label0)
 
         # 设置第一个面板
         self.form_quary = QWidget()
@@ -132,11 +146,13 @@ class FirstMainWindow(QMainWindow):
         self.label4.setFont(QFont("Roman times", 50, QFont.Bold))
         self.formLayout_predict.addWidget(self.label4)
 
-        # 将4个面板，加入stackedWidget
+        # 将5个面板，加入stackedWidget
+        self.stackedWidget.addWidget(self.form_main)
         self.stackedWidget.addWidget(self.form_quary)
         self.stackedWidget.addWidget(self.form_updata)
         self.stackedWidget.addWidget(self.form_analyse)
         self.stackedWidget.addWidget(self.form_predict)
+
 
         # 设置状态栏
         self.statusBar().showMessage("欢迎使用")
@@ -150,51 +166,66 @@ class FirstMainWindow(QMainWindow):
         self.pushButton_analyse.clicked.connect(self.on_pushButton_analyse_clicked)
         self.pushButton_predict.clicked.connect(self.on_pushButton_predict_clicked)
         self.pushButton_signout.clicked.connect(self.on_pushButton_signout_clicked)
+        self.pushButton_mainpage.clicked.connect(self.on_pushButton_mainpage_clicked)
 
     #登录验证
     def on_pushButton_login_clicked(self):
         username=self.lineEdit_ID.text()
         password=self.lineEdit_PWD.text()
         dc=oper_database.ConnectDB()
-        f=dc.login(username,password)
-        if f==1:
-            message="当前用户："+self.lineEdit_ID.text()
-            self.statusBar().showMessage(message)
-            # 窗口最大化
-            self.showMaximized()
-            self.stackedWidget_start.setCurrentIndex(1)
-        elif f==-1:
-            QMessageBox.critical(self,'ERROR','密码错误')
-            # print('密码错误')
-            # pass
+        if dc.Error_flag == 0:
+            f=dc.login(username,password)
+            if f==1:
+                message="当前用户："+self.lineEdit_ID.text()
+                self.statusBar().showMessage(message)
+                # 窗口最大化
+                self.showMaximized()
+                self.stackedWidget_start.setCurrentIndex(1)
+            elif f==-1:
+                QMessageBox.critical(self,'ERROR','密码错误')
+                # print('密码错误')
+                # pass
+            else:
+                QMessageBox.critical(self, 'ERROR', '账户不存在')
+                # print('账户不存在')
+                # pass
         else:
-            QMessageBox.critical(self, 'ERROR', '账户不存在')
-            # print('账户不存在')
-            # pass
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
 
     #退出登录
     def on_pushButton_signout_clicked(self):
+        self.stackedWidget.setCurrentIndex(0)
         # self.lineEdit_ID.setText('')
         self.lineEdit_PWD.setText('')
         self.statusBar().showMessage("欢迎使用")
-        # 窗口最大化
+        # 窗口
         self.showNormal()
         self.stackedWidget_start.setCurrentIndex(0)
 
+    #主页
+    def on_pushButton_mainpage_clicked(self):
+        self.stackedWidget.setCurrentIndex(0)
+
     # 按钮一：打开第一个面板
     def on_pushButton_quary_clicked(self):
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
 
     # 按钮二：打开第二个面板
     def on_pushButton_updata_clicked(self):
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(2)
 
     # 按钮三：打开第三个面板
     def on_pushButton_analyse_clicked(self):
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(3)
 
     # 按钮四：打开第四个面板
     def on_pushButton_predict_clicked(self):
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(4)
 
 
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('F:\project2021\GUI\image\logo.jpg'))
+    the_mainwindow = FirstMainWindow()
+    the_mainwindow.show()
+    sys.exit(app.exec_())

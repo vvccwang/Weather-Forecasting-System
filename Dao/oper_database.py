@@ -6,11 +6,16 @@ from urllib.parse import urlencode
 class ConnectDB():
     # 打开数据库连接，使用cursor()方法创建一个游标对象cursor
     def __init__(self):
-        self.db= pymysql.connect(host="localhost", user="root", password="v9ningmeng", database="weatherdata")
-        self.cursor = self.db.cursor()
-
         # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
-        self.citylist=['311','811','936','1281','2087','2347','2348','2349']
+        self.citylist = ['311', '811', '936', '1281', '2087', '2347', '2348', '2349']
+        self.Error_flag=0
+        try:
+            self.db= pymysql.connect(host="localhost", user="root", password="v9ningmeng", database="weatherdata")
+            self.cursor = self.db.cursor()
+        except:
+            self.Error_flag = 1
+
+
 
     # 关闭数据库连接
     def closeDB(self):
