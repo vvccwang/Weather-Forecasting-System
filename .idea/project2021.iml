@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Pyqt_window" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Dao" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/GUI" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Func_Data" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="inheritedJdk" />
