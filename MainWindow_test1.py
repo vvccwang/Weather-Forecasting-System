@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import * #QMainWindow,QApplication,QDesktopWidget,QHBoxLayo
 from PyQt5.QtGui import QIcon,QFont,QPalette,QPixmap,QIntValidator,QDoubleValidator,QRegExpValidator
 from PyQt5.QtCore import Qt,QRegExp
 
+
 class FirstMainWindow(QMainWindow):
     def __init__(self,parent=None):
         #super（）调用父类方法
@@ -23,7 +24,7 @@ class FirstMainWindow(QMainWindow):
         #setGeometry是相对于父窗体来说的一种对子窗体进行位置设置的方法。
         self.setGeometry(300,300,250,250)#从300，300位置 ，显示一个250*250的窗口
         #设置窗口图标
-        self.setWindowIcon(QIcon('image/logo.jpg'))
+        self.setWindowIcon(QIcon('GUI/image/logo.jpg'))
 
     #设置状态栏
     def inistatus(self):
@@ -103,7 +104,7 @@ class FirstMainWindow(QMainWindow):
         label3.setAlignment(Qt.AlignCenter)
         #设置提示
         label3.setToolTip('这是一个图片标签')
-        label3.setPixmap(QPixmap("image/logo.jpg"))
+        label3.setPixmap(QPixmap("GUI/image/logo.jpg"))
 
         #设置超链接可以用浏览器打开
         label4.setOpenExternalLinks(True)
@@ -254,7 +255,7 @@ class DialogDemo(QMainWindow):
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)
-    app.setWindowIcon(QIcon('image/logo.jpg'))
+    app.setWindowIcon(QIcon('GUI/image/logo.jpg'))
     mainWindow = FirstMainWindow()
     mainWindow.center()
     mainWindow.show()

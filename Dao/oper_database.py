@@ -26,6 +26,7 @@ class ConnectDB():
         sql="SELECT * FROM weatherinfo WHERE cityid = "+cityid+" AND uptime BETWEEN '"+startdatetime+" 00:00:00' AND '"+enddatetime+" 23:59:59'"
         self.cursor.execute(sql)
         self.data=self.cursor.fetchall()
+        # print(self.data)
         list=[]
         for i in self.data:
             list.append(i)
