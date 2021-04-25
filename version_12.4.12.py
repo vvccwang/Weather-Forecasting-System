@@ -190,6 +190,8 @@ class Ui_MainWindow(QMainWindow):
         self.comboBox_city = QtWidgets.QComboBox(self.widget2)
         self.comboBox_city.setObjectName("comboBox_city")
         self.FLayout_quary.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city)
+        #下拉框添加城市
+        self.comboBox_city.addItems(['张店区', '高青县', '桓台县', '临淄区', '沂源县', '淄川区', '博山区', '周村区'])
 
         self.label_start = QtWidgets.QLabel(self.widget2)
         self.label_start.setObjectName("label_start")
@@ -213,9 +215,15 @@ class Ui_MainWindow(QMainWindow):
         self.FLayout_quary.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.dateEdit_end)
         self.VLayout_quary.addLayout(self.FLayout_quary)
         #查询按钮
-        self.pushButton_quaryenter = QtWidgets.QPushButton(self.widget2)
-        self.pushButton_quaryenter.setObjectName("pushButton_quaryenter")
-        self.VLayout_quary.addWidget(self.pushButton_quaryenter)
+        self.pushButton_quaryone = QtWidgets.QPushButton(self.widget2)
+        self.pushButton_quaryone.setObjectName("pushButton_quaryone")
+        self.VLayout_quary.addWidget(self.pushButton_quaryone)
+        self.pushButton_quaryone.clicked.connect(self.on_pushButton_quaryone_clicked)
+
+        self.pushButton_quarymany = QtWidgets.QPushButton(self.widget2)
+        self.pushButton_quarymany.setObjectName("pushButton_quarymany")
+        self.VLayout_quary.addWidget(self.pushButton_quarymany)
+        self.pushButton_quarymany.clicked.connect(self.on_pushButton_quarymany_clicked)
 
         #左侧垂直布局加入整体水平布局
         self.HLayout_quary.addLayout(self.VLayout_quary)
@@ -233,10 +241,9 @@ class Ui_MainWindow(QMainWindow):
         self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
         self.tableWidget_quary.setObjectName("tableWidget_quary")
         #设置行列数
-        self.tableWidget_quary.setColumnCount(8)
-        self.tableWidget_quary.setRowCount(30)
+        self.tableWidget_quary.setColumnCount(0)
+        self.tableWidget_quary.setRowCount(0)
         self.HLayout_quary.addWidget(self.tableWidget_quary)
-        self.tableWidget_quary.setHorizontalHeaderLabels(['城市', '日期', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
 
 
 
@@ -312,7 +319,8 @@ class Ui_MainWindow(QMainWindow):
         self.label_city.setText(_translate("MainWindow", "城市选择："))
         self.label_start.setText(_translate("MainWindow", "起始时间："))
         self.label_end.setText(_translate("MainWindow", "结束时间："))
-        self.pushButton_quaryenter.setText(_translate("MainWindow", "查询"))
+        self.pushButton_quaryone.setText(_translate("MainWindow", "查询起始日单日"))
+        self.pushButton_quarymany.setText(_translate("MainWindow", "查询起止日期多日"))
         self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
         self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
         self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
@@ -386,6 +394,26 @@ class Ui_MainWindow(QMainWindow):
         self.widget_updata.hide()
         self.widget_analyse.hide()
         self.widget_predict.show()
+
+    #点击查询单天天气数据
+    def on_pushButton_quaryone_clicked(self):
+        self.tableWidget_quary.setColumnCount(7)
+        self.tableWidget_quary.setRowCount(30)
+        self.tableWidget_quary.setHorizontalHeaderLabels(['时间', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
+
+        city=self.comboBox_city.currentText()
+        startdate=self.dateEdit_start.date().toString("yyyy-MM-dd")
+        enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
+
+
+    # 点击查询多天天气数据
+    def on_pushButton_quarymany_clicked(self):
+        self.tableWidget_quary.setColumnCount(8)
+        self.tableWidget_quary.setRowCount(30)
+        self.tableWidget_quary.setHorizontalHeaderLabels(['日期', '天气状况', '最高温度', '最低温度', '湿度', '空气质量', '风向', '风力等级'])
+        city = self.comboBox_city.currentText()
+        startdate = []
+        enddate = []
 
 
 if __name__ == '__main__':
