@@ -17,6 +17,12 @@ class Ui_MainWindow(QMainWindow):
         self.setupUi(self)
         self.retranslateUi(self)
         self.widget_mainpage.hide()
+        self.widget_quary.hide()
+        self.widget_updata.hide()
+        self.widget_analyse.hide()
+        self.widget_predict.hide()
+
+
     def setupUi(self, MainWindow):
         #app窗口设置，名字设置，大小固定不可变，
         MainWindow.setObjectName("MainWindow")
@@ -107,27 +113,89 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_mainpage = QtWidgets.QPushButton(self.widget1)
         self.pushButton_mainpage.setObjectName("pushButton_mainpage")
         self.HLayout_func.addWidget(self.pushButton_mainpage)
+        #切换到主页
+        self.pushButton_login.clicked.connect(self.on_pushButton_login_clicked)
 
         self.pushButton_quary = QtWidgets.QPushButton(self.widget1)
         self.pushButton_quary.setObjectName("pushButton_quary")
         self.HLayout_func.addWidget(self.pushButton_quary)
+        # 切换到查询
+        self.pushButton_quary.clicked.connect(self.on_pushButton_quary_clicked)
 
         self.pushButton_updata = QtWidgets.QPushButton(self.widget1)
         self.pushButton_updata.setObjectName("pushButton_updata")
         self.HLayout_func.addWidget(self.pushButton_updata)
+        # 切换到更新
+        self.pushButton_updata.clicked.connect(self.on_pushButton_updata_clicked)
 
         self.pushButton_analyse = QtWidgets.QPushButton(self.widget1)
         self.pushButton_analyse.setObjectName("pushButton_analyse")
         self.HLayout_func.addWidget(self.pushButton_analyse)
+        # 切换到分析
+        self.pushButton_analyse.clicked.connect(self.on_pushButton_analyse_clicked)
 
         self.pushButton_predict = QtWidgets.QPushButton(self.widget1)
         self.pushButton_predict.setObjectName("pushButton_predict")
         self.HLayout_func.addWidget(self.pushButton_predict)
+        # 切换到预测
+        self.pushButton_predict.clicked.connect(self.on_pushButton_predict_clicked)
 
         self.pushButton_signout = QtWidgets.QPushButton(self.widget1)
         self.pushButton_signout.setObjectName("pushButton_signout")
         self.HLayout_func.addWidget(self.pushButton_signout)
         self.pushButton_signout.clicked.connect(self.on_pushButton_signout_clicked)
+
+        #设置重合的四个功能显示widget和主页显示widget
+        self.widget_mainshow = QtWidgets.QWidget(self.widget_mainpage)
+        self.widget_mainshow .setGeometry(QtCore.QRect(30, 70, 1031, 731))
+        self.widget_mainshow .setMinimumSize(QtCore.QSize(1031, 731))
+        self.widget_mainshow .setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_mainshow .setObjectName("widget_quary")
+
+        self.pushButton_mainenter = QtWidgets.QPushButton(self.widget_mainshow)
+        self.pushButton_mainenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        self.pushButton_mainenter.setObjectName("pushButton_mainenter")
+
+        self.widget_quary = QtWidgets.QWidget(self.widget_mainpage)
+        self.widget_quary.setGeometry(QtCore.QRect(30, 70, 1031, 731))
+        self.widget_quary.setMinimumSize(QtCore.QSize(1031, 731))
+        self.widget_quary.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_quary.setObjectName("widget_quary")
+
+        self.pushButton_quaryenter = QtWidgets.QPushButton(self.widget_quary)
+        self.pushButton_quaryenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        self.pushButton_quaryenter.setObjectName("pushButton_quaryenter")
+
+        self.widget_updata = QtWidgets.QWidget(self.widget_mainpage)
+        self.widget_updata.setEnabled(True)
+        self.widget_updata.setGeometry(QtCore.QRect(30, 70, 1031, 731))
+        self.widget_updata.setMinimumSize(QtCore.QSize(1031, 731))
+        self.widget_updata.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_updata.setObjectName("widget_updata")
+
+        self.pushButton_updataenter = QtWidgets.QPushButton(self.widget_updata)
+        self.pushButton_updataenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        self.pushButton_updataenter.setObjectName("pushButton_updataenter")
+
+        self.widget_analyse = QtWidgets.QWidget(self.widget_mainpage)
+        self.widget_analyse.setGeometry(QtCore.QRect(30, 70, 1031, 731))
+        self.widget_analyse.setMinimumSize(QtCore.QSize(1031, 731))
+        self.widget_analyse.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_analyse.setObjectName("widget_analyse")
+
+        self.pushButton_analyseenter = QtWidgets.QPushButton(self.widget_analyse)
+        self.pushButton_analyseenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        self.pushButton_analyseenter.setObjectName("pushButton_analyseenter")
+
+        self.widget_predict = QtWidgets.QWidget(self.widget_mainpage)
+        self.widget_predict.setGeometry(QtCore.QRect(30, 70, 1031, 731))
+        self.widget_predict.setMinimumSize(QtCore.QSize(1031, 731))
+        self.widget_predict.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_predict.setObjectName("widget_predict")
+
+        self.pushButton_predictenter = QtWidgets.QPushButton(self.widget_predict)
+        self.pushButton_predictenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        self.pushButton_predictenter.setObjectName("pushButton_predictenter")
 
         #设置中心窗口
         MainWindow.setCentralWidget(self.centralwidget)
@@ -158,6 +226,12 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_analyse.setText(_translate("MainWindow", "气象分析"))
         self.pushButton_predict.setText(_translate("MainWindow", "气象预测"))
         self.pushButton_signout.setText(_translate("MainWindow", "退出登录"))
+
+        self.pushButton_mainenter.setText(_translate("MainWindow", "主页"))
+        self.pushButton_quaryenter.setText(_translate("MainWindow", "查询"))
+        self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
+        self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
+        self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
 
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -192,6 +266,43 @@ class Ui_MainWindow(QMainWindow):
         # 窗口
         self.widget_login.show()
         self.widget_mainpage.hide()
+
+    #点击主页按钮
+    def on_pushButton_mainpage_clicked(self):
+        self.widget_mainshow.show()
+        self.widget_quary.hide()
+        self.widget_updata.hide()
+        self.widget_analyse.hide()
+        self.widget_predict.hide()
+    # 点击查询按钮
+    def on_pushButton_quary_clicked(self):
+        self.widget_mainshow.hide()
+        self.widget_quary.show()
+        self.widget_updata.hide()
+        self.widget_analyse.hide()
+        self.widget_predict.hide()
+    # 点击更新按钮
+    def on_pushButton_updata_clicked(self):
+        self.widget_mainshow.hide()
+        self.widget_quary.hide()
+        self.widget_updata.show()
+        self.widget_analyse.hide()
+        self.widget_predict.hide()
+    # 点击分析按钮
+    def on_pushButton_analyse_clicked(self):
+        self.widget_mainshow.hide()
+        self.widget_quary.hide()
+        self.widget_updata.hide()
+        self.widget_analyse.show()
+        self.widget_predict.hide()
+    # 点击预测按钮
+    def on_pushButton_predict_clicked(self):
+        self.widget_mainshow.hide()
+        self.widget_quary.hide()
+        self.widget_updata.hide()
+        self.widget_analyse.hide()
+        self.widget_predict.show()
+
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)

@@ -425,12 +425,7 @@ class Ui_MainWindow(QMainWindow):
         self.widget_login.show()
         self.widget_mainpage.hide()
 
-if __name__ == '__main__':
-    app=QApplication(sys.argv)
-    app.setWindowIcon(QIcon('GUI/image/logo.jpg'))
-    mainWindow = Ui_MainWindow()
-    mainWindow.show()
-    sys.exit(app.exec())
+
 
 
 
