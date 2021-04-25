@@ -31,7 +31,10 @@ class ConnectDB():
         for i in self.data:
             list.append(i)
         self.closeDB()
-        return list
+        if self.data == None:
+            return -1
+        else:
+            return list
 
     # 更改数据库中的气象数据,暂时无用
     def ChangeData(self,cityid,date,keyname,value):

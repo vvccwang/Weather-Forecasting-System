@@ -6,7 +6,7 @@ import sys
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import oper_database
@@ -190,8 +190,8 @@ class Ui_MainWindow(QMainWindow):
         self.comboBox_city = QtWidgets.QComboBox(self.widget2)
         self.comboBox_city.setObjectName("comboBox_city")
         self.FLayout_quary.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city)
-        #下拉框添加城市
-        self.comboBox_city.addItems(['张店区', '高青县', '桓台县', '临淄区', '沂源县', '淄川区', '博山区', '周村区'])
+        #下拉框添加城市 311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
+        self.comboBox_city.addItems(['张店区311', '高青县811', '桓台县936', '临淄区1281', '沂源县2087', '淄川区2347', '博山区2348', '周村区2349'])
 
         self.label_start = QtWidgets.QLabel(self.widget2)
         self.label_start.setObjectName("label_start")
@@ -400,10 +400,36 @@ class Ui_MainWindow(QMainWindow):
         self.tableWidget_quary.setColumnCount(7)
         self.tableWidget_quary.setRowCount(30)
         self.tableWidget_quary.setHorizontalHeaderLabels(['时间', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
-
-        city=self.comboBox_city.currentText()
+        #获取下拉框选择的城市并去掉汉字名称，只留下代号
+        city=self.comboBox_city.currentText()[3:]
+        #获取起始日期和终止日期，并转换格式
         startdate=self.dateEdit_start.date().toString("yyyy-MM-dd")
-        enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
+        # enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
+        #查询start当天数据
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            onedata=dc.QuaryWeaData(city,startdate,startdate)
+            if onedata == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            else:
+                for index,item in enumerate(onedata):
+                    timeItem = QTableWidgetItem(item[1])
+                    self.tableWidget_quary.setItem(index, 0, timeItem)
+                    weaItem = QTableWidgetItem(item[5])
+                    self.tableWidget_quary.setItem(index, 1, weaItem)
+                    tempItem = QTableWidgetItem(item[2])
+                    self.tableWidget_quary.setItem(index, 2, tempItem)
+                    humItem = QTableWidgetItem(item[3])
+                    self.tableWidget_quary.setItem(index, 3, humItem)
+                    aqiItem = QTableWidgetItem(item[4])
+                    self.tableWidget_quary.setItem(index, 4, aqiItem)
+                    windItem = QTableWidgetItem(item[6])
+                    self.tableWidget_quary.setItem(index, 5, windItem)
+                    levelItem = QTableWidgetItem(item[7])
+                    self.tableWidget_quary.setItem(index, 6, levelItem)
+        else:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+
 
 
     # 点击查询多天天气数据
