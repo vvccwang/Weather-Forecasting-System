@@ -6,7 +6,7 @@ import sys
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import oper_database
@@ -412,21 +412,27 @@ class Ui_MainWindow(QMainWindow):
             if onedata == -1:
                 QMessageBox.critical(self, 'ERROR', '数据库无此数据')
             else:
+                # print(onedata)
                 for index,item in enumerate(onedata):
-                    timeItem = QTableWidgetItem(item[1])
+                    timeItem = QTableWidgetItem(str(item[1])[11:])
                     self.tableWidget_quary.setItem(index, 0, timeItem)
-                    weaItem = QTableWidgetItem(item[5])
+                    weaItem = QTableWidgetItem(str(item[5]))
                     self.tableWidget_quary.setItem(index, 1, weaItem)
-                    tempItem = QTableWidgetItem(item[2])
+                    tempItem = QTableWidgetItem(str(item[2]))
                     self.tableWidget_quary.setItem(index, 2, tempItem)
-                    humItem = QTableWidgetItem(item[3])
+                    humItem = QTableWidgetItem(str(item[3]))
                     self.tableWidget_quary.setItem(index, 3, humItem)
-                    aqiItem = QTableWidgetItem(item[4])
+                    if str(item[4]) == '-1':
+                        aqiItem = QTableWidgetItem('暂无数据')
+                    else:
+                        aqiItem = QTableWidgetItem(str(item[4]))
                     self.tableWidget_quary.setItem(index, 4, aqiItem)
                     windItem = QTableWidgetItem(item[6])
                     self.tableWidget_quary.setItem(index, 5, windItem)
-                    levelItem = QTableWidgetItem(item[7])
+                    levelItem = QTableWidgetItem(str(item[7]))
                     self.tableWidget_quary.setItem(index, 6, levelItem)
+                    # 禁止编辑
+                    self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
 
