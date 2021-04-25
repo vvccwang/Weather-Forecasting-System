@@ -1,5 +1,6 @@
 #具体的登录窗口控件self.widget
 #功能按键具体窗口self.widget1
+#查询页面内容self.widget2
 
 import sys
 
@@ -146,25 +147,98 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_signout.clicked.connect(self.on_pushButton_signout_clicked)
 
         #设置重合的四个功能显示widget和主页显示widget
+
+        #设置主页widget
         self.widget_mainshow = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_mainshow .setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_mainshow .setMinimumSize(QtCore.QSize(1031, 731))
         self.widget_mainshow .setMaximumSize(QtCore.QSize(1031, 731))
         self.widget_mainshow .setObjectName("widget_quary")
-
+        #主页内容设置
         self.pushButton_mainenter = QtWidgets.QPushButton(self.widget_mainshow)
         self.pushButton_mainenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
         self.pushButton_mainenter.setObjectName("pushButton_mainenter")
 
+        #信息查询widget
         self.widget_quary = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_quary.setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_quary.setMinimumSize(QtCore.QSize(1031, 731))
         self.widget_quary.setMaximumSize(QtCore.QSize(1031, 731))
         self.widget_quary.setObjectName("widget_quary")
+        #信息查询widget内容
+        self.widget2 = QtWidgets.QWidget(self.widget_quary)
+        self.widget2.setGeometry(QtCore.QRect(10, 6, 1011, 721))
+        self.widget2.setObjectName("widget2")
+        #水平布局，左边查询城市、起始终止时间等，右边为表格控件
+        self.HLayout_quary = QtWidgets.QHBoxLayout(self.widget2)
+        self.HLayout_quary.setContentsMargins(0, 0, 0, 0)
+        self.HLayout_quary.setObjectName("HLayout_quary")
+        #垂直布局，查询城市、起始终止时间、查询按钮
+        self.VLayout_quary = QtWidgets.QVBoxLayout()
+        self.VLayout_quary.setContentsMargins(-1, 20, 15, 550)
+        self.VLayout_quary.setSpacing(7)
+        self.VLayout_quary.setObjectName("VLayout_quary")
+        #表单布局，查询条件组合
+        self.FLayout_quary = QtWidgets.QFormLayout()
+        self.FLayout_quary.setObjectName("FLayout_quary")
 
-        self.pushButton_quaryenter = QtWidgets.QPushButton(self.widget_quary)
-        self.pushButton_quaryenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        #查询条件控件设置（左半部分垂直布局中）
+        self.label_city = QtWidgets.QLabel(self.widget2)
+        self.label_city.setObjectName("label_city")
+        self.FLayout_quary.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_city)
+        #城市选择下拉框
+        self.comboBox_city = QtWidgets.QComboBox(self.widget2)
+        self.comboBox_city.setObjectName("comboBox_city")
+        self.FLayout_quary.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city)
+
+        self.label_start = QtWidgets.QLabel(self.widget2)
+        self.label_start.setObjectName("label_start")
+        self.FLayout_quary.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_start)
+        # 起始时间
+        self.dateEdit_start = QtWidgets.QDateEdit(self.widget2)
+        self.dateEdit_start.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_start.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_start.setObjectName("dateEdit_start")
+        self.FLayout_quary.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.dateEdit_start)
+
+        self.label_end = QtWidgets.QLabel(self.widget2)
+        self.label_end.setObjectName("label_end")
+        self.FLayout_quary.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_end)
+        # 终止时间
+        self.dateEdit_end = QtWidgets.QDateEdit(self.widget2)
+        self.dateEdit_end.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_end.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_end.setCurrentSection(QtWidgets.QDateTimeEdit.YearSection)
+        self.dateEdit_end.setObjectName("dateEdit_end")
+        self.FLayout_quary.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.dateEdit_end)
+        self.VLayout_quary.addLayout(self.FLayout_quary)
+        #查询按钮
+        self.pushButton_quaryenter = QtWidgets.QPushButton(self.widget2)
         self.pushButton_quaryenter.setObjectName("pushButton_quaryenter")
+        self.VLayout_quary.addWidget(self.pushButton_quaryenter)
+
+        #左侧垂直布局加入整体水平布局
+        self.HLayout_quary.addLayout(self.VLayout_quary)
+
+        #分割线水平布局左右分割
+        self.line_quary = QtWidgets.QFrame(self.widget2)
+        self.line_quary.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_quary.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_quary.setObjectName("line_quary")
+        self.HLayout_quary.addWidget(self.line_quary)
+
+        #右侧表格显示数据控件
+        self.tableWidget_quary = QtWidgets.QTableWidget(self.widget2)
+        self.tableWidget_quary.setMinimumSize(QtCore.QSize(780, 680))
+        self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
+        self.tableWidget_quary.setObjectName("tableWidget_quary")
+        #设置行列数
+        self.tableWidget_quary.setColumnCount(8)
+        self.tableWidget_quary.setRowCount(30)
+        self.HLayout_quary.addWidget(self.tableWidget_quary)
+        self.tableWidget_quary.setHorizontalHeaderLabels(['城市', '日期', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
+
+
 
         self.widget_updata = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_updata.setEnabled(True)
@@ -197,6 +271,13 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_predictenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
         self.pushButton_predictenter.setObjectName("pushButton_predictenter")
 
+        #分割线，上方按钮和下方显示区
+        self.line_func = QtWidgets.QFrame(self.widget_mainpage)
+        self.line_func.setGeometry(QtCore.QRect(30, 56, 1031, 20))
+        self.line_func.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_func.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_func.setObjectName("line_func")
+
         #设置中心窗口
         MainWindow.setCentralWidget(self.centralwidget)
         # 设置状态栏
@@ -228,6 +309,9 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_signout.setText(_translate("MainWindow", "退出登录"))
 
         self.pushButton_mainenter.setText(_translate("MainWindow", "主页"))
+        self.label_city.setText(_translate("MainWindow", "城市选择："))
+        self.label_start.setText(_translate("MainWindow", "起始时间："))
+        self.label_end.setText(_translate("MainWindow", "结束时间："))
         self.pushButton_quaryenter.setText(_translate("MainWindow", "查询"))
         self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
         self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
