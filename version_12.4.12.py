@@ -398,7 +398,6 @@ class Ui_MainWindow(QMainWindow):
     #点击查询单天天气数据
     def on_pushButton_quaryone_clicked(self):
         self.tableWidget_quary.setColumnCount(7)
-        self.tableWidget_quary.setRowCount(30)
         self.tableWidget_quary.setHorizontalHeaderLabels(['时间', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
         #获取下拉框选择的城市并去掉汉字名称，只留下代号
         city=self.comboBox_city.currentText()[3:]
@@ -413,23 +412,24 @@ class Ui_MainWindow(QMainWindow):
                 QMessageBox.critical(self, 'ERROR', '数据库无此数据')
             else:
                 # print(onedata)
+                self.tableWidget_quary.setRowCount(len(onedata))
                 for index,item in enumerate(onedata):
-                    timeItem = QTableWidgetItem(str(item[1])[11:])
+                    timeItem = QTableWidgetItem(item[1][11:])
                     self.tableWidget_quary.setItem(index, 0, timeItem)
-                    weaItem = QTableWidgetItem(str(item[5]))
+                    weaItem = QTableWidgetItem(item[5])
                     self.tableWidget_quary.setItem(index, 1, weaItem)
-                    tempItem = QTableWidgetItem(str(item[2]))
+                    tempItem = QTableWidgetItem(item[2])
                     self.tableWidget_quary.setItem(index, 2, tempItem)
-                    humItem = QTableWidgetItem(str(item[3]))
+                    humItem = QTableWidgetItem(item[3])
                     self.tableWidget_quary.setItem(index, 3, humItem)
-                    if str(item[4]) == '-1':
+                    if item[4] == '-1':
                         aqiItem = QTableWidgetItem('暂无数据')
                     else:
-                        aqiItem = QTableWidgetItem(str(item[4]))
+                        aqiItem = QTableWidgetItem(item[4])
                     self.tableWidget_quary.setItem(index, 4, aqiItem)
                     windItem = QTableWidgetItem(item[6])
                     self.tableWidget_quary.setItem(index, 5, windItem)
-                    levelItem = QTableWidgetItem(str(item[7]))
+                    levelItem = QTableWidgetItem(item[7])
                     self.tableWidget_quary.setItem(index, 6, levelItem)
                     # 禁止编辑
                     self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)

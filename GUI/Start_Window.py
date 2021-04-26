@@ -6,7 +6,7 @@ import sys
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import oper_database
@@ -190,6 +190,8 @@ class Ui_MainWindow(QMainWindow):
         self.comboBox_city = QtWidgets.QComboBox(self.widget2)
         self.comboBox_city.setObjectName("comboBox_city")
         self.FLayout_quary.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city)
+        #下拉框添加城市 311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
+        self.comboBox_city.addItems(['张店区311', '高青县811', '桓台县936', '临淄区1281', '沂源县2087', '淄川区2347', '博山区2348', '周村区2349'])
 
         self.label_start = QtWidgets.QLabel(self.widget2)
         self.label_start.setObjectName("label_start")
@@ -213,9 +215,15 @@ class Ui_MainWindow(QMainWindow):
         self.FLayout_quary.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.dateEdit_end)
         self.VLayout_quary.addLayout(self.FLayout_quary)
         #查询按钮
-        self.pushButton_quaryenter = QtWidgets.QPushButton(self.widget2)
-        self.pushButton_quaryenter.setObjectName("pushButton_quaryenter")
-        self.VLayout_quary.addWidget(self.pushButton_quaryenter)
+        self.pushButton_quaryone = QtWidgets.QPushButton(self.widget2)
+        self.pushButton_quaryone.setObjectName("pushButton_quaryone")
+        self.VLayout_quary.addWidget(self.pushButton_quaryone)
+        self.pushButton_quaryone.clicked.connect(self.on_pushButton_quaryone_clicked)
+
+        self.pushButton_quarymany = QtWidgets.QPushButton(self.widget2)
+        self.pushButton_quarymany.setObjectName("pushButton_quarymany")
+        self.VLayout_quary.addWidget(self.pushButton_quarymany)
+        self.pushButton_quarymany.clicked.connect(self.on_pushButton_quarymany_clicked)
 
         #左侧垂直布局加入整体水平布局
         self.HLayout_quary.addLayout(self.VLayout_quary)
@@ -233,10 +241,9 @@ class Ui_MainWindow(QMainWindow):
         self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
         self.tableWidget_quary.setObjectName("tableWidget_quary")
         #设置行列数
-        self.tableWidget_quary.setColumnCount(8)
-        self.tableWidget_quary.setRowCount(30)
+        self.tableWidget_quary.setColumnCount(0)
+        self.tableWidget_quary.setRowCount(0)
         self.HLayout_quary.addWidget(self.tableWidget_quary)
-        self.tableWidget_quary.setHorizontalHeaderLabels(['城市', '日期', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
 
 
 
@@ -312,7 +319,8 @@ class Ui_MainWindow(QMainWindow):
         self.label_city.setText(_translate("MainWindow", "城市选择："))
         self.label_start.setText(_translate("MainWindow", "起始时间："))
         self.label_end.setText(_translate("MainWindow", "结束时间："))
-        self.pushButton_quaryenter.setText(_translate("MainWindow", "查询"))
+        self.pushButton_quaryone.setText(_translate("MainWindow", "查询起始日单日"))
+        self.pushButton_quarymany.setText(_translate("MainWindow", "查询起止日期多日"))
         self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
         self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
         self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
@@ -387,6 +395,57 @@ class Ui_MainWindow(QMainWindow):
         self.widget_analyse.hide()
         self.widget_predict.show()
 
+    #点击查询单天天气数据
+    def on_pushButton_quaryone_clicked(self):
+        self.tableWidget_quary.setColumnCount(7)
+        self.tableWidget_quary.setHorizontalHeaderLabels(['时间', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
+        #获取下拉框选择的城市并去掉汉字名称，只留下代号
+        city=self.comboBox_city.currentText()[3:]
+        #获取起始日期和终止日期，并转换格式
+        startdate=self.dateEdit_start.date().toString("yyyy-MM-dd")
+        # enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
+        #查询start当天数据
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            onedata=dc.QuaryWeaData(city,startdate,startdate)
+            if onedata == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            else:
+                # print(onedata)
+                self.tableWidget_quary.setRowCount(len(onedata))
+                for index,item in enumerate(onedata):
+                    timeItem = QTableWidgetItem(item[1][11:])
+                    self.tableWidget_quary.setItem(index, 0, timeItem)
+                    weaItem = QTableWidgetItem(item[5])
+                    self.tableWidget_quary.setItem(index, 1, weaItem)
+                    tempItem = QTableWidgetItem(item[2])
+                    self.tableWidget_quary.setItem(index, 2, tempItem)
+                    humItem = QTableWidgetItem(item[3])
+                    self.tableWidget_quary.setItem(index, 3, humItem)
+                    if item[4] == '-1':
+                        aqiItem = QTableWidgetItem('暂无数据')
+                    else:
+                        aqiItem = QTableWidgetItem(item[4])
+                    self.tableWidget_quary.setItem(index, 4, aqiItem)
+                    windItem = QTableWidgetItem(item[6])
+                    self.tableWidget_quary.setItem(index, 5, windItem)
+                    levelItem = QTableWidgetItem(item[7])
+                    self.tableWidget_quary.setItem(index, 6, levelItem)
+                    # 禁止编辑
+                    self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        else:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+
+
+
+    # 点击查询多天天气数据
+    def on_pushButton_quarymany_clicked(self):
+        self.tableWidget_quary.setColumnCount(8)
+        self.tableWidget_quary.setRowCount(30)
+        self.tableWidget_quary.setHorizontalHeaderLabels(['日期', '天气状况', '最高温度', '最低温度', '湿度', '空气质量', '风向', '风力等级'])
+        city = self.comboBox_city.currentText()
+        startdate = []
+        enddate = []
 
 
 

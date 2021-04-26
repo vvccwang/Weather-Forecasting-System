@@ -15,8 +15,6 @@ class ConnectDB():
         except:
             self.Error_flag = 1
 
-
-
     # 关闭数据库连接
     def closeDB(self):
         self.db.close()
@@ -29,7 +27,7 @@ class ConnectDB():
         # print(self.data)
         list=[]
         for i in self.data:
-            list.append(i)
+            list.append([str(item) for item in i])
         self.closeDB()
         if self.data == None:
             return -1
@@ -137,4 +135,6 @@ class ConnectDB():
             return -1
 
 
-
+dc = ConnectDB()
+if dc.Error_flag == 0:
+    onedata=dc.QuaryWeaData('311','2020-1-1','2020-1-1')
