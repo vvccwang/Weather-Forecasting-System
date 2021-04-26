@@ -6,7 +6,7 @@ import sys
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import oper_database
@@ -240,6 +240,9 @@ class Ui_MainWindow(QMainWindow):
         self.tableWidget_quary.setMinimumSize(QtCore.QSize(780, 680))
         self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
         self.tableWidget_quary.setObjectName("tableWidget_quary")
+        #列宽自动调整
+        self.tableWidget_quary.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
         #设置行列数
         self.tableWidget_quary.setColumnCount(0)
         self.tableWidget_quary.setRowCount(0)
@@ -399,6 +402,8 @@ class Ui_MainWindow(QMainWindow):
     def on_pushButton_quaryone_clicked(self):
         self.tableWidget_quary.setColumnCount(7)
         self.tableWidget_quary.setHorizontalHeaderLabels(['时间', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
+        #设置时间列宽
+        self.tableWidget_quary.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         #获取下拉框选择的城市并去掉汉字名称，只留下代号
         city=self.comboBox_city.currentText()[3:]
         #获取起始日期和终止日期，并转换格式
@@ -407,7 +412,8 @@ class Ui_MainWindow(QMainWindow):
         #查询start当天数据
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
-            onedata=dc.QuaryWeaData(city,startdate,startdate)
+            onedata=dc.QuaryWeaData(city,startdate)
+            dc.closeDB()
             if onedata == -1:
                 QMessageBox.critical(self, 'ERROR', '数据库无此数据')
             else:
@@ -418,7 +424,7 @@ class Ui_MainWindow(QMainWindow):
                     self.tableWidget_quary.setItem(index, 0, timeItem)
                     weaItem = QTableWidgetItem(item[5])
                     self.tableWidget_quary.setItem(index, 1, weaItem)
-                    tempItem = QTableWidgetItem(item[2])
+                    tempItem = QTableWidgetItem(str(item[2]))
                     self.tableWidget_quary.setItem(index, 2, tempItem)
                     humItem = QTableWidgetItem(item[3])
                     self.tableWidget_quary.setItem(index, 3, humItem)
@@ -436,17 +442,38 @@ class Ui_MainWindow(QMainWindow):
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
 
-
-
     # 点击查询多天天气数据
     def on_pushButton_quarymany_clicked(self):
-        self.tableWidget_quary.setColumnCount(8)
-        self.tableWidget_quary.setRowCount(30)
-        self.tableWidget_quary.setHorizontalHeaderLabels(['日期', '天气状况', '最高温度', '最低温度', '湿度', '空气质量', '风向', '风力等级'])
-        city = self.comboBox_city.currentText()
-        startdate = []
-        enddate = []
+        self.tableWidget_quary.setColumnCount(4)
+        self.tableWidget_quary.setHorizontalHeaderLabels(['日期', '天气状况', '最高温度', '最低温度'])
 
+        # 获取下拉框选择的城市并去掉汉字名称，只留下代号
+        city = self.comboBox_city.currentText()[3:]
+        # 获取起始日期和终止日期，并转换格式
+        startdate = self.dateEdit_start.date().toString("yyyy-MM-dd")
+        enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
+        # 查询多天数据
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            manydata = dc.QuaryWeaData_maxmin(city, startdate, enddate)
+            if manydata == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            else:
+                # print(manydata)
+                self.tableWidget_quary.setRowCount(len(manydata))
+                for index, item in enumerate(manydata):
+                    timeItem = QTableWidgetItem(item['date'])
+                    self.tableWidget_quary.setItem(index, 0, timeItem)
+                    weaItem = QTableWidgetItem(item['weather'])
+                    self.tableWidget_quary.setItem(index, 1, weaItem)
+                    maxtempItem = QTableWidgetItem(item['max'])
+                    self.tableWidget_quary.setItem(index, 2, maxtempItem)
+                    mintempItem = QTableWidgetItem(item['min'])
+                    self.tableWidget_quary.setItem(index, 3, mintempItem)
+                    # 禁止编辑
+                    self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        else:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)
