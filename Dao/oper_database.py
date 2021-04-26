@@ -70,7 +70,7 @@ class ConnectDB():
                     result[k] = v
                 d_order = sorted(result.items(), key=lambda x: x[1], reverse=True)
                 wea_1=d_order[0][0]
-                if d_order[0][0].find('晴') != -1 or d_order[0][0].find('多云') != -1 or d_order[0][0].find('阴') != -1 :
+                if len(d_order)>1 and (d_order[0][0].find('晴') != -1 or d_order[0][0].find('多云') != -1 or d_order[0][0].find('阴') != -1) :
                     if (d_order[1][0].find('雨') != -1 or d_order[1][0].find('雪') != -1) and d_order[1][1]>3 :
                         wea_1=d_order[1][0]
                     elif (d_order[1][0].find('霾') != -1 or d_order[1][0].find('雾') != -1) and d_order[1][1]>5:

@@ -1,6 +1,7 @@
 #具体的登录窗口控件self.widget
 #功能按键具体窗口self.widget1
 #查询页面内容self.widget2
+# 更新页面内容self.widget3
 
 import sys
 
@@ -42,7 +43,7 @@ class Ui_MainWindow(QMainWindow):
         self.centralwidget.setMinimumSize(QtCore.QSize(1114, 834))
         self.centralwidget.setMaximumSize(QtCore.QSize(1114, 834))
         self.centralwidget.setObjectName("centralwidget")
-        #登录窗口
+ #登录窗口
         self.widget_login = QtWidgets.QWidget(self.centralwidget)
         #QtCore.QRect(340, 240, 411, 231)定义矩形
         self.widget_login.setGeometry(QtCore.QRect(340, 240, 411, 231))
@@ -64,6 +65,7 @@ class Ui_MainWindow(QMainWindow):
         self.formLayout_login.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_id)
         self.lineEdit_id = QtWidgets.QLineEdit(self.widget)
         self.lineEdit_id.setObjectName("lineEdit_id")
+        self.lineEdit_id.setText('sdut001')
         #
         self.formLayout_login.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.lineEdit_id)
         self.label_pwd = QtWidgets.QLabel(self.widget)
@@ -97,7 +99,7 @@ class Ui_MainWindow(QMainWindow):
         #登录按钮信号连接
         self.pushButton_login.clicked.connect(self.on_pushButton_login_clicked)
 
-        #功能窗口
+#功能窗口
         self.widget_mainpage = QtWidgets.QWidget(self.centralwidget)
         self.widget_mainpage.setGeometry(QtCore.QRect(10, 10, 1091, 821))
         self.widget_mainpage.setObjectName("widget_mainpage")
@@ -148,7 +150,7 @@ class Ui_MainWindow(QMainWindow):
 
         #设置重合的四个功能显示widget和主页显示widget
 
-        #设置主页widget
+#设置主页widget
         self.widget_mainshow = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_mainshow .setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_mainshow .setMinimumSize(QtCore.QSize(1031, 731))
@@ -159,7 +161,7 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_mainenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
         self.pushButton_mainenter.setObjectName("pushButton_mainenter")
 
-        #信息查询widget
+#信息查询widget
         self.widget_quary = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_quary.setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_quary.setMinimumSize(QtCore.QSize(1031, 731))
@@ -249,18 +251,83 @@ class Ui_MainWindow(QMainWindow):
         self.HLayout_quary.addWidget(self.tableWidget_quary)
 
 
-
+#更新页面widget
         self.widget_updata = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_updata.setEnabled(True)
         self.widget_updata.setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_updata.setMinimumSize(QtCore.QSize(1031, 731))
         self.widget_updata.setMaximumSize(QtCore.QSize(1031, 731))
         self.widget_updata.setObjectName("widget_updata")
+        #具体的更新widget
+        self.widget3 = QtWidgets.QWidget(self.widget_updata)
+        self.widget3.setGeometry(QtCore.QRect(330, 110, 373, 558))
+        self.widget3.setObjectName("widget")
+        # 垂直布局
+        self.VLayout_updata = QtWidgets.QVBoxLayout(self.widget3)
+        self.VLayout_updata.setContentsMargins(0, 0, 0, 0)
+        self.VLayout_updata.setObjectName("VLayout_updata")
+        #更新页面上方的查询功能表单布局
+        self.FLayout_updata = QtWidgets.QFormLayout()
+        self.FLayout_updata.setContentsMargins(-1, 7, -1, -1)
+        self.FLayout_updata.setObjectName("FLayout_updata")
+        #按钮和显示标签
+        self.pushButton_db_datetime = QtWidgets.QPushButton(self.widget3)
+        self.pushButton_db_datetime.setObjectName("pushButton_db_datetime")
+        self.FLayout_updata.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.pushButton_db_datetime)
 
-        self.pushButton_updataenter = QtWidgets.QPushButton(self.widget_updata)
-        self.pushButton_updataenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
+        self.label_db_datetime = QtWidgets.QLabel(self.widget3)
+        self.label_db_datetime.setObjectName("label_db_datetime")
+        self.FLayout_updata.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_db_datetime)
+
+        self.pushButton_net_datetime = QtWidgets.QPushButton(self.widget3)
+        self.pushButton_net_datetime.setObjectName("pushButton_net_datetime")
+        self.FLayout_updata.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.pushButton_net_datetime)
+
+        self.pushButton_updataenter = QtWidgets.QPushButton(self.widget3)
         self.pushButton_updataenter.setObjectName("pushButton_updataenter")
+        self.FLayout_updata.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.pushButton_updataenter)
 
+        self.label_updatatip = QtWidgets.QLabel(self.widget3)
+        self.label_updatatip.setObjectName("label_updatatip")
+        self.FLayout_updata.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.label_updatatip)
+
+        self.label_net_datetime = QtWidgets.QLabel(self.widget3)
+        self.label_net_datetime.setObjectName("label_net_datetime")
+        self.FLayout_updata.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.label_net_datetime)
+
+        self.VLayout_updata.addLayout(self.FLayout_updata)
+
+
+        #表单布局加入垂直布局
+        self.VLayout_updata.addLayout(self.FLayout_updata)
+        #中间提示标签，显示更新了多少条数据
+
+        self.line_updata3 = QtWidgets.QFrame(self.widget3)
+        self.line_updata3.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_updata3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_updata3.setObjectName("line_updata3")
+        self.VLayout_updata.addWidget(self.line_updata3)
+
+        self.label_counttip = QtWidgets.QLabel(self.widget3)
+        self.label_counttip.setObjectName("label_counttip")
+        self.VLayout_updata.addWidget(self.label_counttip)
+
+        self.line_updata4 = QtWidgets.QFrame(self.widget3)
+        self.line_updata4.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_updata4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_updata4.setObjectName("line_updata4")
+        self.VLayout_updata.addWidget(self.line_updata4)
+
+        #下方表格widget显示更新的具体数据
+        self.tableWidget_updata = QtWidgets.QTableWidget(self.widget3)
+        self.tableWidget_updata.setMinimumSize(QtCore.QSize(371, 421))
+        self.tableWidget_updata.setMaximumSize(QtCore.QSize(371, 421))
+        self.tableWidget_updata.setObjectName("tableWidget_updata")
+        self.tableWidget_updata.setColumnCount(0)
+        self.tableWidget_updata.setRowCount(0)
+        self.VLayout_updata.addWidget(self.tableWidget_updata)
+
+#分析widget
         self.widget_analyse = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_analyse.setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_analyse.setMinimumSize(QtCore.QSize(1031, 731))
@@ -270,7 +337,7 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_analyseenter = QtWidgets.QPushButton(self.widget_analyse)
         self.pushButton_analyseenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
         self.pushButton_analyseenter.setObjectName("pushButton_analyseenter")
-
+#预测widget
         self.widget_predict = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_predict.setGeometry(QtCore.QRect(30, 70, 1031, 731))
         self.widget_predict.setMinimumSize(QtCore.QSize(1031, 731))
@@ -324,9 +391,17 @@ class Ui_MainWindow(QMainWindow):
         self.label_end.setText(_translate("MainWindow", "结束时间："))
         self.pushButton_quaryone.setText(_translate("MainWindow", "查询起始日单日"))
         self.pushButton_quarymany.setText(_translate("MainWindow", "查询起止日期多日"))
-        self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
         self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
         self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
+
+        self.pushButton_db_datetime.setText(_translate("MainWindow", "数据库数据"))
+        self.label_db_datetime.setText(_translate("MainWindow", "点击按钮获取当前数据库中数据日期"))
+        self.pushButton_net_datetime.setText(_translate("MainWindow", "最新数据"))
+        self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
+        self.label_updatatip.setText(_translate("MainWindow", "点击按钮更新数据库"))
+        self.label_net_datetime.setText(_translate("MainWindow", "点击按钮获取当前网络最新数据日期"))
+        self.label_counttip.setText(_translate("MainWindow", "数据更新条数"))
+
 
     #登录验证
     def on_pushButton_login_clicked(self):
