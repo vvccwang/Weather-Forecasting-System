@@ -261,71 +261,42 @@ class Ui_MainWindow(QMainWindow):
         #具体的更新widget
         self.widget3 = QtWidgets.QWidget(self.widget_updata)
         self.widget3.setGeometry(QtCore.QRect(330, 110, 373, 558))
-        self.widget3.setObjectName("widget")
+        self.widget3.setObjectName("widget3")
         # 垂直布局
         self.VLayout_updata = QtWidgets.QVBoxLayout(self.widget3)
         self.VLayout_updata.setContentsMargins(0, 0, 0, 0)
         self.VLayout_updata.setObjectName("VLayout_updata")
-        #更新页面上方的查询功能表单布局
-        self.FLayout_updata = QtWidgets.QFormLayout()
-        self.FLayout_updata.setContentsMargins(-1, 7, -1, -1)
-        self.FLayout_updata.setObjectName("FLayout_updata")
-        #按钮和显示标签
-        self.pushButton_db_datetime = QtWidgets.QPushButton(self.widget3)
-        self.pushButton_db_datetime.setObjectName("pushButton_db_datetime")
-        self.FLayout_updata.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.pushButton_db_datetime)
+        # 按钮和显示标签
+        self.pushButton_updataenter = QtWidgets.QPushButton(self.widget3)
+        self.pushButton_updataenter.setObjectName("pushButton_updataenter")
+        self.VLayout_updata.addWidget(self.pushButton_updataenter)
+        self.pushButton_updataenter.clicked.connect(self.on_pushButton_updataenter_clicked)
 
         self.label_db_datetime = QtWidgets.QLabel(self.widget3)
         self.label_db_datetime.setObjectName("label_db_datetime")
-        self.FLayout_updata.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_db_datetime)
+        self.VLayout_updata.addWidget(self.label_db_datetime)
 
-        self.pushButton_net_datetime = QtWidgets.QPushButton(self.widget3)
-        self.pushButton_net_datetime.setObjectName("pushButton_net_datetime")
-        self.FLayout_updata.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.pushButton_net_datetime)
+        self.line_updata1 = QtWidgets.QFrame(self.widget3)
+        self.line_updata1.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_updata1.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_updata1.setObjectName("line_updata1")
+        self.VLayout_updata.addWidget(self.line_updata1)
 
-        self.pushButton_updataenter = QtWidgets.QPushButton(self.widget3)
-        self.pushButton_updataenter.setObjectName("pushButton_updataenter")
-        self.FLayout_updata.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.pushButton_updataenter)
+        self.label_newtime = QtWidgets.QLabel(self.widget3)
+        self.label_newtime.setObjectName("label_newtime")
+        self.VLayout_updata.addWidget(self.label_newtime)
 
-        self.label_updatatip = QtWidgets.QLabel(self.widget3)
-        self.label_updatatip.setObjectName("label_updatatip")
-        self.FLayout_updata.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.label_updatatip)
-
-        self.label_net_datetime = QtWidgets.QLabel(self.widget3)
-        self.label_net_datetime.setObjectName("label_net_datetime")
-        self.FLayout_updata.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.label_net_datetime)
-
-        self.VLayout_updata.addLayout(self.FLayout_updata)
-
-
-        #表单布局加入垂直布局
-        self.VLayout_updata.addLayout(self.FLayout_updata)
-        #中间提示标签，显示更新了多少条数据
-
-        self.line_updata3 = QtWidgets.QFrame(self.widget3)
-        self.line_updata3.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_updata3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_updata3.setObjectName("line_updata3")
-        self.VLayout_updata.addWidget(self.line_updata3)
+        self.line_updata2 = QtWidgets.QFrame(self.widget3)
+        self.line_updata2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_updata2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_updata2.setObjectName("line_updata2")
+        self.VLayout_updata.addWidget(self.line_updata2)
 
         self.label_counttip = QtWidgets.QLabel(self.widget3)
         self.label_counttip.setObjectName("label_counttip")
         self.VLayout_updata.addWidget(self.label_counttip)
 
-        self.line_updata4 = QtWidgets.QFrame(self.widget3)
-        self.line_updata4.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_updata4.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_updata4.setObjectName("line_updata4")
-        self.VLayout_updata.addWidget(self.line_updata4)
 
-        #下方表格widget显示更新的具体数据
-        self.tableWidget_updata = QtWidgets.QTableWidget(self.widget3)
-        self.tableWidget_updata.setMinimumSize(QtCore.QSize(371, 421))
-        self.tableWidget_updata.setMaximumSize(QtCore.QSize(371, 421))
-        self.tableWidget_updata.setObjectName("tableWidget_updata")
-        self.tableWidget_updata.setColumnCount(0)
-        self.tableWidget_updata.setRowCount(0)
-        self.VLayout_updata.addWidget(self.tableWidget_updata)
 
 #分析widget
         self.widget_analyse = QtWidgets.QWidget(self.widget_mainpage)
@@ -394,14 +365,10 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
         self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
 
-        self.pushButton_db_datetime.setText(_translate("MainWindow", "数据库数据"))
-        self.label_db_datetime.setText(_translate("MainWindow", "点击按钮获取当前数据库中数据日期"))
-        self.pushButton_net_datetime.setText(_translate("MainWindow", "最新数据"))
         self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
-        self.label_updatatip.setText(_translate("MainWindow", "点击按钮更新数据库"))
-        self.label_net_datetime.setText(_translate("MainWindow", "点击按钮获取当前网络最新数据日期"))
-        self.label_counttip.setText(_translate("MainWindow", "数据更新条数"))
-
+        self.label_db_datetime.setText(_translate("MainWindow", "更新前数据库截止日期为："))
+        self.label_newtime.setText(_translate("MainWindow", "更新后数据库截止日期为："))
+        self.label_counttip.setText(_translate("MainWindow", "数据更新条数："))
 
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -547,6 +514,23 @@ class Ui_MainWindow(QMainWindow):
                     self.tableWidget_quary.setItem(index, 3, mintempItem)
                     # 禁止编辑
                     self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        else:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+
+    def on_pushButton_updataenter_clicked(self):
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            data=dc.UpdateWeaData()
+            if data == -1:
+                QMessageBox.critical(self, 'ERROR', 'API Error')
+            elif data == 0:
+                QMessageBox.critical(self, 'ERROR', 'Limit Error')
+            else:
+                # print(data)
+                self.label_db_datetime.setText("更新前数据库截止日期为："+data[0])
+                self.label_newtime.setText("更新后数据库截止日期为："+data[2])
+                self.label_counttip.setText("数据更新条数："+data[1])
+
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
 

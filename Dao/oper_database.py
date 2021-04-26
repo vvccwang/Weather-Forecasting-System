@@ -10,17 +10,20 @@ from collections import Counter
 class ConnectDB():
     # 打开数据库连接，使用cursor()方法创建一个游标对象cursor
     def __init__(self):
-        self.wealist = ['晴', '多云', '阴', '阵雨', '雷阵雨', '雷阵雨有冰雹', '雨夹雪', '小雨', '中雨', '大雨', '暴雨', '大暴雨', '特大暴雨', '阵雪', '小雪', '中雪',
-                '大雪', '暴雪', '雾', '冻雨', '沙尘暴', '小到中雨', '中到大雨', '大到暴雨','暴雨到大暴雨', '大暴雨到特大暴雨', '小雪到中雪', '中雪到大雪', '大雪到暴雪', '浮尘',
-                '扬尘', '强沙尘暴', '霾', '浓雾', '强浓雾', '中度霾', '重度霾', '严重霾', '大雾', '特强浓雾', '雨', '雪']
-        # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
-        self.citylist = ['311', '811', '936', '1281', '2087', '2347', '2348', '2349']
-        self.Error_flag=0
+        self.Error_flag = 0
         try:
             self.db= pymysql.connect(host="localhost", user="root", password="v9ningmeng", database="weatherdata")
             self.cursor = self.db.cursor()
         except:
             self.Error_flag = 1
+        self.wealist = ['晴', '多云', '阴', '阵雨', '雷阵雨', '雷阵雨有冰雹', '雨夹雪', '小雨', '中雨', '大雨', '暴雨', '大暴雨', '特大暴雨', '阵雪', '小雪',
+                        '中雪',
+                        '大雪', '暴雪', '雾', '冻雨', '沙尘暴', '小到中雨', '中到大雨', '大到暴雨', '暴雨到大暴雨', '大暴雨到特大暴雨', '小雪到中雪', '中雪到大雪',
+                        '大雪到暴雪', '浮尘',
+                        '扬尘', '强沙尘暴', '霾', '浓雾', '强浓雾', '中度霾', '重度霾', '严重霾', '大雾', '特强浓雾', '雨', '雪']
+        # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
+        self.citylist = ['311', '811', '936', '1281', '2087', '2347', '2348', '2349']
+
 
     # 关闭数据库连接
     def closeDB(self):
@@ -87,9 +90,6 @@ class ConnectDB():
         else:
             return -1
 
-
-
-
     # 获取两个日期间的日期列表
     def getDatesByTimes(self,sDateStr, eDateStr):
         list = []
@@ -104,6 +104,7 @@ class ConnectDB():
     # 获取指定日期和城市的天气数据，插入数据库
     # return:1正常 0超出 -1出错
     def GetHisData(self,hisdate,cityid):
+        count=0
         url = 'http://api.k780.com'
         params = {
             'app': 'weather.history',
@@ -134,34 +135,44 @@ class ConnectDB():
                     # print(value_list)
                     self.cursor.execute("INSERT INTO weatherinfo VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",value_list)
                     self.db.commit()
-                    self.closeDB()
+                    count+=1
             else:
-                print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
+                # print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
                 if a_result['msgid']=='1000701':
                     return 0
         else:
             print('Request nowapi fail.')
             return -1
-
-        return 1
+        return count
 
     # 更新数据库信息
     def UpdateWeaData(self):
+        count=0
         sql = "SELECT uptime FROM weatherinfo ORDER BY uptime desc"
         self.cursor.execute(sql)
         time_tup = self.cursor.fetchone()
         for i in time_tup:
-            uptime=i.strftime('%Y-%m-%d')
+            utime=i.strftime('%Y-%m-%d')
             break
+        # print(utime)
         today=datetime.datetime.now().strftime('%Y-%m-%d')
-        self.DeleteWeaData(uptime,uptime)
-        datelist=self.getDatesByTimes(uptime,today)
+        self.DeleteWeaData(utime,utime)
+        datelist=self.getDatesByTimes(utime,today)
         for dl in datelist:
             for cid in self.citylist:
                 flag=self.GetHisData(dl,cid)
-
+                if flag != 0 and flag != -1:
+                    if dl != utime:
+                        count+=flag
+                elif flag==-1:
+                    # print('api error')
+                    return -1
+                else:
+                    # print('limit error')
+                    return 0
         self.closeDB()
-        pass
+        list=[str(utime),str(count),str(today)]
+        return list
 
     # return：账户不存在0、账户存在密码不正确-1、密码正确1
     def login(self,name,passwprd):
@@ -177,23 +188,22 @@ class ConnectDB():
         else:
             return -1
 
-    # 更改数据库中的气象数据,暂时无用
-    def ChangeData(self,cityid,date,keyname,value):
-        self.closeDB()
-        pass
-
+    # # 更改数据库中的气象数据,暂时无用
+    # def ChangeData(self,cityid,date,keyname,value):
+    #     self.closeDB()
+    #     pass
+    #
     # 从数据库删除指定条件的信息，根据要求编辑
     def DeleteWeaData(self,startdatetime,enddatetime):
         sql="DELETE FROM weatherinfo WHERE uptime BETWEEN '"+startdatetime+" 00:00:00' AND '"+enddatetime+" 23:59:59'"
         self.cursor.execute(sql)
         self.db.commit()
-        self.closeDB()
-        pass
 
 
 
 
-dc = ConnectDB()
-if dc.Error_flag == 0:
-    dc.QuaryWeaData_maxmin('311','2020-1-1','2020-1-2')
+# dc = ConnectDB()
+# if dc.Error_flag == 0:
+#     data=dc.UpdateWeaData()
+#     print(data)
 
