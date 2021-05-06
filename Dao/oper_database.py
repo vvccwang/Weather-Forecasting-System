@@ -91,12 +91,12 @@ class ConnectDB():
                     value_list.append(wd_dict['weatid'])
                     value_list.append(wd_dict['wind'])
                     value_list.append(wd_dict['winp'][:-1])
-                    # print(value_list)
+                    print(value_list)
                     self.cursor.execute("INSERT INTO weatherinfo VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",value_list)
                     self.db.commit()
                     count+=1
             else:
-                # print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
+                print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
                 if a_result['msgid']=='1000701':
                     return 0
         else:
@@ -163,6 +163,6 @@ class ConnectDB():
 
 # dc = ConnectDB()
 # if dc.Error_flag == 0:
-#     data=dc.UpdateWeaData()
-#     print(data)
-
+#     datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
+#     for date in datelist:
+#         dc.GetHisData(date,'311')
