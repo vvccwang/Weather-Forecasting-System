@@ -10,6 +10,7 @@ from PyQt5.QtGui import QIcon, QRegExpValidator
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import Func_Login
 import oper_database
 
 
@@ -374,27 +375,21 @@ class Ui_MainWindow(QMainWindow):
     def on_pushButton_login_clicked(self):
         username=self.lineEdit_id.text()
         password=self.lineEdit_pwd.text()
-        if username == '' or password == '':
+        fl=Func_Login.Func_Login()
+        flag=fl.Login(username,password)
+        if flag == 0:
             QMessageBox.critical(self, 'ERROR', '帐号或密码不能为空')
+        elif flag == 1:
+            message="当前用户："+self.lineEdit_id.text()
+            self.statusBar().showMessage(message)
+            self.widget_login.hide()
+            self.widget_mainpage.show()
+        elif flag == -1:
+            QMessageBox.critical(self,'ERROR','密码错误')
+        elif flag == 2:
+            QMessageBox.critical(self.centralwidget, 'ERROR', '账户不存在')
         else:
-            dc=oper_database.ConnectDB()
-            if dc.Error_flag == 0:
-                f=dc.login(username,password)
-                if f==1:
-                    message="当前用户："+self.lineEdit_id.text()
-                    self.statusBar().showMessage(message)
-                    self.widget_login.hide()
-                    self.widget_mainpage.show()
-                elif f==-1:
-                    QMessageBox.critical(self,'ERROR','密码错误')
-                    # print('密码错误')
-                    # pass
-                else:
-                    QMessageBox.critical(self.centralwidget, 'ERROR', '账户不存在')
-                    # print('账户不存在')
-                    # pass
-            else:
-                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
 
     #退出登录
     def on_pushButton_signout_clicked(self):
