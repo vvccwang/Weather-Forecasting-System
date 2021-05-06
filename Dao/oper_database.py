@@ -24,7 +24,6 @@ class ConnectDB():
         # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
         self.citylist = ['311', '811', '936', '1281', '2087', '2347', '2348', '2349']
 
-
     # 关闭数据库连接
     def closeDB(self):
         self.db.close()
@@ -49,46 +48,6 @@ class ConnectDB():
                 else:
                     i[5] = self.wealist[int(i[5])-1]
             return list
-
-    def QuaryWeaData_maxmin(self,cityid,startdatetime,enddatetime):
-        datelist=self.getDatesByTimes(startdatetime,enddatetime)
-        list=[]
-        for time in datelist:
-            data=self.QuaryWeaData(cityid,time)
-            dict={}
-            if data != -1:
-                temp=[t[2] for t in data]
-                temp.sort(reverse=True)
-                max=temp[0]
-                min=temp[len(temp)-1]
-
-                wea=[w[5] for w in data]
-                wea = np.array(wea)
-                key = np.unique(wea)
-                result = {}
-                for k in key:
-                    mask = (wea == k)
-                    list_new = wea[mask]
-                    v = list_new.size
-                    result[k] = v
-                d_order = sorted(result.items(), key=lambda x: x[1], reverse=True)
-                wea_1=d_order[0][0]
-                if len(d_order)>1 and (d_order[0][0].find('晴') != -1 or d_order[0][0].find('多云') != -1 or d_order[0][0].find('阴') != -1) :
-                    if (d_order[1][0].find('雨') != -1 or d_order[1][0].find('雪') != -1) and d_order[1][1]>3 :
-                        wea_1=d_order[1][0]
-                    elif (d_order[1][0].find('霾') != -1 or d_order[1][0].find('雾') != -1) and d_order[1][1]>5:
-                        wea_1 = d_order[1][0]
-                dict['date'] = str(time)
-                dict['weather'] =wea_1
-                dict['max'] = str(max)
-                dict['min'] = str(min)
-                # print(dict)
-                list.append(dict)
-        self.closeDB()
-        if list != []:
-            return list
-        else:
-            return -1
 
     # 获取两个日期间的日期列表
     def getDatesByTimes(self,sDateStr, eDateStr):
