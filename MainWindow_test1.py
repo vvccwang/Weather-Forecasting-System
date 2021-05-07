@@ -9,7 +9,7 @@ class FirstMainWindow(QMainWindow):
         #super（）调用父类方法
         super(FirstMainWindow,self).__init__(parent)
         #设置主窗口的标题
-        self.setWindowTitle('气象分析预测系统')
+        self.setWindowTitle('css test')
         #设置主窗口尺寸
         self.resize(500,400)
         #设置状态栏
@@ -24,7 +24,7 @@ class FirstMainWindow(QMainWindow):
         #setGeometry是相对于父窗体来说的一种对子窗体进行位置设置的方法。
         self.setGeometry(300,300,250,250)#从300，300位置 ，显示一个250*250的窗口
         #设置窗口图标
-        self.setWindowIcon(QIcon('GUI/image/logo.jpg'))
+        # self.setWindowIcon(QIcon('GUI/image/logo.jpg'))
 
     #设置状态栏
     def inistatus(self):

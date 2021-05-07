@@ -10,6 +10,7 @@ from PyQt5.QtGui import QIcon, QRegExpValidator
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import Data_quary
 import Func_Login
 import oper_database
 
@@ -445,39 +446,32 @@ class Ui_MainWindow(QMainWindow):
         city=self.comboBox_city.currentText()[3:]
         #获取起始日期和终止日期，并转换格式
         startdate=self.dateEdit_start.date().toString("yyyy-MM-dd")
-        # enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
         #查询start当天数据
-        dc = oper_database.ConnectDB()
-        if dc.Error_flag == 0:
-            onedata=dc.QuaryWeaData(city,startdate)
-            dc.closeDB()
-            if onedata == -1:
-                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-            else:
-                # print(onedata)
-                self.tableWidget_quary.setRowCount(len(onedata))
-                for index,item in enumerate(onedata):
-                    timeItem = QTableWidgetItem(item[1][11:])
-                    self.tableWidget_quary.setItem(index, 0, timeItem)
-                    weaItem = QTableWidgetItem(item[5])
-                    self.tableWidget_quary.setItem(index, 1, weaItem)
-                    tempItem = QTableWidgetItem(str(item[2]))
-                    self.tableWidget_quary.setItem(index, 2, tempItem)
-                    humItem = QTableWidgetItem(item[3])
-                    self.tableWidget_quary.setItem(index, 3, humItem)
-                    if item[4] == '-1':
-                        aqiItem = QTableWidgetItem('暂无数据')
-                    else:
-                        aqiItem = QTableWidgetItem(item[4])
-                    self.tableWidget_quary.setItem(index, 4, aqiItem)
-                    windItem = QTableWidgetItem(item[6])
-                    self.tableWidget_quary.setItem(index, 5, windItem)
-                    levelItem = QTableWidgetItem(item[7])
-                    self.tableWidget_quary.setItem(index, 6, levelItem)
-                    # 禁止编辑
-                    self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        else:
+        dq = Data_quary.Data_Quary()
+        onedata = dq.Quary_one(city, startdate)
+        if onedata == 0:
+            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+        elif onedata == -1:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            self.tableWidget_quary.setRowCount(len(onedata))
+            for index, item in enumerate(onedata):
+                timeItem = QTableWidgetItem(item[0])
+                self.tableWidget_quary.setItem(index, 0, timeItem)
+                weaItem = QTableWidgetItem(item[1])
+                self.tableWidget_quary.setItem(index, 1, weaItem)
+                tempItem = QTableWidgetItem(str(item[2]))
+                self.tableWidget_quary.setItem(index, 2, tempItem)
+                humItem = QTableWidgetItem(item[3])
+                self.tableWidget_quary.setItem(index, 3, humItem)
+                aqiItem = QTableWidgetItem(item[4])
+                self.tableWidget_quary.setItem(index, 4, aqiItem)
+                windItem = QTableWidgetItem(item[5])
+                self.tableWidget_quary.setItem(index, 5, windItem)
+                levelItem = QTableWidgetItem(item[6])
+                self.tableWidget_quary.setItem(index, 6, levelItem)
+                # 禁止编辑
+                self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     # 点击查询多天天气数据
     def on_pushButton_quarymany_clicked(self):
@@ -490,36 +484,36 @@ class Ui_MainWindow(QMainWindow):
         startdate = self.dateEdit_start.date().toString("yyyy-MM-dd")
         enddate=self.dateEdit_end.date().toString("yyyy-MM-dd")
         # 查询多天数据
-        dc = oper_database.ConnectDB()
-        if dc.Error_flag == 0:
-            manydata = dc.QuaryWeaData_maxmin(city, startdate, enddate)
-            if manydata == -1:
-                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-            else:
-                # print(manydata)
-                self.tableWidget_quary.setRowCount(len(manydata))
-                for index, item in enumerate(manydata):
-                    timeItem = QTableWidgetItem(item['date'])
-                    self.tableWidget_quary.setItem(index, 0, timeItem)
-                    weaItem = QTableWidgetItem(item['weather'])
-                    self.tableWidget_quary.setItem(index, 1, weaItem)
-                    maxtempItem = QTableWidgetItem(item['max'])
-                    self.tableWidget_quary.setItem(index, 2, maxtempItem)
-                    mintempItem = QTableWidgetItem(item['min'])
-                    self.tableWidget_quary.setItem(index, 3, mintempItem)
-                    # 禁止编辑
-                    self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        else:
+        dq = Data_quary.Data_Quary()
+        manydata = dq.Quary_many(city,startdate,enddate)
+        if manydata == 0:
+            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+        elif manydata == -1:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            # print(manydata)
+            self.tableWidget_quary.setRowCount(len(manydata))
+            for index, item in enumerate(manydata):
+                timeItem = QTableWidgetItem(item['date'])
+                self.tableWidget_quary.setItem(index, 0, timeItem)
+                weaItem = QTableWidgetItem(item['weather'])
+                self.tableWidget_quary.setItem(index, 1, weaItem)
+                maxtempItem = QTableWidgetItem(item['max'])
+                self.tableWidget_quary.setItem(index, 2, maxtempItem)
+                mintempItem = QTableWidgetItem(item['min'])
+                self.tableWidget_quary.setItem(index, 3, mintempItem)
+                # 禁止编辑
+                self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
 
     def on_pushButton_updataenter_clicked(self):
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
             data=dc.UpdateWeaData()
             if data == -1:
-                QMessageBox.critical(self, 'ERROR', 'API Error')
+                QMessageBox.critical(self, 'ERROR', 'API Error：请联系开发者')
             elif data == 0:
-                QMessageBox.critical(self, 'ERROR', 'Limit Error')
+                QMessageBox.critical(self, 'ERROR', 'Limit Error:等待一小时后重试')
             else:
                 # print(data)
                 self.label_db_datetime.setText("更新前数据库截止日期为："+data[0])

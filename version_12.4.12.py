@@ -511,9 +511,9 @@ class Ui_MainWindow(QMainWindow):
         if dc.Error_flag == 0:
             data=dc.UpdateWeaData()
             if data == -1:
-                QMessageBox.critical(self, 'ERROR', 'API Error')
+                QMessageBox.critical(self, 'ERROR', 'API Error：请联系开发者')
             elif data == 0:
-                QMessageBox.critical(self, 'ERROR', 'Limit Error')
+                QMessageBox.critical(self, 'ERROR', 'Limit Error:等待一小时后重试')
             else:
                 # print(data)
                 self.label_db_datetime.setText("更新前数据库截止日期为："+data[0])

@@ -69,10 +69,10 @@ class ConnectDB():
             'app': 'weather.history',
             'weaid': cityid,
             'date': hisdate,
-            # 'appkey': '58433',
-            'appkey': '58300',
-            # 'sign': '2f6f16436696acab39e15d3a14065f85',
-            'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
+            'appkey': '58433',
+            # 'appkey': '58300',
+            'sign': '2f6f16436696acab39e15d3a14065f85',
+            # 'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
             'format': 'json',
         }
         params = urlencode(params)
@@ -104,6 +104,15 @@ class ConnectDB():
             return -1
         return count
 
+    # def uptime(self):
+    #     sql = "SELECT uptime FROM weatherinfo ORDER BY uptime desc"
+    #     self.cursor.execute(sql)
+    #     time_tup = self.cursor.fetchone()
+    #     for i in time_tup:
+    #         utime = i.strftime('%Y-%m-%d')
+    #         break
+    #     # print(utime)
+    #     return utime
     # 更新数据库信息
     def UpdateWeaData(self):
         count=0
@@ -160,9 +169,9 @@ class ConnectDB():
 
 
 
-
+#
 # dc = ConnectDB()
 # if dc.Error_flag == 0:
-#     datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
+#     datelist=dc.getDatesByTimes('2019-01-01','2019-07-20')
 #     for date in datelist:
-#         dc.GetHisData(date,'311')
+#         dc.GetHisData(date,'1281')
