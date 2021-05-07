@@ -2,6 +2,7 @@
 #功能按键具体窗口self.widget1
 #查询页面内容self.widget2
 # 更新页面内容self.widget3
+#分析页面具体内容widget4
 
 import sys
 
@@ -307,9 +308,75 @@ class Ui_MainWindow(QMainWindow):
         self.widget_analyse.setMaximumSize(QtCore.QSize(1031, 731))
         self.widget_analyse.setObjectName("widget_analyse")
 
-        self.pushButton_analyseenter = QtWidgets.QPushButton(self.widget_analyse)
-        self.pushButton_analyseenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
-        self.pushButton_analyseenter.setObjectName("pushButton_analyseenter")
+        self.widget4 = QtWidgets.QWidget(self.widget_analyse)
+        self.widget4.setGeometry(QtCore.QRect(0, 9, 1031, 711))
+        self.widget4.setObjectName("widget4")
+
+        self.HLayout_analyse = QtWidgets.QHBoxLayout(self.widget4)
+        self.HLayout_analyse.setContentsMargins(0, 0, 0, 0)
+        self.HLayout_analyse.setObjectName("HLayout_analyse")
+
+        self.VLayout_analyse = QtWidgets.QVBoxLayout()
+        self.VLayout_analyse.setContentsMargins(10, 100, 10, 300)
+        self.VLayout_analyse.setObjectName("VLayout_analyse")
+
+        self.FLayout_analyse = QtWidgets.QFormLayout()
+        self.FLayout_analyse.setObjectName("FLayout_analyse")
+
+        self.label_city_analyse = QtWidgets.QLabel(self.widget4)
+        self.label_city_analyse.setObjectName("label_city_analyse")
+        self.FLayout_analyse.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_city_analyse)
+
+        self.comboBox_city_analyse = QtWidgets.QComboBox(self.widget4)
+        self.comboBox_city_analyse.setObjectName("comboBox_city_analyse")
+        self.FLayout_analyse.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city_analyse)
+
+        self.label_time_analyse = QtWidgets.QLabel(self.widget4)
+        self.label_time_analyse.setObjectName("label_time_analyse")
+        self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_time_analyse)
+
+        self.comboBox_time_analyse = QtWidgets.QComboBox(self.widget4)
+        self.comboBox_time_analyse.setObjectName("comboBox_time_analyse")
+        self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.comboBox_time_analyse)
+
+        self.VLayout_analyse.addLayout(self.FLayout_analyse)
+
+        self.pushButton_temp = QtWidgets.QPushButton(self.widget4)
+        self.pushButton_temp.setObjectName("pushButton_temp")
+        self.VLayout_analyse.addWidget(self.pushButton_temp)
+
+        self.pushButton_weather = QtWidgets.QPushButton(self.widget4)
+        self.pushButton_weather.setObjectName("pushButton_weather")
+        self.VLayout_analyse.addWidget(self.pushButton_weather)
+
+        self.pushButton_hum = QtWidgets.QPushButton(self.widget4)
+        self.pushButton_hum.setObjectName("pushButton_hum")
+        self.VLayout_analyse.addWidget(self.pushButton_hum)
+
+        self.pushButton_wind = QtWidgets.QPushButton(self.widget4)
+        self.pushButton_wind.setObjectName("pushButton_wind")
+        self.VLayout_analyse.addWidget(self.pushButton_wind)
+
+        self.pushButton_aqi = QtWidgets.QPushButton(self.widget4)
+        self.pushButton_aqi.setObjectName("pushButton_aqi")
+        self.VLayout_analyse.addWidget(self.pushButton_aqi)
+
+        self.HLayout_analyse.addLayout(self.VLayout_analyse)
+
+        self.line_analyse = QtWidgets.QFrame(self.widget4)
+        self.line_analyse.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_analyse.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_analyse.setObjectName("line_analyse")
+
+        self.HLayout_analyse.addWidget(self.line_analyse)
+
+        self.groupBox_analyse = QtWidgets.QGroupBox(self.widget4)
+        self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 650))
+        self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 650))
+        self.groupBox_analyse.setObjectName("groupBox_analyse")
+        self.HLayout_analyse.addWidget(self.groupBox_analyse)
+
+
 #预测widget
         self.widget_predict = QtWidgets.QWidget(self.widget_mainpage)
         self.widget_predict.setGeometry(QtCore.QRect(30, 70, 1031, 731))
@@ -364,13 +431,21 @@ class Ui_MainWindow(QMainWindow):
         self.label_end.setText(_translate("MainWindow", "结束时间："))
         self.pushButton_quaryone.setText(_translate("MainWindow", "查询起始日单日"))
         self.pushButton_quarymany.setText(_translate("MainWindow", "查询起止日期多日"))
-        self.pushButton_analyseenter.setText(_translate("MainWindow", "分析"))
         self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
 
         self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
         self.label_db_datetime.setText(_translate("MainWindow", "更新前数据库截止日期为："))
         self.label_newtime.setText(_translate("MainWindow", "更新后数据库截止日期为："))
         self.label_counttip.setText(_translate("MainWindow", "数据更新条数："))
+
+        self.label_city_analyse.setText(_translate("MainWindow", "城市："))
+        self.label_time_analyse.setText(_translate("MainWindow", "时间："))
+        self.pushButton_temp.setText(_translate("MainWindow", "温度趋势变化"))
+        self.pushButton_weather.setText(_translate("MainWindow", "天气类型统计"))
+        self.pushButton_hum.setText(_translate("MainWindow", "湿度趋势变化"))
+        self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
+        self.pushButton_aqi.setText(_translate("MainWindow", "空气质量变化趋势"))
+        self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
 
     #登录验证
     def on_pushButton_login_clicked(self):
