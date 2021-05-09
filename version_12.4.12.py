@@ -351,26 +351,25 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_temp = QtWidgets.QPushButton(self.widget4)
         self.pushButton_temp.setObjectName("pushButton_temp")
         self.VLayout_analyse.addWidget(self.pushButton_temp)
+        self.pushButton_temp.clicked.connect(self.on_pushButton_temp_clicked)
 
         #天气类型数据统计按钮
         self.pushButton_weather = QtWidgets.QPushButton(self.widget4)
         self.pushButton_weather.setObjectName("pushButton_weather")
         self.VLayout_analyse.addWidget(self.pushButton_weather)
+        self.pushButton_weather.clicked.connect(self.on_pushButton_weather_clicked)
 
         #湿度趋势变化按钮
         self.pushButton_hum = QtWidgets.QPushButton(self.widget4)
         self.pushButton_hum.setObjectName("pushButton_hum")
         self.VLayout_analyse.addWidget(self.pushButton_hum)
+        self.pushButton_hum.clicked.connect(self.on_pushButton_hum_clicked)
 
         #风力、风向统计按钮
         self.pushButton_wind = QtWidgets.QPushButton(self.widget4)
         self.pushButton_wind.setObjectName("pushButton_wind")
         self.VLayout_analyse.addWidget(self.pushButton_wind)
-
-        #空气质量变化趋势按钮
-        # self.pushButton_aqi = QtWidgets.QPushButton(self.widget4)
-        # self.pushButton_aqi.setObjectName("pushButton_aqi")
-        # self.VLayout_analyse.addWidget(self.pushButton_aqi)
+        self.pushButton_wind.clicked.connect(self.on_pushButton_wind_clicked)
 
         self.HLayout_analyse.addLayout(self.VLayout_analyse)
 
@@ -454,7 +453,6 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_weather.setText(_translate("MainWindow", "天气类型统计"))
         self.pushButton_hum.setText(_translate("MainWindow", "湿度趋势变化"))
         self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
-        # self.pushButton_aqi.setText(_translate("MainWindow", "空气质量变化趋势"))
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -601,7 +599,18 @@ class Ui_MainWindow(QMainWindow):
 
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-    #点击
+    # 点击获取温度趋势可视化分析
+    def on_pushButton_temp_clicked(self):
+        pass
+    # 点击获取天气类型可视化分析
+    def on_pushButton_weather_clicked(self):
+        pass
+    # 点击获取湿度趋势可视化分析
+    def on_pushButton_hum_clicked(self):
+        pass
+    # 点击获取风向、风力趋势可视化分析
+    def on_pushButton_wind_clicked(self):
+        pass
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)
