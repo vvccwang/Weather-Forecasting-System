@@ -6,14 +6,24 @@
 
 import sys
 
+import matplotlib
+from matplotlib.figure import Figure
+
+matplotlib.use('Qt5Agg')
+
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView, \
+    QGridLayout
 from PyQt5 import QtCore, QtGui, QtWidgets
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import numpy as np
+import matplotlib.pyplot as plt
 
 import Data_quary
 import Func_Login
 import oper_database
+
 
 
 class Ui_MainWindow(QMainWindow):
@@ -343,7 +353,7 @@ class Ui_MainWindow(QMainWindow):
         self.comboBox_time_analyse = QtWidgets.QComboBox(self.widget4)
         self.comboBox_time_analyse.setObjectName("comboBox_time_analyse")
         self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.comboBox_time_analyse)
-        self.comboBox_time_analyse.addItems(['近30天', '近三个月', '近六个月', '近一年', '近两年'])
+        self.comboBox_time_analyse.addItems(['1:近一个月', '2:近三个月', '3:近六个月', '4:近一年', '5:近两年'])
 
         self.VLayout_analyse.addLayout(self.FLayout_analyse)
 
@@ -386,6 +396,12 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 650))
         self.groupBox_analyse.setObjectName("groupBox_analyse")
         self.HLayout_analyse.addWidget(self.groupBox_analyse)
+
+        self.grid = QGridLayout(self.groupBox_analyse)
+
+        self.figure = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
+        self.canvas = FigureCanvas(self.figure)
+        self.grid.addWidget(self.canvas,0,1)
 
 
 
@@ -601,7 +617,40 @@ class Ui_MainWindow(QMainWindow):
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
     # 点击获取温度趋势可视化分析
     def on_pushButton_temp_clicked(self):
-        pass
+        city = self.comboBox_city_analyse.currentText()[3:]
+        timeflag = self.comboBox_time_analyse.currentText()[0]
+        # print(city,timeflag)
+
+
+
+        AgeList = ['10', '21', '12', '14', '25']
+        NameList = ['Tom', 'Jon', 'Alice', 'Mike', 'Mary']
+
+        # 将AgeList中的数据转化为int类型
+        AgeList = list(map(int, AgeList))
+
+        # 将x,y轴转化为矩阵式
+        self.x = np.arange(len(NameList)) + 1
+        self.y = np.array(AgeList)
+
+        # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
+        plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
+
+        # 在柱体上显示数据
+        for a, b in zip(self.x, self.y):
+            plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
+
+        # 设置标题
+        plt.title("Demo")
+
+        # 画图
+        self.canvas.draw()
+
+
+
+
+
+
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
         pass
