@@ -203,8 +203,8 @@ class Ui_MainWindow(QMainWindow):
         self.FLayout_quary.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_start)
         # 起始时间
         self.dateEdit_start = QtWidgets.QDateEdit(self.widget2)
-        self.dateEdit_start.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
-        self.dateEdit_start.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_start.setDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_start.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEdit_start.setObjectName("dateEdit_start")
         self.FLayout_quary.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.dateEdit_start)
 
@@ -213,8 +213,8 @@ class Ui_MainWindow(QMainWindow):
         self.FLayout_quary.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_end)
         # 终止时间
         self.dateEdit_end = QtWidgets.QDateEdit(self.widget2)
-        self.dateEdit_end.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
-        self.dateEdit_end.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_end.setDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit_end.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEdit_end.setCurrentSection(QtWidgets.QDateTimeEdit.YearSection)
         self.dateEdit_end.setObjectName("dateEdit_end")
         self.FLayout_quary.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.dateEdit_end)
@@ -323,43 +323,54 @@ class Ui_MainWindow(QMainWindow):
         self.FLayout_analyse = QtWidgets.QFormLayout()
         self.FLayout_analyse.setObjectName("FLayout_analyse")
 
+        #城市label
         self.label_city_analyse = QtWidgets.QLabel(self.widget4)
         self.label_city_analyse.setObjectName("label_city_analyse")
         self.FLayout_analyse.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_city_analyse)
 
+        #城市选择下拉框
         self.comboBox_city_analyse = QtWidgets.QComboBox(self.widget4)
         self.comboBox_city_analyse.setObjectName("comboBox_city_analyse")
         self.FLayout_analyse.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city_analyse)
+        self.comboBox_city_analyse.addItems(['张店区311', '高青县811', '桓台县936', '临淄区1281', '沂源县2087', '淄川区2347', '博山区2348', '周村区2349'])
 
+        #时间段label
         self.label_time_analyse = QtWidgets.QLabel(self.widget4)
         self.label_time_analyse.setObjectName("label_time_analyse")
         self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_time_analyse)
 
+        #时间段选择下拉框
         self.comboBox_time_analyse = QtWidgets.QComboBox(self.widget4)
         self.comboBox_time_analyse.setObjectName("comboBox_time_analyse")
         self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.comboBox_time_analyse)
+        self.comboBox_time_analyse.addItems(['近30天', '近三个月', '近六个月', '近一年', '近两年'])
 
         self.VLayout_analyse.addLayout(self.FLayout_analyse)
 
+        #温度趋势变化按钮
         self.pushButton_temp = QtWidgets.QPushButton(self.widget4)
         self.pushButton_temp.setObjectName("pushButton_temp")
         self.VLayout_analyse.addWidget(self.pushButton_temp)
 
+        #天气类型数据统计按钮
         self.pushButton_weather = QtWidgets.QPushButton(self.widget4)
         self.pushButton_weather.setObjectName("pushButton_weather")
         self.VLayout_analyse.addWidget(self.pushButton_weather)
 
+        #湿度趋势变化按钮
         self.pushButton_hum = QtWidgets.QPushButton(self.widget4)
         self.pushButton_hum.setObjectName("pushButton_hum")
         self.VLayout_analyse.addWidget(self.pushButton_hum)
 
+        #风力、风向统计按钮
         self.pushButton_wind = QtWidgets.QPushButton(self.widget4)
         self.pushButton_wind.setObjectName("pushButton_wind")
         self.VLayout_analyse.addWidget(self.pushButton_wind)
 
-        self.pushButton_aqi = QtWidgets.QPushButton(self.widget4)
-        self.pushButton_aqi.setObjectName("pushButton_aqi")
-        self.VLayout_analyse.addWidget(self.pushButton_aqi)
+        #空气质量变化趋势按钮
+        # self.pushButton_aqi = QtWidgets.QPushButton(self.widget4)
+        # self.pushButton_aqi.setObjectName("pushButton_aqi")
+        # self.VLayout_analyse.addWidget(self.pushButton_aqi)
 
         self.HLayout_analyse.addLayout(self.VLayout_analyse)
 
@@ -370,11 +381,14 @@ class Ui_MainWindow(QMainWindow):
 
         self.HLayout_analyse.addWidget(self.line_analyse)
 
+        # 可视化显示区域
         self.groupBox_analyse = QtWidgets.QGroupBox(self.widget4)
         self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 650))
         self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 650))
         self.groupBox_analyse.setObjectName("groupBox_analyse")
         self.HLayout_analyse.addWidget(self.groupBox_analyse)
+
+
 
 
 #预测widget
@@ -402,13 +416,9 @@ class Ui_MainWindow(QMainWindow):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.statusBar().showMessage("欢迎使用")
-
         #功能按键设置
         self.retranslateUi(MainWindow)
-
-        #其作用是如其名称一样，用来将QObject 里的子孙QObject的某些信号按照其objectName连接到相应的槽上
-        # QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+    #功能化按键设置
     def retranslateUi(self, MainWindow):
         #件需要运行在不同的语言环境下时，我们要针对特定的语言环境来改变界面显示
         _translate = QtCore.QCoreApplication.translate
@@ -444,9 +454,8 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_weather.setText(_translate("MainWindow", "天气类型统计"))
         self.pushButton_hum.setText(_translate("MainWindow", "湿度趋势变化"))
         self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
-        self.pushButton_aqi.setText(_translate("MainWindow", "空气质量变化趋势"))
+        # self.pushButton_aqi.setText(_translate("MainWindow", "空气质量变化趋势"))
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
-
     #登录验证
     def on_pushButton_login_clicked(self):
         username=self.lineEdit_id.text()
@@ -466,7 +475,6 @@ class Ui_MainWindow(QMainWindow):
             QMessageBox.critical(self.centralwidget, 'ERROR', '账户不存在')
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-
     #退出登录
     def on_pushButton_signout_clicked(self):
         self.lineEdit_pwd.setText('')
@@ -474,7 +482,6 @@ class Ui_MainWindow(QMainWindow):
         # 窗口
         self.widget_login.show()
         self.widget_mainpage.hide()
-
     #点击主页按钮
     def on_pushButton_mainpage_clicked(self):
         self.widget_mainshow.show()
@@ -510,7 +517,6 @@ class Ui_MainWindow(QMainWindow):
         self.widget_updata.hide()
         self.widget_analyse.hide()
         self.widget_predict.show()
-
     #点击查询单天天气数据
     def on_pushButton_quaryone_clicked(self):
         self.tableWidget_quary.setColumnCount(7)
@@ -547,7 +553,6 @@ class Ui_MainWindow(QMainWindow):
                 self.tableWidget_quary.setItem(index, 6, levelItem)
                 # 禁止编辑
                 self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
-
     # 点击查询多天天气数据
     def on_pushButton_quarymany_clicked(self):
         self.tableWidget_quary.setColumnCount(4)
@@ -579,8 +584,7 @@ class Ui_MainWindow(QMainWindow):
                 self.tableWidget_quary.setItem(index, 3, mintempItem)
                 # 禁止编辑
                 self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
-
-
+    # 点击更新数据库数据
     def on_pushButton_updataenter_clicked(self):
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
@@ -597,6 +601,7 @@ class Ui_MainWindow(QMainWindow):
 
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+    #点击
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)

@@ -69,10 +69,13 @@ class ConnectDB():
             'app': 'weather.history',
             'weaid': cityid,
             'date': hisdate,
-            'appkey': '58433',
-            # 'appkey': '58300',
-            'sign': '2f6f16436696acab39e15d3a14065f85',
-            # 'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
+            # 'appkey': '58433',
+            'appkey': '58300',
+            # 'appkey': '58940',
+            # 'sign': '2f6f16436696acab39e15d3a14065f85',
+            'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
+            # 'sign': '5f75eff0e853fbf8e8738f54692549be',
+
             'format': 'json',
         }
         params = urlencode(params)
@@ -169,9 +172,10 @@ class ConnectDB():
 
 
 
-#
+
 # dc = ConnectDB()
 # if dc.Error_flag == 0:
-#     datelist=dc.getDatesByTimes('2019-01-01','2019-07-20')
+#     datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
+#     # datelist = dc.getDatesByTimes('2019-01-01', '2019-07-20')
 #     for date in datelist:
-#         dc.GetHisData(date,'1281')
+#         dc.GetHisData(date,'2349')

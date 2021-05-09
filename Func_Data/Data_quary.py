@@ -19,7 +19,7 @@ class Data_Quary():
                     dlist.append(item[5])
                     dlist.append(str(item[2]))
                     dlist.append(item[3])
-                    if item[4] == '-1':
+                    if item[4] == '-1' or item[4] == '0':
                         dlist.append('暂无数据')
                     else:
                         dlist.append(item[4])
