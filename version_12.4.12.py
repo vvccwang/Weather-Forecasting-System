@@ -9,6 +9,8 @@ import sys
 import matplotlib
 from matplotlib.figure import Figure
 
+import Data_analyse
+
 matplotlib.use('Qt5Agg')
 
 from PyQt5.QtCore import QRegExp
@@ -618,33 +620,78 @@ class Ui_MainWindow(QMainWindow):
     # 点击获取温度趋势可视化分析
     def on_pushButton_temp_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
-        timeflag = self.comboBox_time_analyse.currentText()[0]
+        timeflag = int(self.comboBox_time_analyse.currentText()[0])
         # print(city,timeflag)
+        da=Data_analyse.Data_Analyse()
+        data=da.Quary_many(city,timeflag)
+
+        if data == 0:
+            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+        elif data == -1:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            plt.clf()
+            # print(data)
+            time=[t['date'] for t in data]
+            time=time[::-1]
+            maxtemp=[t['max'] for t in data]
+            maxtemp=maxtemp[::-1]
+            mintemp=[t['min'] for t in data]
+            mintemp=mintemp[::-1]
+            # print(time)
+            # print(maxtemp)
+            # print(mintemp)
+
+            x=np.arange(len(maxtemp))+1
+            y1=np.array(maxtemp)
+            y2=np.array(mintemp)
+
+            ax = self.figure.add_subplot(1, 1, 1)
+
+            ax.plot(x, y1, ls="-",color="r",marker =".", lw=2, label="MAX TEMP")
+            ax.plot(x, y2, ls="--", color="g", marker=",", lw=2, label="MIN TEMP")
+
+            # for a, b in zip(x, y1):
+            #     ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+            # for a, b in zip(x, y2):
+            #     ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+
+            # ax.set_xticks(x)
+            # ax.set_xticklabels(time, rotation=60, fontsize='small')
 
 
+            # 设置标题
+            ax.set_xlabel('Date')
+            ax.set_xlabel('Temperature')
+            ax.legend()
+            ax.set_title("Line chart of temperature change")
 
-        AgeList = ['10', '21', '12', '14', '25']
-        NameList = ['Tom', 'Jon', 'Alice', 'Mike', 'Mary']
+            # 画图
+            self.canvas.draw()
 
-        # 将AgeList中的数据转化为int类型
-        AgeList = list(map(int, AgeList))
 
-        # 将x,y轴转化为矩阵式
-        self.x = np.arange(len(NameList)) + 1
-        self.y = np.array(AgeList)
-
-        # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
-        plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
-
-        # 在柱体上显示数据
-        for a, b in zip(self.x, self.y):
-            plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
-
-        # 设置标题
-        plt.title("Demo")
-
-        # 画图
-        self.canvas.draw()
+            # AgeList = ['10', '21', '12', '14', '25']
+            # NameList = ['Tom', 'Jon', 'Alice', 'Mike', 'Mary']
+            #
+            # # 将AgeList中的数据转化为int类型
+            # AgeList = list(map(int, AgeList))
+            #
+            # # 将x,y轴转化为矩阵式
+            # self.x = np.arange(len(NameList)) + 1
+            # self.y = np.array(AgeList)
+            #
+            # # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
+            # plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
+            #
+            # # 在柱体上显示数据
+            # for a, b in zip(self.x, self.y):
+            #     plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
+            #
+            # # 设置标题
+            # plt.title("Demo")
+            #
+            # # 画图
+            # self.canvas.draw()
 
 
 

@@ -1,11 +1,10 @@
-from filecmp import cmp
-from functools import cmp_to_key
+
 import pymysql
 import datetime
 import json,urllib.request
 from urllib.parse import urlencode
 import numpy as np
-from collections import Counter
+
 
 class ConnectDB():
     # 打开数据库连接，使用cursor()方法创建一个游标对象cursor
@@ -33,8 +32,6 @@ class ConnectDB():
         sql="SELECT * FROM weatherinfo WHERE cityid = "+cityid+" AND uptime BETWEEN '"+datetime+" 00:00:00' AND '"+datetime+" 23:59:59'"
         self.cursor.execute(sql)
         self.data=self.cursor.fetchall()
-        # print(self.data)
-        # self.closeDB()
         if self.data == None:
             return -1
         else:
@@ -47,17 +44,33 @@ class ConnectDB():
                     i[5] = '无'
                 else:
                     i[5] = self.wealist[int(i[5])-1]
-            return list
+            if list != []:
+                return list
+            else:
+                return -1
 
     # 获取两个日期间的日期列表
     def getDatesByTimes(self,sDateStr, eDateStr):
+
         list = []
         datestart = datetime.datetime.strptime(sDateStr, '%Y-%m-%d')
         dateend = datetime.datetime.strptime(eDateStr, '%Y-%m-%d')
+
         list.append(datestart.strftime('%Y-%m-%d'))
         while datestart < dateend:
             datestart += datetime.timedelta(days=1)
             list.append(datestart.strftime('%Y-%m-%d'))
+        return list
+
+    def date_add(self, date_str, days_count):
+        list = []
+        start = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+
+        list.append(start.strftime('%Y-%m-%d'))
+        while days_count > 1 :
+            start -= datetime.timedelta(days=1)
+            list.append(start.strftime('%Y-%m-%d'))
+            days_count-=1
         return list
 
     # 获取指定日期和城市的天气数据，插入数据库
@@ -108,15 +121,6 @@ class ConnectDB():
             return -1
         return count
 
-    # def uptime(self):
-    #     sql = "SELECT uptime FROM weatherinfo ORDER BY uptime desc"
-    #     self.cursor.execute(sql)
-    #     time_tup = self.cursor.fetchone()
-    #     for i in time_tup:
-    #         utime = i.strftime('%Y-%m-%d')
-    #         break
-    #     # print(utime)
-    #     return utime
     # 更新数据库信息
     def UpdateWeaData(self):
         count=0
@@ -172,8 +176,8 @@ class ConnectDB():
         self.db.commit()
 
 
-
-
+#
+#
 # dc = ConnectDB()
 # if dc.Error_flag == 0:
 #     datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')

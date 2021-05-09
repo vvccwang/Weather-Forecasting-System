@@ -50,7 +50,7 @@ class Main_window(QDialog):
         # 画图
         self.canvas.draw()
         # 保存画出来的图片
-        plt.savefig('1.jpg')
+        # plt.savefig('1.jpg')
 
 
 # 运行程序
