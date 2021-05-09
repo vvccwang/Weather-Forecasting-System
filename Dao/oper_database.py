@@ -102,7 +102,7 @@ class ConnectDB():
                 print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
                 if a_result['msgid']=='1000701':
                     print(a_result['msgid']+'error')
-                    return 0
+                    return -2
         else:
             print('Request nowapi fail.')
             return -1
@@ -133,15 +133,15 @@ class ConnectDB():
         for dl in datelist:
             for cid in self.citylist:
                 flag=self.GetHisData(dl,cid)
-                if flag != 0 and flag != -1:
-                    if dl != utime:
-                        count+=flag
-                elif flag==-1:
+                if flag==-1:
                     # print('api error')
                     return -1
-                else:
+                elif flag==-2:
                     # print('limit error')
                     return 0
+                elif dl != utime:
+                    count += flag
+
         self.closeDB()
         list=[str(utime),str(count),str(today)]
         return list
