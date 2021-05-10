@@ -677,10 +677,9 @@ class Ui_MainWindow(QMainWindow):
                 ax.plot(x, y1, ls="-",color="r",marker ="o", lw=1, label="MAX TEMP")
                 ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
 
-                for a, b in zip(x, y1):
-                    ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
-                for a, b in zip(x, y2):
-                    ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+                for a, b ,c in zip(x, y1, y2):
+                    ax.text(a , b, '%d' % b, ha='center', va='bottom', rotation= -45)
+                    ax.text(a , c, '%d' % c, ha='center', va='bottom', rotation= -45)
 
                 ax.set_xticks(x)
                 ax.set_xticklabels(time, rotation=70, fontsize='small')
