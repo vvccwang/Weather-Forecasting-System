@@ -43,9 +43,13 @@ class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
         #app窗口设置，名字设置，大小固定不可变，
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1114, 859)
-        MainWindow.setMinimumSize(QtCore.QSize(1114, 859))
-        MainWindow.setMaximumSize(QtCore.QSize(1114, 859))
+# MainWindow.resize(1114, 859)
+# MainWindow.setMinimumSize(QtCore.QSize(1114, 859))
+# MainWindow.setMaximumSize(QtCore.QSize(1114, 859))
+        MainWindow.resize(1300, 1000)
+        MainWindow.setMinimumSize(QtCore.QSize(1300, 975))
+        MainWindow.setMaximumSize(QtCore.QSize(1300, 975))
+
         #定义主窗口
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         # size策略
@@ -55,13 +59,16 @@ class Ui_MainWindow(QMainWindow):
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
         #主窗口大小固定
-        self.centralwidget.setMinimumSize(QtCore.QSize(1114, 834))
-        self.centralwidget.setMaximumSize(QtCore.QSize(1114, 834))
+# self.centralwidget.setMinimumSize(QtCore.QSize(1114, 834))
+# self.centralwidget.setMaximumSize(QtCore.QSize(1114, 834))
+        self.centralwidget.setMinimumSize(QtCore.QSize(1300, 950))
+        self.centralwidget.setMaximumSize(QtCore.QSize(1300, 950))
+
         self.centralwidget.setObjectName("centralwidget")
  #登录窗口
         self.widget_login = QtWidgets.QWidget(self.centralwidget)
-        #QtCore.QRect(340, 240, 411, 231)定义矩形
-        self.widget_login.setGeometry(QtCore.QRect(340, 240, 411, 231))
+#QtCore.QRect(340, 240, 411, 231)定义矩形
+        self.widget_login.setGeometry(QtCore.QRect(450, 240, 400, 250))
         self.widget_login.setObjectName("widget_login")
         #具体的登录窗口控件self.widget
         self.widget = QtWidgets.QWidget(self.widget_login)
@@ -116,11 +123,13 @@ class Ui_MainWindow(QMainWindow):
 
 #功能窗口
         self.widget_mainpage = QtWidgets.QWidget(self.centralwidget)
-        self.widget_mainpage.setGeometry(QtCore.QRect(10, 10, 1091, 821))
+# self.widget_mainpage.setGeometry(QtCore.QRect(10, 10, 1091, 821))
+        self.widget_mainpage.setGeometry(QtCore.QRect(10, 10, 1270, 960))
         self.widget_mainpage.setObjectName("widget_mainpage")
         #功能按键具体窗口self.widget1
         self.widget1 = QtWidgets.QWidget(self.widget_mainpage)
-        self.widget1.setGeometry(QtCore.QRect(30, 20, 1031, 30))
+ # self.widget1.setGeometry(QtCore.QRect(30, 20, 1031, 30))
+        self.widget1.setGeometry(QtCore.QRect(15, 20, 1250, 30))
         self.widget1.setObjectName("widget1")
         #功能按键水平控件
         self.HLayout_func = QtWidgets.QHBoxLayout(self.widget1)
@@ -167,10 +176,15 @@ class Ui_MainWindow(QMainWindow):
 
 #设置主页widget
         self.widget_mainshow = QtWidgets.QWidget(self.widget_mainpage)
-        self.widget_mainshow .setGeometry(QtCore.QRect(30, 70, 1031, 731))
-        self.widget_mainshow .setMinimumSize(QtCore.QSize(1031, 731))
-        self.widget_mainshow .setMaximumSize(QtCore.QSize(1031, 731))
-        self.widget_mainshow .setObjectName("widget_quary")
+# self.widget_mainshow .setGeometry(QtCore.QRect(30, 70, 1031, 731))
+# self.widget_mainshow .setMinimumSize(QtCore.QSize(1031, 731))
+# self.widget_mainshow .setMaximumSize(QtCore.QSize(1031, 731))
+
+        self.widget_mainshow.setGeometry(QtCore.QRect(15, 70, 1250, 950))
+        self.widget_mainshow.setMinimumSize(QtCore.QSize(1250, 950))
+        self.widget_mainshow.setMaximumSize(QtCore.QSize(1250, 950))
+
+        self.widget_mainshow .setObjectName("widget_main")
         #主页内容设置
         self.pushButton_mainenter = QtWidgets.QPushButton(self.widget_mainshow)
         self.pushButton_mainenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
@@ -178,13 +192,15 @@ class Ui_MainWindow(QMainWindow):
 
 #信息查询widget
         self.widget_quary = QtWidgets.QWidget(self.widget_mainpage)
-        self.widget_quary.setGeometry(QtCore.QRect(30, 70, 1031, 731))
-        self.widget_quary.setMinimumSize(QtCore.QSize(1031, 731))
-        self.widget_quary.setMaximumSize(QtCore.QSize(1031, 731))
+####
+        self.widget_quary.setGeometry(QtCore.QRect(15, 70, 1250, 950))
+        self.widget_quary.setMinimumSize(QtCore.QSize(1250, 950))
+        self.widget_quary.setMaximumSize(QtCore.QSize(1250, 950))
         self.widget_quary.setObjectName("widget_quary")
         #信息查询widget内容
         self.widget2 = QtWidgets.QWidget(self.widget_quary)
-        self.widget2.setGeometry(QtCore.QRect(10, 6, 1011, 721))
+ # self.widget2.setGeometry(QtCore.QRect(10, 6, 1011, 721))
+        self.widget2.setGeometry(QtCore.QRect(5, 5, 1240, 940))
         self.widget2.setObjectName("widget2")
         #水平布局，左边查询城市、起始终止时间等，右边为表格控件
         self.HLayout_quary = QtWidgets.QHBoxLayout(self.widget2)
@@ -254,8 +270,10 @@ class Ui_MainWindow(QMainWindow):
 
         #右侧表格显示数据控件
         self.tableWidget_quary = QtWidgets.QTableWidget(self.widget2)
-        self.tableWidget_quary.setMinimumSize(QtCore.QSize(780, 680))
-        self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
+# self.tableWidget_quary.setMinimumSize(QtCore.QSize(780, 680))
+# self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
+        self.tableWidget_quary.setMinimumSize(QtCore.QSize(900, 900))
+        self.tableWidget_quary.setMaximumSize(QtCore.QSize(900, 900))
         self.tableWidget_quary.setObjectName("tableWidget_quary")
         #列宽自动调整
         self.tableWidget_quary.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -315,13 +333,18 @@ class Ui_MainWindow(QMainWindow):
 
 #分析widget
         self.widget_analyse = QtWidgets.QWidget(self.widget_mainpage)
-        self.widget_analyse.setGeometry(QtCore.QRect(30, 70, 1031, 731))
-        self.widget_analyse.setMinimumSize(QtCore.QSize(1031, 731))
-        self.widget_analyse.setMaximumSize(QtCore.QSize(1031, 731))
+# self.widget_analyse.setGeometry(QtCore.QRect(30, 70, 1031, 731))
+# self.widget_analyse.setMinimumSize(QtCore.QSize(1031, 731))
+# self.widget_analyse.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_analyse.setGeometry(QtCore.QRect(15, 70, 1250, 950))
+        self.widget_analyse.setMinimumSize(QtCore.QSize(1250, 950))
+        self.widget_analyse.setMaximumSize(QtCore.QSize(1250, 950))
+
         self.widget_analyse.setObjectName("widget_analyse")
 
         self.widget4 = QtWidgets.QWidget(self.widget_analyse)
-        self.widget4.setGeometry(QtCore.QRect(0, 9, 1031, 711))
+# self.widget4.setGeometry(QtCore.QRect(0, 9, 1031, 711))
+        self.widget4.setGeometry(QtCore.QRect(5, 5, 1240, 940))
         self.widget4.setObjectName("widget4")
 
         self.HLayout_analyse = QtWidgets.QHBoxLayout(self.widget4)
@@ -329,7 +352,7 @@ class Ui_MainWindow(QMainWindow):
         self.HLayout_analyse.setObjectName("HLayout_analyse")
 
         self.VLayout_analyse = QtWidgets.QVBoxLayout()
-        self.VLayout_analyse.setContentsMargins(10, 100, 10, 300)
+        self.VLayout_analyse.setContentsMargins(10, 100, 10, 500)
         self.VLayout_analyse.setObjectName("VLayout_analyse")
 
         self.FLayout_analyse = QtWidgets.QFormLayout()
@@ -394,8 +417,10 @@ class Ui_MainWindow(QMainWindow):
 
         # 可视化显示区域
         self.groupBox_analyse = QtWidgets.QGroupBox(self.widget4)
-        self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 700))
-        self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 700))
+# self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 700))
+# self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 700))
+        self.groupBox_analyse.setMinimumSize(QtCore.QSize(1100, 900))
+        self.groupBox_analyse.setMaximumSize(QtCore.QSize(1100, 900))
         self.groupBox_analyse.setObjectName("groupBox_analyse")
         self.HLayout_analyse.addWidget(self.groupBox_analyse)
 
@@ -421,7 +446,8 @@ class Ui_MainWindow(QMainWindow):
 
         #分割线，上方按钮和下方显示区
         self.line_func = QtWidgets.QFrame(self.widget_mainpage)
-        self.line_func.setGeometry(QtCore.QRect(30, 56, 1031, 20))
+# self.line_func.setGeometry(QtCore.QRect(30, 56, 1031, 20))
+        self.line_func.setGeometry(QtCore.QRect(15, 56, 1250, 20))
         self.line_func.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_func.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_func.setObjectName("line_func")
@@ -694,21 +720,6 @@ class Ui_MainWindow(QMainWindow):
                 maxtemp2 = [t['max'] for t in list2]
                 maxtemp3 = [t['max'] for t in list3]
 
-
-                #将两年的每天最高气温对比，将天数较少的一年补齐
-                l=len(maxtemp2)
-                if len(maxtemp1) > len(maxtemp2) :
-                    l=len(maxtemp1)
-                    f=l-len(maxtemp2)
-                    while f>0:
-                        f-=1
-                        maxtemp2.append(0)
-                else:
-                    f = l - len(maxtemp1)
-                    while f > 0:
-                        f -= 1
-                        maxtemp1.append(0)
-
                 # print(len(maxtemp2),len(maxtemp1),l)
 
                 # 变为矩阵
@@ -719,9 +730,9 @@ class Ui_MainWindow(QMainWindow):
                 y2 = np.array(maxtemp2)
                 y3 = np.array(maxtemp3)
 
-                ax.plot(x1, y1, ls="-", color="r", marker=",", lw=0.5, label="2019 TEMP")
-                ax.plot(x2, y2, ls="-", color="g", marker=",", lw=0.5, label="2020 TEMP")
-                ax.plot(x3, y3, ls="-", color="k", marker=",", lw=0.5, label="2021 TEMP")
+                ax.plot(x1, y1, ls="--", color="r", marker=",", lw=1, label="2019 TEMP")
+                ax.plot(x2, y2, ls=":", color="g", marker=",", lw=1, label="2020 TEMP")
+                ax.plot(x3, y3, ls="-", color="b", marker=",", lw=1, label="2021 TEMP")
                 # 设置标题
                 ax.set_xlabel('Date')
                 ax.set_xlabel('Temperature')
@@ -730,13 +741,6 @@ class Ui_MainWindow(QMainWindow):
 
                 # 画图
                 self.canvas.draw()
-
-
-
-
-
-
-
 
 
     # 点击获取天气类型可视化分析
