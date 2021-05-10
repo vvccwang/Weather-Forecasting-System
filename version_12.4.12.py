@@ -355,7 +355,7 @@ class Ui_MainWindow(QMainWindow):
         self.comboBox_time_analyse = QtWidgets.QComboBox(self.widget4)
         self.comboBox_time_analyse.setObjectName("comboBox_time_analyse")
         self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.comboBox_time_analyse)
-        self.comboBox_time_analyse.addItems(['1:近一个月', '2:近三个月', '3:近六个月', '4:近一年', '5:近两年'])
+        self.comboBox_time_analyse.addItems(['1:近7天', '2:近30天', '3:历年对比'])
 
         self.VLayout_analyse.addLayout(self.FLayout_analyse)
 
@@ -394,16 +394,16 @@ class Ui_MainWindow(QMainWindow):
 
         # 可视化显示区域
         self.groupBox_analyse = QtWidgets.QGroupBox(self.widget4)
-        self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 650))
-        self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 650))
+        self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 700))
+        self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 700))
         self.groupBox_analyse.setObjectName("groupBox_analyse")
         self.HLayout_analyse.addWidget(self.groupBox_analyse)
 
-        self.grid = QGridLayout(self.groupBox_analyse)
+        self.grid = QtWidgets.QVBoxLayout(self.groupBox_analyse)
 
         self.figure = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
         self.canvas = FigureCanvas(self.figure)
-        self.grid.addWidget(self.canvas,0,1)
+        self.grid.addWidget(self.canvas)
 
 
 
@@ -622,76 +622,117 @@ class Ui_MainWindow(QMainWindow):
         city = self.comboBox_city_analyse.currentText()[3:]
         timeflag = int(self.comboBox_time_analyse.currentText()[0])
         # print(city,timeflag)
-        da=Data_analyse.Data_Analyse()
-        data=da.Quary_many(city,timeflag)
+        if timeflag != 3:
+            da=Data_analyse.Data_Analyse()
+            data=da.Quary_many(city,timeflag)
+            if data == 0:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            elif data == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            else:
+                #清理图像
+                plt.clf()
+                # print(data) 将数据分为最高温、最低温、时间；逆序
+                time=[t['date'][5:] for t in data]
+                time=time[::-1]
+                maxtemp=[t['max'] for t in data]
+                maxtemp=maxtemp[::-1]
+                mintemp=[t['min'] for t in data]
+                mintemp=mintemp[::-1]
 
-        if data == 0:
-            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-        elif data == -1:
-            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+                #变为矩阵
+                x=np.arange(len(maxtemp))+1
+                y1=np.array(maxtemp)
+                y2=np.array(mintemp)
+
+
+                ax = self.figure.add_subplot(1, 1, 1)
+
+                ax.plot(x, y1, ls="-",color="r",marker ="o", lw=1, label="MAX TEMP")
+                ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
+
+                for a, b in zip(x, y1):
+                    ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+                for a, b in zip(x, y2):
+                    ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+
+                ax.set_xticks(x)
+                ax.set_xticklabels(time, rotation=70, fontsize='small')
+                # 设置标题
+                ax.set_xlabel('Date')
+                ax.set_xlabel('Temperature')
+                ax.legend()
+                ax.set_title("Line chart of temperature change")
+                # 画图
+                self.canvas.draw()
+
+                # # 将AgeList中的数据转化为int类型
+                # AgeList = list(map(int, AgeList))
+                # # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
+                # plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
+                # # 在柱体上显示数据
+                # for a, b in zip(self.x, self.y):
+                #     plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
         else:
-            plt.clf()
-            # print(data)
-            time=[t['date'] for t in data]
-            time=time[::-1]
-            maxtemp=[t['max'] for t in data]
-            maxtemp=maxtemp[::-1]
-            mintemp=[t['min'] for t in data]
-            mintemp=mintemp[::-1]
-            # print(time)
-            # print(maxtemp)
-            # print(mintemp)
+            da = Data_analyse.Data_Analyse()
+            data = da.Year_contrast(city)
+            if data == 0:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            elif data == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            else:
+                # 清理图像
+                plt.clf()
 
-            x=np.arange(len(maxtemp))+1
-            y1=np.array(maxtemp)
-            y2=np.array(mintemp)
+                list1=data[0]
+                list2=data[1]
+                list3=data[2]
 
-            ax = self.figure.add_subplot(1, 1, 1)
+                ax = self.figure.add_subplot(1, 1,1 )
 
-            ax.plot(x, y1, ls="-",color="r",marker =".", lw=2, label="MAX TEMP")
-            ax.plot(x, y2, ls="--", color="g", marker=",", lw=2, label="MIN TEMP")
-
-            # for a, b in zip(x, y1):
-            #     ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
-            # for a, b in zip(x, y2):
-            #     ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
-
-            # ax.set_xticks(x)
-            # ax.set_xticklabels(time, rotation=60, fontsize='small')
+                maxtemp1 = [t['max'] for t in list1]
+                maxtemp2 = [t['max'] for t in list2]
+                maxtemp3 = [t['max'] for t in list3]
 
 
-            # 设置标题
-            ax.set_xlabel('Date')
-            ax.set_xlabel('Temperature')
-            ax.legend()
-            ax.set_title("Line chart of temperature change")
+                #将两年的每天最高气温对比，将天数较少的一年补齐
+                l=len(maxtemp2)
+                if len(maxtemp1) > len(maxtemp2) :
+                    l=len(maxtemp1)
+                    f=l-len(maxtemp2)
+                    while f>0:
+                        f-=1
+                        maxtemp2.append(0)
+                else:
+                    f = l - len(maxtemp1)
+                    while f > 0:
+                        f -= 1
+                        maxtemp1.append(0)
 
-            # 画图
-            self.canvas.draw()
+                # print(len(maxtemp2),len(maxtemp1),l)
+
+                # 变为矩阵
+                x1 = np.arange(len(maxtemp1)) + 1
+                x2 = np.arange(len(maxtemp2)) + 1
+                x3 = np.arange(len(maxtemp3))+1
+                y1 = np.array(maxtemp1)
+                y2 = np.array(maxtemp2)
+                y3 = np.array(maxtemp3)
+
+                ax.plot(x1, y1, ls="-", color="r", marker=",", lw=0.5, label="2019 TEMP")
+                ax.plot(x2, y2, ls="-", color="g", marker=",", lw=0.5, label="2020 TEMP")
+                ax.plot(x3, y3, ls="-", color="k", marker=",", lw=0.5, label="2021 TEMP")
+                # 设置标题
+                ax.set_xlabel('Date')
+                ax.set_xlabel('Temperature')
+                ax.legend()
+                ax.set_title("Line chart of temperature change")
+
+                # 画图
+                self.canvas.draw()
 
 
-            # AgeList = ['10', '21', '12', '14', '25']
-            # NameList = ['Tom', 'Jon', 'Alice', 'Mike', 'Mary']
-            #
-            # # 将AgeList中的数据转化为int类型
-            # AgeList = list(map(int, AgeList))
-            #
-            # # 将x,y轴转化为矩阵式
-            # self.x = np.arange(len(NameList)) + 1
-            # self.y = np.array(AgeList)
-            #
-            # # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
-            # plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
-            #
-            # # 在柱体上显示数据
-            # for a, b in zip(self.x, self.y):
-            #     plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
-            #
-            # # 设置标题
-            # plt.title("Demo")
-            #
-            # # 画图
-            # self.canvas.draw()
+
 
 
 
