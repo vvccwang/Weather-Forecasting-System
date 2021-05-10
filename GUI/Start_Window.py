@@ -6,14 +6,26 @@
 
 import sys
 
+import matplotlib
+from matplotlib.figure import Figure
+
+import Data_analyse
+
+matplotlib.use('Qt5Agg')
+
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView, \
+    QGridLayout
 from PyQt5 import QtCore, QtGui, QtWidgets
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import numpy as np
+import matplotlib.pyplot as plt
 
 import Data_quary
 import Func_Login
 import oper_database
+
 
 
 class Ui_MainWindow(QMainWindow):
@@ -343,7 +355,7 @@ class Ui_MainWindow(QMainWindow):
         self.comboBox_time_analyse = QtWidgets.QComboBox(self.widget4)
         self.comboBox_time_analyse.setObjectName("comboBox_time_analyse")
         self.FLayout_analyse.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.comboBox_time_analyse)
-        self.comboBox_time_analyse.addItems(['近30天', '近三个月', '近六个月', '近一年', '近两年'])
+        self.comboBox_time_analyse.addItems(['1:近7天', '2:近30天', '3:历年对比'])
 
         self.VLayout_analyse.addLayout(self.FLayout_analyse)
 
@@ -351,26 +363,25 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_temp = QtWidgets.QPushButton(self.widget4)
         self.pushButton_temp.setObjectName("pushButton_temp")
         self.VLayout_analyse.addWidget(self.pushButton_temp)
+        self.pushButton_temp.clicked.connect(self.on_pushButton_temp_clicked)
 
         #天气类型数据统计按钮
         self.pushButton_weather = QtWidgets.QPushButton(self.widget4)
         self.pushButton_weather.setObjectName("pushButton_weather")
         self.VLayout_analyse.addWidget(self.pushButton_weather)
+        self.pushButton_weather.clicked.connect(self.on_pushButton_weather_clicked)
 
         #湿度趋势变化按钮
         self.pushButton_hum = QtWidgets.QPushButton(self.widget4)
         self.pushButton_hum.setObjectName("pushButton_hum")
         self.VLayout_analyse.addWidget(self.pushButton_hum)
+        self.pushButton_hum.clicked.connect(self.on_pushButton_hum_clicked)
 
         #风力、风向统计按钮
         self.pushButton_wind = QtWidgets.QPushButton(self.widget4)
         self.pushButton_wind.setObjectName("pushButton_wind")
         self.VLayout_analyse.addWidget(self.pushButton_wind)
-
-        #空气质量变化趋势按钮
-        # self.pushButton_aqi = QtWidgets.QPushButton(self.widget4)
-        # self.pushButton_aqi.setObjectName("pushButton_aqi")
-        # self.VLayout_analyse.addWidget(self.pushButton_aqi)
+        self.pushButton_wind.clicked.connect(self.on_pushButton_wind_clicked)
 
         self.HLayout_analyse.addLayout(self.VLayout_analyse)
 
@@ -383,10 +394,16 @@ class Ui_MainWindow(QMainWindow):
 
         # 可视化显示区域
         self.groupBox_analyse = QtWidgets.QGroupBox(self.widget4)
-        self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 650))
-        self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 650))
+        self.groupBox_analyse.setMinimumSize(QtCore.QSize(750, 700))
+        self.groupBox_analyse.setMaximumSize(QtCore.QSize(750, 700))
         self.groupBox_analyse.setObjectName("groupBox_analyse")
         self.HLayout_analyse.addWidget(self.groupBox_analyse)
+
+        self.grid = QtWidgets.QVBoxLayout(self.groupBox_analyse)
+
+        self.figure = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
+        self.canvas = FigureCanvas(self.figure)
+        self.grid.addWidget(self.canvas)
 
 
 
@@ -454,7 +471,6 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_weather.setText(_translate("MainWindow", "天气类型统计"))
         self.pushButton_hum.setText(_translate("MainWindow", "湿度趋势变化"))
         self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
-        # self.pushButton_aqi.setText(_translate("MainWindow", "空气质量变化趋势"))
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -601,7 +617,137 @@ class Ui_MainWindow(QMainWindow):
 
         else:
             QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-    #点击
+    # 点击获取温度趋势可视化分析
+    def on_pushButton_temp_clicked(self):
+        city = self.comboBox_city_analyse.currentText()[3:]
+        timeflag = int(self.comboBox_time_analyse.currentText()[0])
+        # print(city,timeflag)
+        if timeflag != 3:
+            da=Data_analyse.Data_Analyse()
+            data=da.Quary_many(city,timeflag)
+            if data == 0:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            elif data == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            else:
+                #清理图像
+                plt.clf()
+                # print(data) 将数据分为最高温、最低温、时间；逆序
+                time=[t['date'][5:] for t in data]
+                time=time[::-1]
+                maxtemp=[t['max'] for t in data]
+                maxtemp=maxtemp[::-1]
+                mintemp=[t['min'] for t in data]
+                mintemp=mintemp[::-1]
+
+                #变为矩阵
+                x=np.arange(len(maxtemp))+1
+                y1=np.array(maxtemp)
+                y2=np.array(mintemp)
+
+
+                ax = self.figure.add_subplot(1, 1, 1)
+
+                ax.plot(x, y1, ls="-",color="r",marker ="o", lw=1, label="MAX TEMP")
+                ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
+
+                for a, b in zip(x, y1):
+                    ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+                for a, b in zip(x, y2):
+                    ax.text(a - 1, b, '%d' % b, ha='center', va='bottom', rotation= -45)
+
+                ax.set_xticks(x)
+                ax.set_xticklabels(time, rotation=70, fontsize='small')
+                # 设置标题
+                ax.set_xlabel('Date')
+                ax.set_xlabel('Temperature')
+                ax.legend()
+                ax.set_title("Line chart of temperature change")
+                # 画图
+                self.canvas.draw()
+
+                # # 将AgeList中的数据转化为int类型
+                # AgeList = list(map(int, AgeList))
+                # # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
+                # plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
+                # # 在柱体上显示数据
+                # for a, b in zip(self.x, self.y):
+                #     plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
+        else:
+            da = Data_analyse.Data_Analyse()
+            data = da.Year_contrast(city)
+            if data == 0:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            elif data == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            else:
+                # 清理图像
+                plt.clf()
+
+                list1=data[0]
+                list2=data[1]
+                list3=data[2]
+
+                ax = self.figure.add_subplot(1, 1,1 )
+
+                maxtemp1 = [t['max'] for t in list1]
+                maxtemp2 = [t['max'] for t in list2]
+                maxtemp3 = [t['max'] for t in list3]
+
+
+                #将两年的每天最高气温对比，将天数较少的一年补齐
+                l=len(maxtemp2)
+                if len(maxtemp1) > len(maxtemp2) :
+                    l=len(maxtemp1)
+                    f=l-len(maxtemp2)
+                    while f>0:
+                        f-=1
+                        maxtemp2.append(0)
+                else:
+                    f = l - len(maxtemp1)
+                    while f > 0:
+                        f -= 1
+                        maxtemp1.append(0)
+
+                # print(len(maxtemp2),len(maxtemp1),l)
+
+                # 变为矩阵
+                x1 = np.arange(len(maxtemp1)) + 1
+                x2 = np.arange(len(maxtemp2)) + 1
+                x3 = np.arange(len(maxtemp3))+1
+                y1 = np.array(maxtemp1)
+                y2 = np.array(maxtemp2)
+                y3 = np.array(maxtemp3)
+
+                ax.plot(x1, y1, ls="-", color="r", marker=",", lw=0.5, label="2019 TEMP")
+                ax.plot(x2, y2, ls="-", color="g", marker=",", lw=0.5, label="2020 TEMP")
+                ax.plot(x3, y3, ls="-", color="k", marker=",", lw=0.5, label="2021 TEMP")
+                # 设置标题
+                ax.set_xlabel('Date')
+                ax.set_xlabel('Temperature')
+                ax.legend()
+                ax.set_title("Line chart of temperature change")
+
+                # 画图
+                self.canvas.draw()
+
+
+
+
+
+
+
+
+
+    # 点击获取天气类型可视化分析
+    def on_pushButton_weather_clicked(self):
+        pass
+    # 点击获取湿度趋势可视化分析
+    def on_pushButton_hum_clicked(self):
+        pass
+    # 点击获取风向、风力趋势可视化分析
+    def on_pushButton_wind_clicked(self):
+        pass
 
 
 
