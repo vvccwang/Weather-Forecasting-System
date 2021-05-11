@@ -22,11 +22,9 @@ class ConnectDB():
                         '扬尘', '强沙尘暴', '霾', '浓雾', '强浓雾', '中度霾', '重度霾', '严重霾', '大雾', '特强浓雾', '雨', '雪']
         # cityid:311淄博城区、811高青、936桓台、1281临淄、2087沂源、2347淄川、2348博山、2349周村
         self.citylist = ['311', '811', '936', '1281', '2087', '2347', '2348', '2349']
-
     # 关闭数据库连接
     def closeDB(self):
         self.db.close()
-
     # 根据城市id和时间，查询天气情况
     def QuaryWeaData(self,cityid,datetime):
         sql="SELECT * FROM weatherinfo WHERE cityid = "+cityid+" AND uptime BETWEEN '"+datetime+" 00:00:00' AND '"+datetime+" 23:59:59'"
@@ -48,7 +46,6 @@ class ConnectDB():
                 return list
             else:
                 return -1
-
     # 获取两个日期间的日期列表
     def getDatesByTimes(self,sDateStr, eDateStr):
 
@@ -61,7 +58,6 @@ class ConnectDB():
             datestart += datetime.timedelta(days=1)
             list.append(datestart.strftime('%Y-%m-%d'))
         return list
-
     def date_add(self, date_str, days_count):
         list = []
         start = datetime.datetime.strptime(date_str, '%Y-%m-%d')
@@ -71,8 +67,7 @@ class ConnectDB():
             start -= datetime.timedelta(days=1)
             list.append(start.strftime('%Y-%m-%d'))
             days_count-=1
-        return list
-
+        return list[::-1]
     # 获取指定日期和城市的天气数据，插入数据库
     # return:1正常 0超出 -1出错
     def GetHisData(self,hisdate,cityid):
@@ -120,7 +115,6 @@ class ConnectDB():
             print('Request nowapi fail.')
             return -1
         return count
-
     # 更新数据库信息
     def UpdateWeaData(self):
         count=0
@@ -149,7 +143,6 @@ class ConnectDB():
         self.closeDB()
         list=[str(utime),str(count),str(today)]
         return list
-
     # return：账户不存在0、账户存在密码不正确-1、密码正确1
     def login(self,name,passwprd):
         sql = "SELECT password FROM user WHERE username = '"+name+"'"
@@ -163,12 +156,6 @@ class ConnectDB():
             return 1
         else:
             return -1
-
-    # # 更改数据库中的气象数据,暂时无用
-    # def ChangeData(self,cityid,date,keyname,value):
-    #     self.closeDB()
-    #     pass
-    #
     # 从数据库删除指定条件的信息，根据要求编辑
     def DeleteWeaData(self,startdatetime,enddatetime):
         sql="DELETE FROM weatherinfo WHERE uptime BETWEEN '"+startdatetime+" 00:00:00' AND '"+enddatetime+" 23:59:59'"
@@ -176,11 +163,11 @@ class ConnectDB():
         self.db.commit()
 
 
-#
-#
 # dc = ConnectDB()
 # if dc.Error_flag == 0:
-#     datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
+#     # datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
 #     # datelist = dc.getDatesByTimes('2019-01-01', '2019-07-20')
-#     for date in datelist:
-#         dc.GetHisData(date,'2349')
+#     # for date in datelist:
+#     #     dc.GetHisData(date,'2349')
+#     for c in dc.citylist:
+#         dc.GetHisData('2021-05-11', c )

@@ -49,14 +49,18 @@ class Data_Quary():
                     wea = [w[5] for w in data]
                     wea = np.array(wea)
                     key = np.unique(wea)
+
                     result = {}
+                    #统计一天中各个天气类型的数量
                     for k in key:
                         mask = (wea == k)
                         list_new = wea[mask]
                         v = list_new.size
                         result[k] = v
+                    #排序
                     d_order = sorted(result.items(), key=lambda x: x[1], reverse=True)
-                    wea_1 = d_order[0][0]
+                    wea_1 = d_order[0][0]#一天中发生最多的天气状况
+                    #通过以下方法，确定一天的天气是什么：通过雨雪的权重大于雾霾大于晴阴多云实现
                     if len(d_order) > 1 and (
                             d_order[0][0].find('晴') != -1 or d_order[0][0].find('多云') != -1 or d_order[0][0].find(
                             '阴') != -1):

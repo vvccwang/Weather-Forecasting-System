@@ -435,9 +435,9 @@ class Ui_MainWindow(QMainWindow):
 
 #预测widget
         self.widget_predict = QtWidgets.QWidget(self.widget_mainpage)
-        self.widget_predict.setGeometry(QtCore.QRect(30, 70, 1031, 731))
-        self.widget_predict.setMinimumSize(QtCore.QSize(1031, 731))
-        self.widget_predict.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_predict.setGeometry(QtCore.QRect(15, 70, 1250, 950))
+        self.widget_predict.setMinimumSize(QtCore.QSize(1250, 950))
+        self.widget_predict.setMaximumSize(QtCore.QSize(1250, 950))
         self.widget_predict.setObjectName("widget_predict")
 
         self.pushButton_predictenter = QtWidgets.QPushButton(self.widget_predict)
@@ -660,11 +660,11 @@ class Ui_MainWindow(QMainWindow):
                 plt.clf()
                 # print(data) 将数据分为最高温、最低温、时间；逆序
                 time=[t['date'][5:] for t in data]
-                time=time[::-1]
+                # time=time[::-1]
                 maxtemp=[t['max'] for t in data]
-                maxtemp=maxtemp[::-1]
+                # maxtemp=maxtemp[::-1]
                 mintemp=[t['min'] for t in data]
-                mintemp=mintemp[::-1]
+                # mintemp=mintemp[::-1]
 
                 #变为矩阵
                 x=np.arange(len(maxtemp))+1
@@ -741,10 +741,55 @@ class Ui_MainWindow(QMainWindow):
                 # 画图
                 self.canvas.draw()
 
-
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
-        pass
+        city = self.comboBox_city_analyse.currentText()[3:]
+        timeflag = int(self.comboBox_time_analyse.currentText()[0])
+        # print(city,timeflag)
+        if timeflag != 3:
+            da = Data_analyse.Data_Analyse()
+            data = da.Weather_type_days(city, timeflag)
+            if data == 0:
+                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            elif data == -1:
+                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            else:
+                # # 清理图像
+                plt.clf()
+                # for d in data:
+                #     print(d)
+                # # print(data) 将数据分为最高温、最低温、时间；逆序
+                # time = [t['date'][5:] for t in data]
+                # time = time[::-1]
+                # maxtemp = [t['max'] for t in data]
+                # maxtemp = maxtemp[::-1]
+                # mintemp = [t['min'] for t in data]
+                # mintemp = mintemp[::-1]
+                #
+                # # 变为矩阵
+                # x = np.arange(len(maxtemp)) + 1
+                # y1 = np.array(maxtemp)
+                # y2 = np.array(mintemp)
+                #
+                # ax = self.figure.add_subplot(1, 1, 1)
+                #
+                # ax.plot(x, y1, ls="-", color="r", marker="o", lw=1, label="MAX TEMP")
+                # ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
+                #
+                # for a, b, c in zip(x, y1, y2):
+                #     ax.text(a, b, '%d' % b, ha='center', va='bottom', rotation=-45)
+                #     ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
+                #
+                # ax.set_xticks(x)
+                # ax.set_xticklabels(time, rotation=70, fontsize='small')
+                # # 设置标题
+                # ax.set_xlabel('Date')
+                # ax.set_xlabel('Temperature')
+                # ax.legend()
+                # ax.set_title("Line chart of temperature change")
+                # # 画图
+                # self.canvas.draw()
+
     # 点击获取湿度趋势可视化分析
     def on_pushButton_hum_clicked(self):
         pass

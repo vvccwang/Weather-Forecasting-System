@@ -1,5 +1,6 @@
 import datetime
 
+import Data_quary
 from Dao import oper_database
 import pandas as pd
 import numpy as np
@@ -106,3 +107,38 @@ class Data_Analyse():
         else:
             return -1  # 数据库连接异常
 
+    def Weather_type_days(self,city,flag):
+
+        timelist = [7, 30]
+        today = datetime.datetime.now().strftime('%Y-%m-%d')
+        today_last1 = today[:3]+'0'+today[4:]
+        today_last2 = today[:2]+'19'+today[4:]
+        # print(today_last1,today_last2)
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            #2019-2021三年的日期list
+            datelist1 = dc.date_add(today, timelist[flag - 1])
+            datelist2 = dc.date_add(today_last1, timelist[flag - 1])
+            datelist3 = dc.date_add(today_last2, timelist[flag - 1])
+
+            #2021、2020、2019三年的数据
+            datalist1 = [0]*42
+            datalist2 = [0]*42
+            datalist3 = [0]*42
+            print(datalist1)
+            for d in datelist1:
+                data=dc.QuaryWeaData(city,d)
+                if data != -1:
+                    print(data)
+
+
+
+            dc.closeDB()
+            # not none
+            if list != []:
+                return list
+            else:
+                return 0
+                # 数据库无此数据
+        else:
+            return -1  # 数据库连接异常
