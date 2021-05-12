@@ -9,6 +9,9 @@ import sys
 import matplotlib
 from matplotlib.figure import Figure
 
+from matplotlib import font_manager
+my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
+
 import Data_analyse
 
 matplotlib.use('Qt5Agg')
@@ -38,8 +41,6 @@ class Ui_MainWindow(QMainWindow):
         self.widget_updata.hide()
         self.widget_analyse.hide()
         self.widget_predict.hide()
-
-
     def setupUi(self, MainWindow):
         #app窗口设置，名字设置，大小固定不可变，
         MainWindow.setObjectName("MainWindow")
@@ -746,49 +747,60 @@ class Ui_MainWindow(QMainWindow):
         city = self.comboBox_city_analyse.currentText()[3:]
         timeflag = int(self.comboBox_time_analyse.currentText()[0])
         # print(city,timeflag)
+        da = Data_analyse.Data_Analyse()
         if timeflag != 3:
-            da = Data_analyse.Data_Analyse()
             data = da.Weather_type_days(city, timeflag)
-            if data == 0:
-                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-            elif data == -1:
-                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-            else:
-                # # 清理图像
-                plt.clf()
-                # for d in data:
-                #     print(d)
-                # # print(data) 将数据分为最高温、最低温、时间；逆序
-                # time = [t['date'][5:] for t in data]
-                # time = time[::-1]
-                # maxtemp = [t['max'] for t in data]
-                # maxtemp = maxtemp[::-1]
-                # mintemp = [t['min'] for t in data]
-                # mintemp = mintemp[::-1]
-                #
-                # # 变为矩阵
-                # x = np.arange(len(maxtemp)) + 1
-                # y1 = np.array(maxtemp)
-                # y2 = np.array(mintemp)
-                #
-                # ax = self.figure.add_subplot(1, 1, 1)
-                #
-                # ax.plot(x, y1, ls="-", color="r", marker="o", lw=1, label="MAX TEMP")
-                # ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
-                #
-                # for a, b, c in zip(x, y1, y2):
-                #     ax.text(a, b, '%d' % b, ha='center', va='bottom', rotation=-45)
-                #     ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
-                #
-                # ax.set_xticks(x)
-                # ax.set_xticklabels(time, rotation=70, fontsize='small')
-                # # 设置标题
-                # ax.set_xlabel('Date')
-                # ax.set_xlabel('Temperature')
-                # ax.legend()
-                # ax.set_title("Line chart of temperature change")
-                # # 画图
-                # self.canvas.draw()
+        else:
+            data = da.Weather_type_year(city)
+
+        if data == 0:
+            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+        elif data == -1:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            # # 清理图像
+            plt.clf()
+            # print(data)
+            datatuple1 = [value for value in data[0].values()]
+            datatuple2 = [value for value in data[1].values()]
+            datatuple3 = [value for value in data[2].values()]
+            # print(datatuple1)
+            type = [key for key in data[0].keys()]
+
+            # 变为矩阵
+            x = np.arange(42) + 1
+
+            y1 = np.array(datatuple1)
+            y2 = np.array(datatuple2)
+            y3 = np.array(datatuple3)
+
+            axes = self.figure.subplots(nrows=3,ncols=1,sharex=True)
+            self.figure.suptitle('Bar of Weather Type')
+
+            ax1 = axes[0]
+            ax2 = axes[1]
+            ax3 = axes[2]
+
+
+            ax3.set_xticks(x)
+            ax3.set_xticklabels(type, rotation=70, fontsize='small',fontproperties=my_font)
+
+            ax1.bar(x, y1, color='green', width=0.5, label = '2021')
+            ax2.bar(x, y2, color='red', width=0.5, label = '2020')
+            ax3.bar(x, y3, color='blue', width=0.5, label = '2019')
+
+            for a, b in zip(x , y1):
+                ax1.text(a, b, '%d' % b, ha='center', va='bottom')
+            for a, b in zip(x , y2):
+                ax2.text(a, b, '%d' % b, ha='center', va='bottom')
+            for a, b in zip(x , y3):
+                ax3.text(a, b, '%d' % b, ha='center', va='bottom')
+
+            ax1.legend()
+            ax2.legend()
+            ax3.legend()
+            # 画图
+            self.canvas.draw()
 
     # 点击获取湿度趋势可视化分析
     def on_pushButton_hum_clicked(self):

@@ -77,17 +77,15 @@ class ConnectDB():
             'app': 'weather.history',
             'weaid': cityid,
             'date': hisdate,
-            'appkey': '58433',
-            # 'appkey': '58300',
+            # 'appkey': '58433',
+            'appkey': '58300',
             # 'appkey': '58940',
-            'sign': '2f6f16436696acab39e15d3a14065f85',
-            # 'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
+            # 'sign': '2f6f16436696acab39e15d3a14065f85',
+            'sign': 'ad4e13e10023397dbfe02f1ca75290ae',
             # 'sign': '5f75eff0e853fbf8e8738f54692549be',
-
             'format': 'json',
         }
         params = urlencode(params)
-
         f = urllib.request.urlopen('%s?%s' % (url, params))
         nowapi_call = f.read()
         a_result = json.loads(nowapi_call)
@@ -139,7 +137,6 @@ class ConnectDB():
                     return 0
                 elif dl != utime:
                     count += flag
-
         self.closeDB()
         list=[str(utime),str(count),str(today)]
         return list
