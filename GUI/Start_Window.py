@@ -9,6 +9,9 @@ import sys
 import matplotlib
 from matplotlib.figure import Figure
 
+from matplotlib import font_manager
+my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
+
 import Data_analyse
 
 matplotlib.use('Qt5Agg')
@@ -38,8 +41,6 @@ class Ui_MainWindow(QMainWindow):
         self.widget_updata.hide()
         self.widget_analyse.hide()
         self.widget_predict.hide()
-
-
     def setupUi(self, MainWindow):
         #app窗口设置，名字设置，大小固定不可变，
         MainWindow.setObjectName("MainWindow")
@@ -435,9 +436,9 @@ class Ui_MainWindow(QMainWindow):
 
 #预测widget
         self.widget_predict = QtWidgets.QWidget(self.widget_mainpage)
-        self.widget_predict.setGeometry(QtCore.QRect(30, 70, 1031, 731))
-        self.widget_predict.setMinimumSize(QtCore.QSize(1031, 731))
-        self.widget_predict.setMaximumSize(QtCore.QSize(1031, 731))
+        self.widget_predict.setGeometry(QtCore.QRect(15, 70, 1250, 950))
+        self.widget_predict.setMinimumSize(QtCore.QSize(1250, 950))
+        self.widget_predict.setMaximumSize(QtCore.QSize(1250, 950))
         self.widget_predict.setObjectName("widget_predict")
 
         self.pushButton_predictenter = QtWidgets.QPushButton(self.widget_predict)
@@ -660,11 +661,11 @@ class Ui_MainWindow(QMainWindow):
                 plt.clf()
                 # print(data) 将数据分为最高温、最低温、时间；逆序
                 time=[t['date'][5:] for t in data]
-                time=time[::-1]
+                # time=time[::-1]
                 maxtemp=[t['max'] for t in data]
-                maxtemp=maxtemp[::-1]
+                # maxtemp=maxtemp[::-1]
                 mintemp=[t['min'] for t in data]
-                mintemp=mintemp[::-1]
+                # mintemp=mintemp[::-1]
 
                 #变为矩阵
                 x=np.arange(len(maxtemp))+1
@@ -741,17 +742,72 @@ class Ui_MainWindow(QMainWindow):
                 # 画图
                 self.canvas.draw()
 
-
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
-        pass
+        city = self.comboBox_city_analyse.currentText()[3:]
+        timeflag = int(self.comboBox_time_analyse.currentText()[0])
+        # print(city,timeflag)
+        da = Data_analyse.Data_Analyse()
+        if timeflag != 3:
+            data = da.Weather_type_days(city, timeflag)
+        else:
+            data = da.Weather_type_year(city)
+
+        if data == 0:
+            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+        elif data == -1:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            # # 清理图像
+            plt.clf()
+            # print(data)
+            datatuple1 = [value for value in data[0].values()]
+            datatuple2 = [value for value in data[1].values()]
+            datatuple3 = [value for value in data[2].values()]
+            # print(datatuple1)
+            type = [key for key in data[0].keys()]
+
+            # 变为矩阵
+            x = np.arange(42) + 1
+
+            y1 = np.array(datatuple1)
+            y2 = np.array(datatuple2)
+            y3 = np.array(datatuple3)
+
+            axes = self.figure.subplots(nrows=3,ncols=1,sharex=True)
+            self.figure.suptitle('Bar of Weather Type')
+
+            ax1 = axes[0]
+            ax2 = axes[1]
+            ax3 = axes[2]
+
+
+            ax3.set_xticks(x)
+            ax3.set_xticklabels(type, rotation=70, fontsize='small',fontproperties=my_font)
+
+            ax1.bar(x, y1, color='green', width=0.5, label = '2021')
+            ax2.bar(x, y2, color='red', width=0.5, label = '2020')
+            ax3.bar(x, y3, color='blue', width=0.5, label = '2019')
+
+            for a, b in zip(x , y1):
+                ax1.text(a, b, '%d' % b, ha='center', va='bottom')
+            for a, b in zip(x , y2):
+                ax2.text(a, b, '%d' % b, ha='center', va='bottom')
+            for a, b in zip(x , y3):
+                ax3.text(a, b, '%d' % b, ha='center', va='bottom')
+
+            ax1.legend()
+            ax2.legend()
+            ax3.legend()
+            # 画图
+            self.canvas.draw()
+
     # 点击获取湿度趋势可视化分析
     def on_pushButton_hum_clicked(self):
         pass
     # 点击获取风向、风力趋势可视化分析
     def on_pushButton_wind_clicked(self):
         pass
-
 
 
 
