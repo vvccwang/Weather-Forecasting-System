@@ -1,5 +1,5 @@
 import datetime
-
+import calendar
 
 
 import Data_quary
@@ -271,3 +271,62 @@ class Data_Analyse():
                 # 数据库无此数据
         else:
             return -1  # 数据库连接异常
+    #按月平均气温
+    def AverageTemp_Month(self,city):
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            yearlist=[2019,2020,2021]
+            monthlist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            today = datetime.datetime.now().strftime('%Y-%m-%d')
+            datelist = []
+            for y in yearlist:
+                datelist_y = []
+                for m in monthlist:
+                    d='-30'
+                    #闰年
+                    if ( (y % 4 == 0 and y % 100 != 0) or (y % 400 == 0) ) and m==2:
+                        d='-29'
+                    elif m==2:
+                        d='-28'
+                    if m == 1 or m == 3 or m == 5 or m == 7 or m == 8 or m == 10 or m == 12:
+                        d = '-31'
+
+                    datelist_m = dc.getDatesByTimes(str(y)+'-'+str(m)+'-01', str(y)+'-'+str(m)+d)
+                    datelist_y.append(datelist_m)
+                datelist.append(datelist_y)
+
+            # for y in datelist:
+            #     for m in y:
+            #         print(m)
+
+            avetemp_y = []
+            for y in datelist:#每年
+                avetemp_m = []
+                for m in y:#每月
+                    at_d = 0
+                    for d in m:
+                        data = dc.QuaryWeaData(city, d)
+                        if data != -1:
+                            at_h = 0
+                            for dl in data:
+                                at_h +=dl[2]
+                            at_d += round(at_h/len(data),2)#每天的平均气温
+
+                    avetemp = round(at_d/len(m),2)
+                    avetemp_m.append(avetemp)
+                avetemp_y.append(avetemp_m)
+
+            # for y in avetemp_y:
+            #     print(y)
+            dc.closeDB()
+            # not none
+            if avetemp_y != []:
+                return avetemp_y
+            else:
+                return 0
+                # 数据库无此数据
+        else:
+            return -1  # 数据库连接异常
+
+da = Data_Analyse()
+da.AverageTemp_Month('311')
