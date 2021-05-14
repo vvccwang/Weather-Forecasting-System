@@ -9,6 +9,7 @@ import sys
 import matplotlib
 from matplotlib.figure import Figure
 
+#plt横坐标显示中文设置
 from matplotlib import font_manager
 my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
 
@@ -395,17 +396,17 @@ class Ui_MainWindow(QMainWindow):
         self.VLayout_analyse.addWidget(self.pushButton_weather)
         self.pushButton_weather.clicked.connect(self.on_pushButton_weather_clicked)
 
-        #湿度趋势变化按钮
-        self.pushButton_hum = QtWidgets.QPushButton(self.widget4)
-        self.pushButton_hum.setObjectName("pushButton_hum")
-        self.VLayout_analyse.addWidget(self.pushButton_hum)
-        self.pushButton_hum.clicked.connect(self.on_pushButton_hum_clicked)
+        #按月平均气温历年对比按钮
+        self.pushButton_monthtemp = QtWidgets.QPushButton(self.widget4)
+        self.pushButton_monthtemp.setObjectName("pushButton_monthtemp")
+        self.VLayout_analyse.addWidget(self.pushButton_monthtemp)
+        self.pushButton_monthtemp.clicked.connect(self.on_pushButton_monthtemp_clicked)
 
-        #风力、风向统计按钮
-        self.pushButton_wind = QtWidgets.QPushButton(self.widget4)
-        self.pushButton_wind.setObjectName("pushButton_wind")
-        self.VLayout_analyse.addWidget(self.pushButton_wind)
-        self.pushButton_wind.clicked.connect(self.on_pushButton_wind_clicked)
+        # #统计按钮
+        # self.pushButton_wind = QtWidgets.QPushButton(self.widget4)
+        # self.pushButton_wind.setObjectName("pushButton_wind")
+        # self.VLayout_analyse.addWidget(self.pushButton_wind)
+        # self.pushButton_wind.clicked.connect(self.on_pushButton_wind_clicked)
 
         self.HLayout_analyse.addLayout(self.VLayout_analyse)
 
@@ -426,7 +427,7 @@ class Ui_MainWindow(QMainWindow):
         self.HLayout_analyse.addWidget(self.groupBox_analyse)
 
         self.grid = QtWidgets.QVBoxLayout(self.groupBox_analyse)
-
+        #figsize=(4,3),
         self.figure = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
         self.canvas = FigureCanvas(self.figure)
         self.grid.addWidget(self.canvas)
@@ -496,8 +497,8 @@ class Ui_MainWindow(QMainWindow):
         self.label_time_analyse.setText(_translate("MainWindow", "时间："))
         self.pushButton_temp.setText(_translate("MainWindow", "温度趋势变化"))
         self.pushButton_weather.setText(_translate("MainWindow", "天气类型统计"))
-        self.pushButton_hum.setText(_translate("MainWindow", "湿度趋势变化"))
-        self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
+        self.pushButton_monthtemp.setText(_translate("MainWindow", "按月平均气温对比"))
+        # self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -802,12 +803,48 @@ class Ui_MainWindow(QMainWindow):
             # 画图
             self.canvas.draw()
 
-    # 点击获取湿度趋势可视化分析
-    def on_pushButton_hum_clicked(self):
-        pass
-    # 点击获取风向、风力趋势可视化分析
-    def on_pushButton_wind_clicked(self):
-        pass
+    # 点击获取按月平均气温可视化分析
+    def on_pushButton_monthtemp_clicked(self):
+        city = self.comboBox_city_analyse.currentText()[3:]
+        da = Data_analyse.Data_Analyse()
+        data = da.AverageTemp_Month(city)
+        if data == 0:
+            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+        elif data == -1:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            # # 清理图像
+            plt.clf()
+            # print(data)
+
+            # 变为矩阵
+            x = np.arange(12) + 1
+
+            y19 = np.array(data[0])
+            y20 = np.array(data[1])
+            y21 = np.array(data[2])
+
+            ax = self.figure.add_subplot(1, 1, 1)
+
+            ax.set_xticks(x)
+
+            ax.plot(x, y19, ls="--", color="r", marker="o", lw=1, label="2019 TEMP")
+            ax.plot(x, y20, ls=":", color="g", marker="^", lw=1, label="2020 TEMP")
+            ax.plot(x, y21, ls="-", color="b", marker="v", lw=1, label="2021 TEMP")
+
+            for a, b, c, d in zip(x, y19, y20, y21):
+                ax.text(a, b, '%d' % b, ha='center', va='bottom')
+                ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
+                ax.text(a, d, '%d' % d, ha='center', va='bottom', rotation=45)
+
+            ax.set_xlabel('Month')
+            ax.set_ylabel('Temperature')
+            ax.legend()
+            ax.set_title("Line chart of average temperature")
+            # 画图
+            self.canvas.draw()
+
+
 
 
 
