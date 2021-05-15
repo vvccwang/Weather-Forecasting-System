@@ -10,7 +10,7 @@ import numpy as np
 class Data_Analyse():
     #温度7/30天可视化
     def Quary_many(self,city, flag):
-        timelist=[7,30]
+        timelist=[30,60]
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
@@ -111,7 +111,7 @@ class Data_Analyse():
             return -1  # 数据库连接异常
     #天气类型统计可视化
     def Weather_type_days(self,city,flag):
-        timelist = [7, 30]
+        timelist = [30, 60]
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         today_last1 = today[:3]+'0'+today[4:]
         today_last2 = today[:2]+'19'+today[4:]
@@ -328,5 +328,5 @@ class Data_Analyse():
         else:
             return -1  # 数据库连接异常
 
-da = Data_Analyse()
-da.AverageTemp_Month('311')
+# da = Data_Analyse()
+# da.AverageTemp_Month('311')
