@@ -442,9 +442,74 @@ class Ui_MainWindow(QMainWindow):
         self.widget_predict.setMaximumSize(QtCore.QSize(1850, 950))
         self.widget_predict.setObjectName("widget_predict")
 
-        self.pushButton_predictenter = QtWidgets.QPushButton(self.widget_predict)
-        self.pushButton_predictenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
-        self.pushButton_predictenter.setObjectName("pushButton_predictenter")
+        self.widget5 = QtWidgets.QWidget(self.widget_predict)
+        self.widget5.setGeometry(QtCore.QRect(5, 5, 1840, 940))
+        self.widget5.setObjectName("widget5")
+
+        self.HLayout_predict = QtWidgets.QHBoxLayout(self.widget5)
+        self.HLayout_predict.setContentsMargins(0, 0, 0, 0)
+        self.HLayout_predict.setObjectName("HLayout_predict")
+
+        self.VLayout_predict = QtWidgets.QVBoxLayout()
+        self.VLayout_predict.setContentsMargins(10, 100, 10, 500)
+        self.VLayout_predict.setObjectName("VLayout_predict")
+
+        self.FLayout_predict = QtWidgets.QFormLayout()
+        self.FLayout_predict.setObjectName("FLayout_predict")
+
+        # 城市label
+        self.label_city_predict = QtWidgets.QLabel(self.widget5)
+        self.label_city_predict.setObjectName("label_city_predict")
+        self.FLayout_predict.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_city_predict)
+
+        # 城市选择下拉框
+        self.comboBox_city_predict = QtWidgets.QComboBox(self.widget5)
+        self.comboBox_city_predict.setObjectName("comboBox_city_predict")
+        self.FLayout_predict.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_city_predict)
+        self.comboBox_city_predict.addItems(
+            ['张店区311', '高青县811', '桓台县936', '临淄区1281', '沂源县2087', '淄川区2347', '博山区2348', '周村区2349'])
+
+        self.VLayout_predict.addLayout(self.FLayout_predict)
+
+        # 训练集按钮
+        self.pushButton_train = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_train.setObjectName("pushButton_train")
+        self.VLayout_predict.addWidget(self.pushButton_train)
+        self.pushButton_train.clicked.connect(self.on_pushButton_train_clicked)
+
+        #测试按钮
+        self.pushButton_test = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_test.setObjectName("pushButton_test")
+        self.VLayout_predict.addWidget(self.pushButton_test)
+        self.pushButton_test.clicked.connect(self.on_pushButton_test_clicked)
+
+        #预测按钮
+        self.pushButton_predict_enter = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_predict_enter.setObjectName("pushButton_predict_enter")
+        self.VLayout_predict.addWidget(self.pushButton_predict_enter)
+        self.pushButton_predict_enter.clicked.connect(self.on_pushButton_predict_enter_clicked)
+
+        self.HLayout_predict.addLayout(self.VLayout_predict)
+
+        self.line_predict = QtWidgets.QFrame(self.widget5)
+        self.line_predict.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_predict.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_predict.setObjectName("line_predict")
+
+        self.HLayout_predict.addWidget(self.line_predict)
+
+        # 可视化显示区域
+        self.groupBox_predict = QtWidgets.QGroupBox(self.widget5)
+        self.groupBox_predict.setMinimumSize(QtCore.QSize(1700, 900))
+        self.groupBox_predict.setMaximumSize(QtCore.QSize(1700, 900))
+        self.groupBox_predict.setObjectName("groupBox_predict")
+        self.HLayout_predict.addWidget(self.groupBox_predict)
+
+        self.grid_predict = QtWidgets.QVBoxLayout(self.groupBox_predict)
+        self.figure_predict = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
+        self.canvas_predict = FigureCanvas(self.figure_predict)
+        self.grid_predict.addWidget(self.canvas_predict)
+
 
         #分割线，上方按钮和下方显示区
         self.line_func = QtWidgets.QFrame(self.widget_mainpage)
@@ -486,7 +551,6 @@ class Ui_MainWindow(QMainWindow):
         self.label_end.setText(_translate("MainWindow", "结束时间："))
         self.pushButton_quaryone.setText(_translate("MainWindow", "查询起始日单日"))
         self.pushButton_quarymany.setText(_translate("MainWindow", "查询起止日期多日"))
-        self.pushButton_predictenter.setText(_translate("MainWindow", "预测"))
 
         self.pushButton_updataenter.setText(_translate("MainWindow", "更新"))
         self.label_db_datetime.setText(_translate("MainWindow", "更新前数据库截止日期为："))
@@ -498,8 +562,16 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_temp.setText(_translate("MainWindow", "温度趋势变化"))
         self.pushButton_weather.setText(_translate("MainWindow", "天气类型统计"))
         self.pushButton_monthtemp.setText(_translate("MainWindow", "按月平均气温对比"))
-        # self.pushButton_wind.setText(_translate("MainWindow", "风向风力统计"))
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
+
+        self.label_city_predict.setText(_translate("MainWindow", "城市："))
+        self.pushButton_train.setText(_translate("MainWindow", "训练模型"))
+        self.pushButton_test.setText(_translate("MainWindow", "测试模型"))
+        self.pushButton_predict_enter.setText(_translate("MainWindow", "预测"))
+        self.groupBox_predict.setTitle(_translate("MainWindow", "Predict"))
+
+
+
     #登录验证
     def on_pushButton_login_clicked(self):
         username=self.lineEdit_id.text()
@@ -843,6 +915,15 @@ class Ui_MainWindow(QMainWindow):
             ax.set_title("Line chart of average temperature")
             # 画图
             self.canvas.draw()
+
+    def on_pushButton_train_clicked(self):
+        pass
+
+    def on_pushButton_test_clicked(self):
+        pass
+
+    def on_pushButton_predict_enter_clicked(self):
+        pass
 
 
 if __name__ == '__main__':
