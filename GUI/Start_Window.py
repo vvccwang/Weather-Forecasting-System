@@ -17,6 +17,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import matplotlib.pyplot as plt
+
+import Data_predict
 import Data_quary
 import Func_Login
 import oper_database
@@ -465,13 +467,25 @@ class Ui_MainWindow(QMainWindow):
 
         self.VLayout_predict.addLayout(self.FLayout_predict)
 
-        # 训练集按钮
-        self.pushButton_pretemp = QtWidgets.QPushButton(self.widget5)
-        self.pushButton_pretemp.setObjectName("pushButton_pretemp")
-        self.VLayout_predict.addWidget(self.pushButton_pretemp)
-        self.pushButton_pretemp.clicked.connect(self.on_pushButton_pretemp_clicked)
+        # 预测最高温度按钮
+        self.pushButton_pretempmax = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_pretempmax.setObjectName("pushButton_pretempmax")
+        self.VLayout_predict.addWidget(self.pushButton_pretempmax)
+        self.pushButton_pretempmax.clicked.connect(self.on_pushButton_pretempmax_clicked)
 
-        #测试按钮
+        # 预测最低温度按钮
+        self.pushButton_pretempmin = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_pretempmin.setObjectName("pushButton_pretempmin")
+        self.VLayout_predict.addWidget(self.pushButton_pretempmin)
+        self.pushButton_pretempmin.clicked.connect(self.on_pushButton_pretempmin_clicked)
+
+        # 预测湿度按钮
+        self.pushButton_prehum = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_prehum.setObjectName("pushButton_prehum")
+        self.VLayout_predict.addWidget(self.pushButton_prehum)
+        self.pushButton_prehum.clicked.connect(self.on_pushButton_prehum_clicked)
+
+        #预测天气类型按钮
         self.pushButton_preweather = QtWidgets.QPushButton(self.widget5)
         self.pushButton_preweather.setObjectName("pushButton_preweather")
         self.VLayout_predict.addWidget(self.pushButton_preweather)
@@ -493,10 +507,10 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_predict.setObjectName("groupBox_predict")
         self.HLayout_predict.addWidget(self.groupBox_predict)
 
-        self.grid_predict = QtWidgets.QVBoxLayout(self.groupBox_predict)
-        self.figure_predict = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
-        self.canvas_predict = FigureCanvas(self.figure_predict)
-        self.grid_predict.addWidget(self.canvas_predict)
+        # self.grid_predict = QtWidgets.QVBoxLayout(self.groupBox_predict)
+        # self.figure_predict = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
+        # self.canvas_predict = FigureCanvas(self.figure_predict)
+        # self.grid_predict.addWidget(self.canvas_predict)
 
 
         #分割线，上方按钮和下方显示区
@@ -553,8 +567,10 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
 
         self.label_city_predict.setText(_translate("MainWindow", "城市："))
-        self.pushButton_pretemp.setText(_translate("MainWindow", "预测温度"))
-        self.pushButton_preweather.setText(_translate("MainWindow", "预测天气"))
+        self.pushButton_pretempmax.setText(_translate("MainWindow", "预测最高温度"))
+        self.pushButton_pretempmin.setText(_translate("MainWindow", "预测最低温度"))
+        self.pushButton_prehum.setText(_translate("MainWindow", "预测湿度"))
+        self.pushButton_preweather.setText(_translate("MainWindow", "预测天气类型"))
         self.groupBox_predict.setTitle(_translate("MainWindow", "Predict"))
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -766,6 +782,7 @@ class Ui_MainWindow(QMainWindow):
             else:
                 # 清理图像
                 plt.clf()
+                # plt.cla()
 
                 list1=data[0]
                 list2=data[1]
@@ -795,9 +812,9 @@ class Ui_MainWindow(QMainWindow):
                 ax.set_xlabel('Temperature')
                 ax.legend()
                 ax.set_title("Line chart of temperature change")
-
                 # 画图
                 self.canvas.draw()
+
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
@@ -897,10 +914,28 @@ class Ui_MainWindow(QMainWindow):
             ax.set_title("Line chart of average temperature")
             # 画图
             self.canvas.draw()
-    # 点击训练模型
-    def on_pushButton_pretemp_clicked(self):
+    # 点击预测温度
+    def on_pushButton_pretempmax_clicked(self):
+        dp=Data_predict.Data_Predict()
+        f=dp.GetData()
+        if f==-1:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            max = dp.Predict_max()
+            max = round(np.double(max), 2)
+            min = dp.Predict_min()
+            min = round(np.double(min), 2)
+            hum = dp.Predict_hum()
+            hum = round(np.double(hum), 2)
+            print(max,min,hum)
+
+    def on_pushButton_pretempmin_clicked(self):
         pass
-    # 点击测试模型
+
+    def on_pushButton_prehum_clicked(self):
+        pass
+
+    # 点击预测天气
     def on_pushButton_preweather_clicked(self):
         pass
 

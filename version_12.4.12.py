@@ -467,13 +467,25 @@ class Ui_MainWindow(QMainWindow):
 
         self.VLayout_predict.addLayout(self.FLayout_predict)
 
-        # 训练集按钮
-        self.pushButton_pretemp = QtWidgets.QPushButton(self.widget5)
-        self.pushButton_pretemp.setObjectName("pushButton_pretemp")
-        self.VLayout_predict.addWidget(self.pushButton_pretemp)
-        self.pushButton_pretemp.clicked.connect(self.on_pushButton_pretemp_clicked)
+        # 预测最高温度按钮
+        self.pushButton_pretempmax = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_pretempmax.setObjectName("pushButton_pretempmax")
+        self.VLayout_predict.addWidget(self.pushButton_pretempmax)
+        self.pushButton_pretempmax.clicked.connect(self.on_pushButton_pretempmax_clicked)
 
-        #测试按钮
+        # 预测最低温度按钮
+        self.pushButton_pretempmin = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_pretempmin.setObjectName("pushButton_pretempmin")
+        self.VLayout_predict.addWidget(self.pushButton_pretempmin)
+        self.pushButton_pretempmin.clicked.connect(self.on_pushButton_pretempmin_clicked)
+
+        # 预测湿度按钮
+        self.pushButton_prehum = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_prehum.setObjectName("pushButton_prehum")
+        self.VLayout_predict.addWidget(self.pushButton_prehum)
+        self.pushButton_prehum.clicked.connect(self.on_pushButton_prehum_clicked)
+
+        #预测天气类型按钮
         self.pushButton_preweather = QtWidgets.QPushButton(self.widget5)
         self.pushButton_preweather.setObjectName("pushButton_preweather")
         self.VLayout_predict.addWidget(self.pushButton_preweather)
@@ -555,8 +567,10 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
 
         self.label_city_predict.setText(_translate("MainWindow", "城市："))
-        self.pushButton_pretemp.setText(_translate("MainWindow", "预测温度"))
-        self.pushButton_preweather.setText(_translate("MainWindow", "预测天气"))
+        self.pushButton_pretempmax.setText(_translate("MainWindow", "预测最高温度"))
+        self.pushButton_pretempmin.setText(_translate("MainWindow", "预测最低温度"))
+        self.pushButton_prehum.setText(_translate("MainWindow", "预测湿度"))
+        self.pushButton_preweather.setText(_translate("MainWindow", "预测天气类型"))
         self.groupBox_predict.setTitle(_translate("MainWindow", "Predict"))
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -901,7 +915,7 @@ class Ui_MainWindow(QMainWindow):
             # 画图
             self.canvas.draw()
     # 点击预测温度
-    def on_pushButton_pretemp_clicked(self):
+    def on_pushButton_pretempmax_clicked(self):
         dp=Data_predict.Data_Predict()
         f=dp.GetData()
         if f==-1:
@@ -915,7 +929,11 @@ class Ui_MainWindow(QMainWindow):
             hum = round(np.double(hum), 2)
             print(max,min,hum)
 
+    def on_pushButton_pretempmin_clicked(self):
+        pass
 
+    def on_pushButton_prehum_clicked(self):
+        pass
 
     # 点击预测天气
     def on_pushButton_preweather_clicked(self):
