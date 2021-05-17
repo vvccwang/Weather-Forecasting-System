@@ -5,18 +5,10 @@
 #分析页面具体内容widget4
 
 import sys
-
 import matplotlib
-from matplotlib.figure import Figure
-
 #plt横坐标显示中文设置
 from matplotlib import font_manager
-my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
-
 import Data_analyse
-
-matplotlib.use('Qt5Agg')
-
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon, QRegExpValidator
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView, \
@@ -25,11 +17,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import matplotlib.pyplot as plt
-
 import Data_quary
 import Func_Login
 import oper_database
 
+matplotlib.use('Qt5Agg')
+#plt横坐标显示中文设置
+my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
 
 
 class Ui_MainWindow(QMainWindow):
@@ -472,22 +466,16 @@ class Ui_MainWindow(QMainWindow):
         self.VLayout_predict.addLayout(self.FLayout_predict)
 
         # 训练集按钮
-        self.pushButton_train = QtWidgets.QPushButton(self.widget5)
-        self.pushButton_train.setObjectName("pushButton_train")
-        self.VLayout_predict.addWidget(self.pushButton_train)
-        self.pushButton_train.clicked.connect(self.on_pushButton_train_clicked)
+        self.pushButton_pretemp = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_pretemp.setObjectName("pushButton_pretemp")
+        self.VLayout_predict.addWidget(self.pushButton_pretemp)
+        self.pushButton_pretemp.clicked.connect(self.on_pushButton_pretemp_clicked)
 
         #测试按钮
-        self.pushButton_test = QtWidgets.QPushButton(self.widget5)
-        self.pushButton_test.setObjectName("pushButton_test")
-        self.VLayout_predict.addWidget(self.pushButton_test)
-        self.pushButton_test.clicked.connect(self.on_pushButton_test_clicked)
-
-        #预测按钮
-        self.pushButton_predict_enter = QtWidgets.QPushButton(self.widget5)
-        self.pushButton_predict_enter.setObjectName("pushButton_predict_enter")
-        self.VLayout_predict.addWidget(self.pushButton_predict_enter)
-        self.pushButton_predict_enter.clicked.connect(self.on_pushButton_predict_enter_clicked)
+        self.pushButton_preweather = QtWidgets.QPushButton(self.widget5)
+        self.pushButton_preweather.setObjectName("pushButton_preweather")
+        self.VLayout_predict.addWidget(self.pushButton_preweather)
+        self.pushButton_preweather.clicked.connect(self.on_pushButton_preweather_clicked)
 
         self.HLayout_predict.addLayout(self.VLayout_predict)
 
@@ -565,13 +553,9 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_analyse.setTitle(_translate("MainWindow", "Analyse"))
 
         self.label_city_predict.setText(_translate("MainWindow", "城市："))
-        self.pushButton_train.setText(_translate("MainWindow", "训练模型"))
-        self.pushButton_test.setText(_translate("MainWindow", "测试模型"))
-        self.pushButton_predict_enter.setText(_translate("MainWindow", "预测"))
+        self.pushButton_pretemp.setText(_translate("MainWindow", "预测温度"))
+        self.pushButton_preweather.setText(_translate("MainWindow", "预测天气"))
         self.groupBox_predict.setTitle(_translate("MainWindow", "Predict"))
-
-
-
     #登录验证
     def on_pushButton_login_clicked(self):
         username=self.lineEdit_id.text()
@@ -814,7 +798,6 @@ class Ui_MainWindow(QMainWindow):
 
                 # 画图
                 self.canvas.draw()
-
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
@@ -874,7 +857,6 @@ class Ui_MainWindow(QMainWindow):
             ax3.legend()
             # 画图
             self.canvas.draw()
-
     # 点击获取按月平均气温可视化分析
     def on_pushButton_monthtemp_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
@@ -915,16 +897,12 @@ class Ui_MainWindow(QMainWindow):
             ax.set_title("Line chart of average temperature")
             # 画图
             self.canvas.draw()
-
-    def on_pushButton_train_clicked(self):
+    # 点击训练模型
+    def on_pushButton_pretemp_clicked(self):
         pass
-
-    def on_pushButton_test_clicked(self):
+    # 点击测试模型
+    def on_pushButton_preweather_clicked(self):
         pass
-
-    def on_pushButton_predict_enter_clicked(self):
-        pass
-
 
 
 

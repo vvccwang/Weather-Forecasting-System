@@ -58,6 +58,8 @@ class ConnectDB():
             datestart += datetime.timedelta(days=1)
             list.append(datestart.strftime('%Y-%m-%d'))
         return list
+
+    #获取 date_str 往前days_count天的日期列表
     def date_add(self, date_str, days_count):
         list = []
         start = datetime.datetime.strptime(date_str, '%Y-%m-%d')
@@ -100,7 +102,7 @@ class ConnectDB():
                     value_list.append(wd_dict['weatid'])
                     value_list.append(wd_dict['wind'])
                     value_list.append(wd_dict['winp'][:-1])
-                    print(value_list)
+                    # print(value_list)
                     self.cursor.execute("INSERT INTO weatherinfo VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",value_list)
                     self.db.commit()
                     count+=1

@@ -17,6 +17,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import matplotlib.pyplot as plt
+
+import Data_predict
 import Data_quary
 import Func_Login
 import oper_database
@@ -469,7 +471,7 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_pretemp = QtWidgets.QPushButton(self.widget5)
         self.pushButton_pretemp.setObjectName("pushButton_pretemp")
         self.VLayout_predict.addWidget(self.pushButton_pretemp)
-        self.pushButton_train.clicked.connect(self.on_pushButton_pretemp_clicked)
+        self.pushButton_pretemp.clicked.connect(self.on_pushButton_pretemp_clicked)
 
         #测试按钮
         self.pushButton_preweather = QtWidgets.QPushButton(self.widget5)
@@ -493,10 +495,10 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_predict.setObjectName("groupBox_predict")
         self.HLayout_predict.addWidget(self.groupBox_predict)
 
-        self.grid_predict = QtWidgets.QVBoxLayout(self.groupBox_predict)
-        self.figure_predict = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
-        self.canvas_predict = FigureCanvas(self.figure_predict)
-        self.grid_predict.addWidget(self.canvas_predict)
+        # self.grid_predict = QtWidgets.QVBoxLayout(self.groupBox_predict)
+        # self.figure_predict = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
+        # self.canvas_predict = FigureCanvas(self.figure_predict)
+        # self.grid_predict.addWidget(self.canvas_predict)
 
 
         #分割线，上方按钮和下方显示区
@@ -766,6 +768,7 @@ class Ui_MainWindow(QMainWindow):
             else:
                 # 清理图像
                 plt.clf()
+                # plt.cla()
 
                 list1=data[0]
                 list2=data[1]
@@ -795,9 +798,9 @@ class Ui_MainWindow(QMainWindow):
                 ax.set_xlabel('Temperature')
                 ax.legend()
                 ax.set_title("Line chart of temperature change")
-
                 # 画图
                 self.canvas.draw()
+
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
@@ -897,10 +900,24 @@ class Ui_MainWindow(QMainWindow):
             ax.set_title("Line chart of average temperature")
             # 画图
             self.canvas.draw()
-    # 点击训练模型
+    # 点击预测温度
     def on_pushButton_pretemp_clicked(self):
-        pass
-    # 点击测试模型
+        dp=Data_predict.Data_Predict()
+        f=dp.GetData()
+        if f==-1:
+            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        else:
+            max = dp.Predict_max()
+            max = round(np.double(max), 2)
+            min = dp.Predict_min()
+            min = round(np.double(min), 2)
+            hum = dp.Predict_hum()
+            hum = round(np.double(hum), 2)
+            print(max,min,hum)
+
+
+
+    # 点击预测天气
     def on_pushButton_preweather_clicked(self):
         pass
 
