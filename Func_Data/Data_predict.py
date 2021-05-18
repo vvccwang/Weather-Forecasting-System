@@ -37,7 +37,7 @@ class Data_Predict():
                     temp = [t[2] for t in data]
                     hum = np.array([int(h[3]) for h in data])
                     aveh = int(np.average(hum))
-                    # print(hsum)
+                    # print(aveh)
                     temp.sort(reverse=True)
                     max = temp[0]
                     min = temp[len(temp) - 1]
@@ -96,7 +96,7 @@ class Data_Predict():
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             # 开始训练模型
-            model.fit(x_train, y_train, batch_size=128, epochs=1000)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            model.fit(x_train, y_train, batch_size=128, epochs=100)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测
             y_ = model.predict(x_)
             return y_
@@ -147,7 +147,7 @@ class Data_Predict():
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             # 开始训练模型
-            model.fit(x_train, y_train, batch_size=128, epochs=1000)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            model.fit(x_train, y_train, batch_size=128, epochs=100)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测
             y_ = model.predict(x_)
             return y_
@@ -198,7 +198,7 @@ class Data_Predict():
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             # 开始训练模型
-            model.fit(x_train, y_train, batch_size=128, epochs=1000)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            model.fit(x_train, y_train, batch_size=128, epochs=100)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测
             y_ = model.predict(x_)
             return y_

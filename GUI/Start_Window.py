@@ -3,6 +3,7 @@
 #查询页面内容self.widget2
 # 更新页面内容self.widget3
 #分析页面具体内容widget4
+#预测具体界面wiget5
 
 import sys
 import time
@@ -486,11 +487,11 @@ class Ui_MainWindow(QMainWindow):
         self.VLayout_predict.addWidget(self.pushButton_prehum)
         self.pushButton_prehum.clicked.connect(self.on_pushButton_prehum_clicked)
 
-        #预测天气类型按钮
-        self.pushButton_preweather = QtWidgets.QPushButton(self.widget5)
-        self.pushButton_preweather.setObjectName("pushButton_preweather")
-        self.VLayout_predict.addWidget(self.pushButton_preweather)
-        self.pushButton_preweather.clicked.connect(self.on_pushButton_preweather_clicked)
+        # #预测天气类型按钮
+        # self.pushButton_preweather = QtWidgets.QPushButton(self.widget5)
+        # self.pushButton_preweather.setObjectName("pushButton_preweather")
+        # self.VLayout_predict.addWidget(self.pushButton_preweather)
+        # self.pushButton_preweather.clicked.connect(self.on_pushButton_preweather_clicked)
 
         self.HLayout_predict.addLayout(self.VLayout_predict)
 
@@ -509,7 +510,8 @@ class Ui_MainWindow(QMainWindow):
         self.HLayout_predict.addWidget(self.groupBox_predict)
 
         # Create the text output widget.
-        self.process = QtWidgets.QTextEdit(self.groupBox_predict )
+        self.process = QtWidgets.QTextEdit(self.groupBox_predict)
+        self.process.setReadOnly(True)
         self.process.ensureCursorVisible()
         self.process.setMinimumSize(QtCore.QSize(1600, 700))
         self.process.setMinimumSize(QtCore.QSize(1600, 700))
@@ -582,7 +584,7 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_pretempmax.setText(_translate("MainWindow", "预测最高温度"))
         self.pushButton_pretempmin.setText(_translate("MainWindow", "预测最低温度"))
         self.pushButton_prehum.setText(_translate("MainWindow", "预测湿度"))
-        self.pushButton_preweather.setText(_translate("MainWindow", "预测天气类型"))
+        # self.pushButton_preweather.setText(_translate("MainWindow", "预测天气类型"))
         self.groupBox_predict.setTitle(_translate("MainWindow", "Predict"))
     #登录验证
     def on_pushButton_login_clicked(self):
@@ -714,21 +716,16 @@ class Ui_MainWindow(QMainWindow):
                 self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
     # 点击更新数据库数据
     def on_pushButton_updataenter_clicked(self):
-        dc = oper_database.ConnectDB()
-        if dc.Error_flag == 0:
-            data=dc.UpdateWeaData()
-            if data == -1:
-                QMessageBox.critical(self, 'ERROR', 'API Error：请联系开发者')
-            elif data == 0:
-                QMessageBox.critical(self, 'ERROR', 'Limit Error:等待一小时后重试')
-            else:
-                # print(data)
-                self.label_db_datetime.setText("更新前数据库截止日期为："+data[0])
-                self.label_newtime.setText("更新后数据库截止日期为："+data[2])
-                self.label_counttip.setText("数据更新条数："+data[1])
-
-        else:
-            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+        # self.pushButton_updataenter.setEnabled(False)
+        # self.pushButton_pretempmax.setEnabled(False)
+        # self.pushButton_pretempmin.setEnabled(False)
+        # self.pushButton_prehum.setEnabled(False)
+        # self.pushButton_preweather.setEnabled(False)
+        # 多线程，前端不死机
+        self.thread1 = Updata()
+        self.thread1.start()
+        # 接收线程中的预测结果
+        self.thread1.sinout.connect(self.out)
     # 点击获取温度趋势可视化分析
     def on_pushButton_temp_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
@@ -826,7 +823,6 @@ class Ui_MainWindow(QMainWindow):
                 ax.set_title("Line chart of temperature change")
                 # 画图
                 self.canvas.draw()
-
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
@@ -928,48 +924,111 @@ class Ui_MainWindow(QMainWindow):
             self.canvas.draw()
     # 点击预测最高温度
     def on_pushButton_pretempmax_clicked(self):
-        self.process.append('预测开始：')
+        # self.pushButton_updataenter.setEnabled(False)
+        # self.pushButton_pretempmax.setEnabled(False)
+        # self.pushButton_pretempmin.setEnabled(False)
+        # self.pushButton_prehum.setEnabled(False)
+        # self.pushButton_preweather.setEnabled(False)
+        self.process.append('预测开始：(估计耗时85s)')
         #多线程预测，前端不死机
-        self.thread = Predict_max()
-        self.thread.start()
+        self.thread2 = Predict_max()
+        self.thread2.start()
         #接收预测线程中的预测结果
-        self.thread.sinout.connect(self.outMax)
+        self.thread2.sinout.connect(self.out)
     # 点击预测最低温度
     def on_pushButton_pretempmin_clicked(self):
-        self.process.append('预测开始：')
+        # self.pushButton_updataenter.setEnabled(False)
+        # self.pushButton_pretempmax.setEnabled(False)
+        # self.pushButton_pretempmin.setEnabled(False)
+        # self.pushButton_prehum.setEnabled(False)
+        # self.pushButton_preweather.setEnabled(False)
+        self.process.append('预测开始：(估计耗时85s)')
         # 多线程预测，前端不死机
-        self.thread = Predict_min()
-        self.thread.start()
+        self.thread3 = Predict_min()
+        self.thread3.start()
         # 接收预测线程中的预测结果
-        self.thread.sinout.connect(self.outMin)
+        self.thread3.sinout.connect(self.out)
     # 点击预测湿度
     def on_pushButton_prehum_clicked(self):
-        self.process.append('预测开始：')
+        # self.pushButton_updataenter.setEnabled(False)
+        # self.pushButton_pretempmax.setEnabled(False)
+        # self.pushButton_pretempmin.setEnabled(False)
+        # self.pushButton_prehum.setEnabled(False)
+        # self.pushButton_preweather.setEnabled(False)
+        self.process.append('预测开始：(估计耗时85s)')
         # 多线程预测，前端不死机
-        self.thread = Predict_max()
-        self.thread.start()
+        self.thread4 = Predict_hum()
+        self.thread4.start()
         # 接收预测线程中的预测结果
-        self.thread.sinout.connect(self.outHum)
+        self.thread4.sinout.connect(self.out)
     # 点击预测天气
     def on_pushButton_preweather_clicked(self):
         pass
-    #接收线程中的预测结果并显示：最高温度
-    def outMax(self,max,s):
-        self.process.append('预测明日最高温度为：' + max)
-        self.process.append('用时：' + s + 's')
+    #接收线程中的预测结果并显示
+    def out(self,flag,k1,k2,k3):
+        if flag == 1:
+            if k1 == '-2':
+                QMessageBox.critical(k2,k3)
+                self.process.append(k1 + k2)
+            elif k1 == '-1':
+                QMessageBox.critical(k2,k3)
+                self.process.append(k1 + k2)
+            elif k1 == '0':
+                QMessageBox.critical(k2,k3)
+                self.process.append(k1 + k2)
+            else:
+                self.label_db_datetime.setText("更新前数据库截止日期为："+k1)
+                self.label_newtime.setText("更新后数据库截止日期为："+k2)
+                self.label_counttip.setText("数据更新条数："+k3)
+        elif flag == 2:
+            if k1 != 'Error:':
+                self.process.append('预测明日最高温度为：' + k1)
+                self.process.append('用时：' + k2 + 's')
+            else:
+                QMessageBox.critical(k1, k2)
+                self.process.append(k1 + k2)
+        elif flag == 3:
+            if k1 != 'Error:':
+                self.process.append('预测明日最低温度为：' + k1)
+                self.process.append('用时：' + k2 + 's')
+            else:
+                QMessageBox.critical(k1, k2)
+                self.process.append(k1 + k2)
+        elif flag == 4:
+            if k1 != 'Error:':
+                self.process.append('预测明日湿度为：' + k1)
+                self.process.append('用时：' + k2 + 's')
+            else:
+                QMessageBox.critical(k1, k2)
+                self.process.append(k1 + k2)
 
-    #接收线程中的预测结果并显示：最低温度
-    def outMin(self,min,s):
-        self.process.append('预测明日最低温度为：' + min)
-        self.process.append('用时：' + s + 's')
+        # self.pushButton_updataenter.setEnabled(True)
+        # self.pushButton_pretempmax.setEnabled(True)
+        # self.pushButton_pretempmin.setEnabled(True)
+        # self.pushButton_prehum.setEnabled(True)
+        # self.pushButton_preweather.setEnabled(True)
 
-    #接收线程中的预测结果并显示：湿度
-    def outHum(self,hum,s):
-        self.process.append('预测明日湿度为：' + hum)
-        self.process.append('用时：' + s + 's')
+class Updata(QThread):
+    sinout = pyqtSignal(int,str,str,str)
+    def __init__(self,parent=None):
+        super(Updata, self).__init__(parent)
+        self.working = True
+
+    def run(self):
+        dc = oper_database.ConnectDB()
+        if dc.Error_flag == 0:
+            data=dc.UpdateWeaData()
+            if data == -1:
+                self.sinout.emit(1,'-1', 'API Error:','请联系开发者')
+            elif data == 0:
+                self.sinout.emit(1,'0','Limit Error:','等待一小时后重试')
+            else:
+                self.sinout.emit(1,str(data[0]), str(data[2]), str(data[1]))
+        else:
+            self.sinout.emit(1, '-2', 'Error:', '数据库连接异常')
 
 class Predict_max(QThread):
-    sinout = pyqtSignal(str,str)
+    sinout = pyqtSignal(int,str,str,str)
     def __init__(self,parent=None):
         super(Predict_max, self).__init__(parent)
         self.working = True
@@ -983,12 +1042,12 @@ class Predict_max(QThread):
             max = str(round(np.double(max), 2))
             end = time.time()
             s = str(round(end - start, 4))
-            self.sinout.emit(max,s)
+            self.sinout.emit(2,max,s,'')
         else:
-            self.sinout.emit('Error:', '数据库连接错误')
+            self.sinout.emit(2,'Error:', '数据库连接错误','')
 
 class Predict_min(QThread):
-    sinout = pyqtSignal(str,str)
+    sinout = pyqtSignal(int,str,str,str)
     def __init__(self,parent=None):
         super(Predict_min, self).__init__(parent)
         self.working = True
@@ -1002,12 +1061,12 @@ class Predict_min(QThread):
             min = str(round(np.double(min), 2))
             end = time.time()
             s = str(round(end - start, 4))
-            self.sinout.emit(min,s)
+            self.sinout.emit(3,min,s,'')
         else:
-            self.sinout.emit('Error:', '数据库连接错误')
+            self.sinout.emit(3,'Error:', '数据库连接错误','')
 
 class Predict_hum(QThread):
-    sinout = pyqtSignal(str,str)
+    sinout = pyqtSignal(int,str,str,str)
     def __init__(self,parent=None):
         super(Predict_hum, self).__init__(parent)
         self.working = True
@@ -1021,10 +1080,9 @@ class Predict_hum(QThread):
             hum = str(round(np.double(hum), 2))
             end = time.time()
             s = str(round(end - start, 4))
-            self.sinout.emit(hum,s)
+            self.sinout.emit(4,hum,s,'')
         else:
-            self.sinout.emit('Error:', '数据库连接错误')
-
+            self.sinout.emit(4,'Error:', '数据库连接错误','')
 
 
 
