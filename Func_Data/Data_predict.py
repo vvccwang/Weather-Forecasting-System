@@ -1,5 +1,7 @@
 #中国科学院院士袁亚湘：一里路一里路把地面划分成几十亿个格子，每个点处的上方将大气划分成10-20层；最终有几百亿个点，每个点有不同的数据特征等；
 import os
+import time
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 from warnings import simplefilter
@@ -50,6 +52,7 @@ class Data_Predict():
     #预测最高温
     #数据库错误：return 100
     def Predict_max(self):
+        # start = time.time()
         list=self.list
         if list == -1:
             return 100
@@ -199,11 +202,3 @@ class Data_Predict():
             # 输出结果预测
             y_ = model.predict(x_)
             return y_
-
-# if __name__ == '__main__':
-#     d = Data_Predict()
-#     max=d.Predict_max()
-#     # min=d.Predict_min()
-#     # hum = d.Predict_hum()
-#     print(round(np.double(max), 2))
-#     print(type(max))

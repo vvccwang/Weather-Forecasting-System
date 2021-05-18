@@ -1,64 +1,74 @@
-import matplotlib
-# 使用 matplotlib中的FigureCanvas (在使用 Qt5 Backends中 FigureCanvas继承自QtWidgets.QWidget)
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout
-import matplotlib.pyplot as plt
-import numpy as np
 import sys
+import time
+from PyQt5.QtCore import QObject, pyqtSignal, QEventLoop, QTimer
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QTextEdit
+from PyQt5.QtGui import QTextCursor
 
 
-class Main_window(QDialog):
+class Stream(QObject):
+    """Redirects console output to text widget."""
+    newText = pyqtSignal(str)
+
+    def write(self, text):
+        self.newText.emit(str(text))
+
+
+class GenMast(QMainWindow):
+    """Main application window."""
     def __init__(self):
         super().__init__()
+        self.initUI()
+        # Custom output stream.
+        sys.stdout = Stream(newText=self.onUpdateText)
 
-        # 几个QWidgets
-        self.figure = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
-        self.canvas = FigureCanvas(self.figure)
-        self.button_draw = QPushButton("绘图")
+    def onUpdateText(self, text):
+        """Write console output to text widget."""
+        cursor = self.process.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        cursor.insertText(text)
+        self.process.setTextCursor(cursor)
+        self.process.ensureCursorVisible()
 
-        # 连接事件
-        self.button_draw.clicked.connect(self.Draw)
+    def closeEvent(self, event):
+        """Shuts down application on close."""
+        # Return stdout to defaults.
+        sys.stdout = sys.__stdout__
+        super().closeEvent(event)
 
-        # 设置布局
-        layout = QVBoxLayout()
-        layout.addWidget(self.canvas)
-        layout.addWidget(self.button_draw)
-        self.setLayout(layout)
+    def initUI(self):
+        """Creates UI window on launch."""
+        # Button for generating the master list.
+        btnGenMast = QPushButton('Run', self)
+        btnGenMast.move(450, 100)
+        btnGenMast.resize(100, 100)
+        btnGenMast.clicked.connect(self.genMastClicked)
 
-    def Draw(self):
-        AgeList = ['10', '21', '12', '14', '25']
-        NameList = ['Tom', 'Jon', 'Alice', 'Mike', 'Mary']
+        # Create the text output widget.
+        self.process = QTextEdit(self, readOnly=True)
+        self.process.ensureCursorVisible()
+        self.process.setLineWrapColumnOrWidth(500)
+        self.process.setLineWrapMode(QTextEdit.FixedPixelWidth)
+        self.process.setFixedWidth(400)
+        self.process.setFixedHeight(150)
+        self.process.move(30, 100)
 
-        # 将AgeList中的数据转化为int类型
-        AgeList = list(map(int, AgeList))
+        # Set window size and title, then show the window.
+        self.setGeometry(300, 300, 600, 300)
+        self.setWindowTitle('Generate Master')
+        self.show()
 
-        # 将x,y轴转化为矩阵式
-        self.x = np.arange(len(NameList)) + 1
-        self.y = np.array(AgeList)
-
-        # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
-        plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
-
-        # 在柱体上显示数据
-        for a, b in zip(self.x, self.y):
-            plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
-
-        # 设置标题
-        plt.title("Demo")
-
-        # 画图
-        self.canvas.draw()
-        # 保存画出来的图片
-        # plt.savefig('1.jpg')
+    def genMastClicked(self):
+        """Runs the main function."""
+        print('Running...')
+        loop = QEventLoop()
+        QTimer.singleShot(5000, loop.quit)
+        loop.exec_()
+        print('Done.')
 
 
-# 运行程序
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    main_window = Main_window()
-    main_window.show()
-    app.exec()
-
-
-
+    # Run the application.
+    app = QApplication(sys.argv)
+    app.aboutToQuit.connect(app.deleteLater)
+    gui = GenMast()
+    sys.exit(app.exec_())

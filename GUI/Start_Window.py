@@ -5,14 +5,16 @@
 #分析页面具体内容widget4
 
 import sys
+import time
+
 import matplotlib
 #plt横坐标显示中文设置
 from matplotlib import font_manager
 import Data_analyse
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QIcon, QRegExpValidator
+from PyQt5.QtCore import QRegExp, QObject, pyqtSignal, QThread
+from PyQt5.QtGui import QIcon, QRegExpValidator, QTextCursor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView, QHeaderView, \
-    QGridLayout
+    QGridLayout, QTextEdit
 from PyQt5 import QtCore, QtGui, QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
@@ -26,7 +28,6 @@ import oper_database
 matplotlib.use('Qt5Agg')
 #plt横坐标显示中文设置
 my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
-
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -507,10 +508,21 @@ class Ui_MainWindow(QMainWindow):
         self.groupBox_predict.setObjectName("groupBox_predict")
         self.HLayout_predict.addWidget(self.groupBox_predict)
 
-        # self.grid_predict = QtWidgets.QVBoxLayout(self.groupBox_predict)
-        # self.figure_predict = plt.figure(facecolor='#FFD7C4')  # 可选参数,facecolor为背景颜色
-        # self.canvas_predict = FigureCanvas(self.figure_predict)
-        # self.grid_predict.addWidget(self.canvas_predict)
+        # Create the text output widget.
+        self.process = QtWidgets.QTextEdit(self.groupBox_predict )
+        self.process.ensureCursorVisible()
+        self.process.setMinimumSize(QtCore.QSize(1600, 700))
+        self.process.setMinimumSize(QtCore.QSize(1600, 700))
+        self.process.setObjectName("process")
+        self.process.move(30, 50)
+
+        self.process.setText('Results')
+
+        # self.cursor = self.process.textCursor()
+        # cursor.movePosition(QTextCursor.End)
+
+
+
 
 
         #分割线，上方按钮和下方显示区
@@ -914,30 +926,105 @@ class Ui_MainWindow(QMainWindow):
             ax.set_title("Line chart of average temperature")
             # 画图
             self.canvas.draw()
-    # 点击预测温度
+    # 点击预测最高温度
     def on_pushButton_pretempmax_clicked(self):
-        dp=Data_predict.Data_Predict()
-        f=dp.GetData()
-        if f==-1:
-            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-        else:
-            max = dp.Predict_max()
-            max = round(np.double(max), 2)
-            min = dp.Predict_min()
-            min = round(np.double(min), 2)
-            hum = dp.Predict_hum()
-            hum = round(np.double(hum), 2)
-            print(max,min,hum)
-
+        self.process.append('预测开始：')
+        #多线程预测，前端不死机
+        self.thread = Predict_max()
+        self.thread.start()
+        #接收预测线程中的预测结果
+        self.thread.sinout.connect(self.outMax)
+    # 点击预测最低温度
     def on_pushButton_pretempmin_clicked(self):
-        pass
-
+        self.process.append('预测开始：')
+        # 多线程预测，前端不死机
+        self.thread = Predict_min()
+        self.thread.start()
+        # 接收预测线程中的预测结果
+        self.thread.sinout.connect(self.outMin)
+    # 点击预测湿度
     def on_pushButton_prehum_clicked(self):
-        pass
-
+        self.process.append('预测开始：')
+        # 多线程预测，前端不死机
+        self.thread = Predict_max()
+        self.thread.start()
+        # 接收预测线程中的预测结果
+        self.thread.sinout.connect(self.outHum)
     # 点击预测天气
     def on_pushButton_preweather_clicked(self):
         pass
+    #接收线程中的预测结果并显示：最高温度
+    def outMax(self,max,s):
+        self.process.append('预测明日最高温度为：' + max)
+        self.process.append('用时：' + s + 's')
+
+    #接收线程中的预测结果并显示：最低温度
+    def outMin(self,min,s):
+        self.process.append('预测明日最低温度为：' + min)
+        self.process.append('用时：' + s + 's')
+
+    #接收线程中的预测结果并显示：湿度
+    def outHum(self,hum,s):
+        self.process.append('预测明日湿度为：' + hum)
+        self.process.append('用时：' + s + 's')
+
+class Predict_max(QThread):
+    sinout = pyqtSignal(str,str)
+    def __init__(self,parent=None):
+        super(Predict_max, self).__init__(parent)
+        self.working = True
+
+    def run(self):
+        start = time.time()
+        dp = Data_predict.Data_Predict()
+        f = dp.GetData()
+        if f != -1:
+            max = dp.Predict_max()
+            max = str(round(np.double(max), 2))
+            end = time.time()
+            s = str(round(end - start, 4))
+            self.sinout.emit(max,s)
+        else:
+            self.sinout.emit('Error:', '数据库连接错误')
+
+class Predict_min(QThread):
+    sinout = pyqtSignal(str,str)
+    def __init__(self,parent=None):
+        super(Predict_min, self).__init__(parent)
+        self.working = True
+
+    def run(self):
+        start = time.time()
+        dp = Data_predict.Data_Predict()
+        f = dp.GetData()
+        if f != -1:
+            min = dp.Predict_min()
+            min = str(round(np.double(min), 2))
+            end = time.time()
+            s = str(round(end - start, 4))
+            self.sinout.emit(min,s)
+        else:
+            self.sinout.emit('Error:', '数据库连接错误')
+
+class Predict_hum(QThread):
+    sinout = pyqtSignal(str,str)
+    def __init__(self,parent=None):
+        super(Predict_hum, self).__init__(parent)
+        self.working = True
+
+    def run(self):
+        start = time.time()
+        dp = Data_predict.Data_Predict()
+        f = dp.GetData()
+        if f != -1:
+            hum = dp.Predict_hum()
+            hum = str(round(np.double(hum), 2))
+            end = time.time()
+            s = str(round(end - start, 4))
+            self.sinout.emit(hum,s)
+        else:
+            self.sinout.emit('Error:', '数据库连接错误')
+
 
 
 
