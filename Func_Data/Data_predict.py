@@ -57,7 +57,7 @@ class Data_Predict():
         if list == -1:
             return 100
         else:
-            N = 7
+            N = 4
             X = []
             Y = []
             X_= []
@@ -70,7 +70,7 @@ class Data_Predict():
             X = np.array(X)
             Y = np.array(Y)
 
-            for j in range(len(list)-7,len(list)):
+            for j in range(len(list)-N,len(list)):
                 X_.append(list[j][0])
             X_ = [X_]
             # print(X_)
@@ -108,7 +108,7 @@ class Data_Predict():
         if list == -1:
             return 100
         else:
-            N = 7
+            N = 4
             X = []
             Y = []
             X_= []
@@ -121,7 +121,7 @@ class Data_Predict():
             X = np.array(X)
             Y = np.array(Y)
 
-            for j in range(len(list)-7,len(list)):
+            for j in range(len(list)-N,len(list)):
                 X_.append(list[j][1])
             X_ = [X_]
             # print(X_)
@@ -159,7 +159,7 @@ class Data_Predict():
         if list == -1:
             return 100
         else:
-            N = 7
+            N = 4
             X = []
             Y = []
             X_= []
@@ -172,7 +172,7 @@ class Data_Predict():
             X = np.array(X)
             Y = np.array(Y)
 
-            for j in range(len(list)-7,len(list)):
+            for j in range(len(list)-N,len(list)):
                 X_.append(list[j][2])
             X_ = [X_]
             # print(X_)
