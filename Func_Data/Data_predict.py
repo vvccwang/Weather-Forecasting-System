@@ -21,6 +21,9 @@ class Data_Predict():
     #获取数据：最高温、最低温、湿度
     #-1：数据库连接错误
     #list：数据列表
+    def __init__(self):
+        self.epochs = 700
+        self.N = 7
     def GetData(self):
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         dc = oper_database.ConnectDB()
@@ -53,35 +56,36 @@ class Data_Predict():
     #数据库错误：return 100
     def Predict_max(self):
         # start = time.time()
+
         list=self.list
         if list == -1:
             return 100
         else:
-            N = 4
+            N = self.N
             X = []
             Y = []
             X_= []
-            for i in range(N, len(list)):
+            for i in range(N, len(list)-1):
                 s = []
                 for j in range(i - N, i):
                     s.append(list[j][0])
                 X.append(s)
                 Y.append(list[i][0])
-            X = np.array(X)
-            Y = np.array(Y)
+            X_a = np.array(X)
+            Y_a = np.array(Y)
 
-            for j in range(len(list)-N,len(list)):
+            for j in range(len(list)-N-1,len(list)-1):
                 X_.append(list[j][0])
             X_ = [X_]
             # print(X_)
 
             # 数据均值化
             min_max_scaler = MinMaxScaler()
-            min_max_scaler.fit(X)
-            x = min_max_scaler.transform(X)  # 均值化处理
+            min_max_scaler.fit(X_a)
+            x = min_max_scaler.transform(X_a)  # 均值化处理
             #预测所需最近七天数值
             x_ = min_max_scaler.transform(X_)  # 这里随便取一组数据，作为后面预测用，注意数据维度
-            y = Y
+            y = Y_a
             # 划分数据集,按训练集:测试集=8:2比例划分
             x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
             # 模型结构，采用relu函数为激活函数，输入层为N个属性
@@ -96,23 +100,26 @@ class Data_Predict():
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             # 开始训练模型
-            model.fit(x_train, y_train, batch_size=128, epochs=1000)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
-            # 输出结果预测
+            model.fit(x_train, y_train, batch_size=128, epochs=self.epochs)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            # 输出结果预测:对今天的预测
             y_ = model.predict(x_)
+            # print(y_)
+            # print(type(y_))
             return y_
 
     #预测最低温
     #数据库错误：return 100
     def Predict_min(self):
+
         list=self.list
         if list == -1:
             return 100
         else:
-            N = 4
+            N = self.N
             X = []
             Y = []
             X_= []
-            for i in range(N, len(list)):
+            for i in range(N, len(list)-1):
                 s = []
                 for j in range(i - N, i):
                     s.append(list[j][1])
@@ -121,7 +128,7 @@ class Data_Predict():
             X = np.array(X)
             Y = np.array(Y)
 
-            for j in range(len(list)-N,len(list)):
+            for j in range(len(list)-N-1,len(list)-1):
                 X_.append(list[j][1])
             X_ = [X_]
             # print(X_)
@@ -147,7 +154,7 @@ class Data_Predict():
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             # 开始训练模型
-            model.fit(x_train, y_train, batch_size=128, epochs=1000)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            model.fit(x_train, y_train, batch_size=128, epochs=self.epochs)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测
             y_ = model.predict(x_)
             return y_
@@ -155,15 +162,16 @@ class Data_Predict():
     #预测最湿度
     #数据库错误：return 100
     def Predict_hum(self):
+
         list=self.list
         if list == -1:
             return 100
         else:
-            N = 4
+            N = self.N
             X = []
             Y = []
             X_= []
-            for i in range(N, len(list)):
+            for i in range(N, len(list)-1):
                 s = []
                 for j in range(i - N, i):
                     s.append(list[j][2])
@@ -172,7 +180,7 @@ class Data_Predict():
             X = np.array(X)
             Y = np.array(Y)
 
-            for j in range(len(list)-N,len(list)):
+            for j in range(len(list)-N-1,len(list)-1):
                 X_.append(list[j][2])
             X_ = [X_]
             # print(X_)
@@ -198,7 +206,22 @@ class Data_Predict():
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             # 开始训练模型
-            model.fit(x_train, y_train, batch_size=128, epochs=1000)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            model.fit(x_train, y_train, batch_size=128, epochs=self.epochs)  # 训练1000个批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测
             y_ = model.predict(x_)
             return y_
+
+    def Predict_tommorw(self):
+        today_max=self.Predict_max()
+        today_min=self.Predict_min()
+        today_hum=self.Predict_hum()
+        s=[today_max,today_min,today_hum]
+        self.list.append(s)
+        tom_max = self.Predict_max()
+        tom_min = self.Predict_min()
+        tom_hum = self.Predict_hum()
+        tma = round(np.double(tom_max), 2)
+        tmi = round(np.double(tom_min), 2)
+        thu = round(np.double(tom_hum), 2)
+
+        return [tma,tmi,thu]
