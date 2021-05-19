@@ -33,6 +33,61 @@ my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super(Ui_MainWindow,self).__init__()
+        self.setStyleSheet('''     
+            QWidget
+            {
+            font-family:'黑体';
+            font-size:20px;
+            font-weight:bold;
+            background-color:rgb(240,255,240);
+            }
+            QWidget#right_widget
+            {border-radius:15;}
+                    
+            QPushButton
+            {text-align : center;
+            background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 #fbc2eb, stop:1 #a6c1ee);
+            font: bold;
+            border-color: grey;
+            border-width: 1px;
+            border-radius: 5px;
+            padding: 6px;
+            height: 28px;
+            border-style: outset;
+            font-family:'黑体';
+            font : 18px;}
+
+            QPushButton:pressed
+            {text-align : center;
+            background-color : light gray;
+            background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 #e1aad2, stop:1 #92adda);
+            font: bold;
+            color:lightblue;
+            border-color: gray;
+            border-width: 1px;
+            border-radius: 5px;
+            padding: 6px;
+            height : 28px;
+            border-style: outset;
+            font-family:'黑体';
+            font : 18px;}
+            QPushButton:hover:!pressed
+            {color:red;}
+            
+            QLineEdit
+            {border:0px;
+            border-radius:0;
+            border-bottom: 2px solid #B3B3B3;
+            font-family:'等线';
+            font-size:25px;
+            font-weight:bold;}
+            QLineEdit:hover{
+                border-bottom:3px solid #66A3FF;
+            }
+            QLineEdit:focus{
+                border-bottom:3px solid #E680BD
+            }
+            ''')
         self.setupUi(self)
         self.retranslateUi(self)
         self.widget_mainpage.hide()
@@ -68,11 +123,11 @@ class Ui_MainWindow(QMainWindow):
  #登录窗口
         self.widget_login = QtWidgets.QWidget(self.centralwidget)
 #QtCore.QRect(340, 240, 411, 231)定义矩形
-        self.widget_login.setGeometry(QtCore.QRect(750, 240, 400, 250))
+        self.widget_login.setGeometry(QtCore.QRect(10, 10, 1870, 940))
         self.widget_login.setObjectName("widget_login")
         #具体的登录窗口控件self.widget
         self.widget = QtWidgets.QWidget(self.widget_login)
-        self.widget.setGeometry(QtCore.QRect(80, 70, 252, 86))
+        self.widget.setGeometry(QtCore.QRect(810, 345, 250, 250))
         self.widget.setObjectName("widget")
         #登录表单控件
         self.formLayout_login = QtWidgets.QFormLayout(self.widget)
