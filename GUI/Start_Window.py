@@ -723,7 +723,7 @@ class Ui_MainWindow(QMainWindow):
         self.tableWidget_quary.setColumnCount(7)
         self.tableWidget_quary.setHorizontalHeaderLabels(['时间', '天气状况', '温度', '湿度', '空气质量', '风向', '风力等级'])
         # 设置时间列宽
-        self.tableWidget_quary.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        # self.tableWidget_quary.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         # 获取下拉框选择的城市并去掉汉字名称，只留下代号
         city = self.comboBox_city.currentText()[3:]
         # 获取起始日期和终止日期，并转换格式
