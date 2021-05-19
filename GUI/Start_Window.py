@@ -243,9 +243,17 @@ class Ui_MainWindow(QMainWindow):
 
         self.widget_mainshow.setObjectName("widget_main")
         # 主页内容设置
-        self.pushButton_mainenter = QtWidgets.QPushButton(self.widget_mainshow)
-        self.pushButton_mainenter.setGeometry(QtCore.QRect(420, 110, 93, 28))
-        self.pushButton_mainenter.setObjectName("pushButton_mainenter")
+        self.label_main = QtWidgets.QLabel(self.widget_mainshow)
+        self.label_main.setGeometry(QtCore.QRect(350, 225, 1200, 400))
+        self.label_main.setObjectName("label_main")
+        self.label_main.setText("Welcome\n欢迎使用SDUT大数据气象和分析预测系统")
+        self.label_main.setStyleSheet('''
+            QLabel
+            {
+            font-family:'黑体';
+            font-size:60px;
+            } 
+            ''')
 
         # 信息查询widget
         self.widget_quary = QtWidgets.QWidget(self.widget_mainpage)
@@ -616,8 +624,6 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_analyse.setText(_translate("MainWindow", "气象分析"))
         self.pushButton_predict.setText(_translate("MainWindow", "气象预测"))
         self.pushButton_signout.setText(_translate("MainWindow", "退出登录"))
-
-        self.pushButton_mainenter.setText(_translate("MainWindow", "主页"))
         self.label_city.setText(_translate("MainWindow", "城市选择："))
         self.label_start.setText(_translate("MainWindow", "起始时间："))
         self.label_end.setText(_translate("MainWindow", "结束时间："))
