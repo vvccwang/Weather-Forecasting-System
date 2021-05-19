@@ -34,6 +34,7 @@ my_font = font_manager.FontProperties(fname="C:\Windows\Fonts\msyh.ttc")
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
+        # self.setWindowIcon(QIcon('logo.ico'))
         self.setStyleSheet('''     
             QWidget
             {
