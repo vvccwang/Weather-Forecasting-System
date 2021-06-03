@@ -825,43 +825,14 @@ class Ui_MainWindow(QMainWindow):
     # 点击获取按月平均气温可视化分析
     def on_pushButton_monthtemp_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
-        da = Data_analyse.Data_Analyse()
-        data = da.AverageTemp_Month(city)
-        if data == 0:
-            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-        elif data == -1:
-            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-        else:
-            # # 清理图像
-            plt.clf()
-            # print(data)
 
-            # 变为矩阵
-            x = np.arange(12) + 1
+        self.pushButton_monthtemp.setEnabled(False)
+        # 多线程，前端不死机
+        self.thread8 = QuaryM3(city)
+        self.thread8.start()
+        # 接收线程中的预测结果
+        self.thread8.sinout.connect(self.out_da3)
 
-            y19 = np.array(data[0])
-            y20 = np.array(data[1])
-            y21 = np.array(data[2])
-
-            ax = self.figure.add_subplot(1, 1, 1)
-
-            ax.set_xticks(x)
-
-            ax.plot(x, y19, ls="--", color="r", marker="o", lw=1, label="2019 TEMP")
-            ax.plot(x, y20, ls=":", color="g", marker="^", lw=1, label="2020 TEMP")
-            ax.plot(x, y21, ls="-", color="b", marker="v", lw=1, label="2021 TEMP")
-
-            for a, b, c, d in zip(x, y19, y20, y21):
-                ax.text(a, b, '%d' % b, ha='center', va='bottom')
-                ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
-                ax.text(a, d, '%d' % d, ha='center', va='bottom', rotation=-45)
-
-            ax.set_xlabel('Month')
-            ax.set_ylabel('Temperature')
-            ax.legend()
-            ax.set_title("Line chart of average temperature")
-            # 画图
-            self.canvas.draw()
 
     # 点击预测最高温度
     def on_pushButton_pretempmax_clicked(self):
@@ -1078,6 +1049,44 @@ class Ui_MainWindow(QMainWindow):
             # 画图
             self.canvas.draw()
 
+    def out_da3(self, data, flag):
+        self.pushButton_monthtemp.setEnabled(True)
+        if flag == 0:
+            QMessageBox.critical('ERROR:', '数据为空')
+        elif flag == -1:
+            QMessageBox.critical('ERROR:', '数据库连接错误')
+        else:
+            # # 清理图像
+            plt.clf()
+            # print(data)
+
+            # 变为矩阵
+            x = np.arange(12) + 1
+
+            y19 = np.array(data[0])
+            y20 = np.array(data[1])
+            y21 = np.array(data[2])
+
+            ax = self.figure.add_subplot(1, 1, 1)
+
+            ax.set_xticks(x)
+
+            ax.plot(x, y19, ls="--", color="r", marker="o", lw=1, label="2019 TEMP")
+            ax.plot(x, y20, ls=":", color="g", marker="^", lw=1, label="2020 TEMP")
+            ax.plot(x, y21, ls="-", color="b", marker="v", lw=1, label="2021 TEMP")
+
+            for a, b, c, d in zip(x, y19, y20, y21):
+                ax.text(a, b, '%d' % b, ha='center', va='bottom')
+                ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
+                ax.text(a, d, '%d' % d, ha='center', va='bottom', rotation=-45)
+
+            ax.set_xlabel('Month')
+            ax.set_ylabel('Temperature')
+            ax.legend()
+            ax.set_title("Line chart of average temperature")
+            # 画图
+            self.canvas.draw()
+
 
 
 class Updata(QThread):
@@ -1246,25 +1255,20 @@ class QuaryM2(QThread):
 class QuaryM3(QThread):
     sinout = pyqtSignal(list,int)
 
-    def __init__(self, city,timeflag,parent=None):
+    def __init__(self, city,parent=None):
         super(QuaryM3, self).__init__(parent)
         self.working = True
         self.city = city
-        self.timeflag = timeflag
 
     def run(self):
-        # print(self.city,self.timeflag)
         da = Data_analyse.Data_Analyse()
-        if self.timeflag != 3:
-            data = da.Weather_type_days(self.city, self.timeflag)
-        else:
-            data = da.Weather_type_year(self.city)
+        data = da.AverageTemp_Month(self.city)
+
         if data == 0:
             self.sinout.emit([], 0)
         elif data == -1:
             self.sinout.emit([], -1)
         else:
-            print(data)
             self.sinout.emit(data, 1)
 
 
