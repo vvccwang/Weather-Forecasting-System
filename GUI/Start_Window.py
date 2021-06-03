@@ -801,56 +801,13 @@ class Ui_MainWindow(QMainWindow):
     def on_pushButton_temp_clicked(self):
         city = self.comboBox_city_analyse.currentText()[3:]
         timeflag = int(self.comboBox_time_analyse.currentText()[0])
-        # print(city,timeflag)
-        if timeflag != 3:
-            da = Data_analyse.Data_Analyse()
-            data = da.Quary_many(city, timeflag)
-            if data == 0:
-                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-            elif data == -1:
-                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-            else:
-                # 清理图像
-                plt.clf()
-                # print(data) 将数据分为最高温、最低温、时间；逆序
-                time = [t['date'][5:] for t in data]
-                # time=time[::-1]
-                maxtemp = [t['max'] for t in data]
-                # maxtemp=maxtemp[::-1]
-                mintemp = [t['min'] for t in data]
-                # mintemp=mintemp[::-1]
 
-                # 变为矩阵
-                x = np.arange(len(maxtemp)) + 1
-                y1 = np.array(maxtemp)
-                y2 = np.array(mintemp)
-
-                ax = self.figure.add_subplot(1, 1, 1)
-
-                ax.plot(x, y1, ls="-", color="r", marker="o", lw=1, label="MAX TEMP")
-                ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
-
-                for a, b, c in zip(x, y1, y2):
-                    ax.text(a, b, '%d' % b, ha='center', va='bottom', rotation=-45)
-                    ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
-
-                ax.set_xticks(x)
-                ax.set_xticklabels(time, rotation=70, fontsize='small')
-                # 设置标题
-                ax.set_xlabel('Date')
-                ax.set_xlabel('Temperature')
-                ax.legend()
-                ax.set_title("Line chart of temperature change")
-                # 画图
-                self.canvas.draw()
-
-        else:
-            self.pushButton_temp.setEnabled(False)
-            # 多线程，前端不死机
-            self.thread6 = QuaryM(city)
-            self.thread6.start()
-            # 接收线程中的预测结果
-            self.thread6.sinout.connect(self.out_da)
+        self.pushButton_temp.setEnabled(False)
+        # 多线程，前端不死机
+        self.thread6 = QuaryM(city,timeflag)
+        self.thread6.start()
+        # 接收线程中的预测结果
+        self.thread6.sinout.connect(self.out_da)
 
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
@@ -1003,13 +960,13 @@ class Ui_MainWindow(QMainWindow):
                 self.process.append(k1 + k2)
         # self.pushButton_preweather.setEnabled(True)
 
-    def out_da(self, data, flag):
+    def out_da(self, data, flag,k):
         self.pushButton_temp.setEnabled(True)
         if flag == 0:
             QMessageBox.critical('ERROR:', '数据为空')
         elif flag == -1:
             QMessageBox.critical('ERROR:', '数据库连接错误')
-        else:
+        elif k == 3:
             # 清理图像
             plt.clf()
             # plt.cla()
@@ -1037,6 +994,40 @@ class Ui_MainWindow(QMainWindow):
             ax.plot(x1, y1, ls="--", color="r", marker=",", lw=1, label="2019 TEMP")
             ax.plot(x2, y2, ls=":", color="g", marker=",", lw=1, label="2020 TEMP")
             ax.plot(x3, y3, ls="-", color="b", marker=",", lw=1, label="2021 TEMP")
+            # 设置标题
+            ax.set_xlabel('Date')
+            ax.set_xlabel('Temperature')
+            ax.legend()
+            ax.set_title("Line chart of temperature change")
+            # 画图
+            self.canvas.draw()
+        else:
+            # 清理图像
+            plt.clf()
+            # print(data) 将数据分为最高温、最低温、时间；逆序
+            time = [t['date'][5:] for t in data]
+            # time=time[::-1]
+            maxtemp = [t['max'] for t in data]
+            # maxtemp=maxtemp[::-1]
+            mintemp = [t['min'] for t in data]
+            # mintemp=mintemp[::-1]
+
+            # 变为矩阵
+            x = np.arange(len(maxtemp)) + 1
+            y1 = np.array(maxtemp)
+            y2 = np.array(mintemp)
+
+            ax = self.figure.add_subplot(1, 1, 1)
+
+            ax.plot(x, y1, ls="-", color="r", marker="o", lw=1, label="MAX TEMP")
+            ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
+
+            for a, b, c in zip(x, y1, y2):
+                ax.text(a, b, '%d' % b, ha='center', va='bottom', rotation=-45)
+                ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
+
+            ax.set_xticks(x)
+            ax.set_xticklabels(time, rotation=70, fontsize='small')
             # 设置标题
             ax.set_xlabel('Date')
             ax.set_xlabel('Temperature')
@@ -1206,30 +1197,57 @@ class Predict_tom(QThread):
             self.sinout.emit(5, 'Error:', '数据库连接错误', '')
 
 class QuaryM(QThread):
-    sinout = pyqtSignal(list,int)
+    sinout = pyqtSignal(list,int,int)
 
-    def __init__(self, city,parent=None):
+    def __init__(self, city,timeflag,parent=None):
         super(QuaryM, self).__init__(parent)
         self.working = True
         self.city = city
+        self.timeflag = timeflag
 
     def run(self):
         da = Data_analyse.Data_Analyse()
-        data = da.Year_contrast(self.city)
+        if self.timeflag ==3:
+            data = da.Year_contrast(self.city)
+        else:
+            data = da.Quary_many(self.city, self.timeflag)
         if data == 0:
             # QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-            self.sinout.emit([], 0)
+            self.sinout.emit([], 0,self.timeflag)
         elif data == -1:
             # QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-            self.sinout.emit([], -1)
+            self.sinout.emit([], -1,self.timeflag)
         else:
-            self.sinout.emit(data, 1)
+            self.sinout.emit(data, 1,self.timeflag)
 
 class QuaryM2(QThread):
     sinout = pyqtSignal(list,int)
 
     def __init__(self, city,timeflag,parent=None):
         super(QuaryM2, self).__init__(parent)
+        self.working = True
+        self.city = city
+        self.timeflag = timeflag
+
+    def run(self):
+        # print(self.city,self.timeflag)
+        da = Data_analyse.Data_Analyse()
+        if self.timeflag != 3:
+            data = da.Weather_type_days(self.city, self.timeflag)
+        else:
+            data = da.Weather_type_year(self.city)
+        if data == 0:
+            self.sinout.emit([], 0)
+        elif data == -1:
+            self.sinout.emit([], -1)
+        else:
+            self.sinout.emit(data, 1)
+
+class QuaryM3(QThread):
+    sinout = pyqtSignal(list,int)
+
+    def __init__(self, city,timeflag,parent=None):
+        super(QuaryM3, self).__init__(parent)
         self.working = True
         self.city = city
         self.timeflag = timeflag
