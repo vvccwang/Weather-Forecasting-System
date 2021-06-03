@@ -39,31 +39,24 @@ class Data_Quary():
             for time in datelist:
                 data = dc.QuaryWeaData(city, time)
                 dict = {}
-                # not none
-                if data != -1:
+                if data != -1: # not none
                     temp = [t[2] for t in data]
                     temp.sort(reverse=True)
                     max = temp[0]
                     min = temp[len(temp) - 1]
-
                     wea = [w[5] for w in data]
                     wea = np.array(wea)
                     key = np.unique(wea)
-
                     result = {}
-                    #统计一天中各个天气类型的数量
-                    for k in key:
+                    for k in key:#统计一天中各个天气类型的数量
                         mask = (wea == k)
                         list_new = wea[mask]
                         v = list_new.size
                         result[k] = v
-                    #排序
-                    d_order = sorted(result.items(), key=lambda x: x[1], reverse=True)
+                    d_order = sorted(result.items(), key=lambda x: x[1], reverse=True)#排序
                     wea_1 = d_order[0][0]#一天中发生最多的天气状况
-                    #通过以下方法，确定一天的天气是什么：通过雨雪的权重大于雾霾大于晴阴多云实现
-                    if len(d_order) > 1 and (
-                            d_order[0][0].find('晴') != -1 or d_order[0][0].find('多云') != -1 or d_order[0][0].find(
-                            '阴') != -1):
+                    # 通过以下方法，确定一天的天气是什么：通过雨雪的权重大于雾霾大于晴阴多云实现
+                    if len(d_order) > 1 and (d_order[0][0].find('晴') != -1 or d_order[0][0].find('多云') != -1 or d_order[0][0].find('阴') != -1):
                         if (d_order[1][0].find('雨') != -1 or d_order[1][0].find('雪') != -1) and d_order[1][1] > 3:
                             wea_1 = d_order[1][0]
                         elif (d_order[1][0].find('霾') != -1 or d_order[1][0].find('雾') != -1) and d_order[1][1] > 5:
@@ -72,14 +65,11 @@ class Data_Quary():
                     dict['weather'] = wea_1
                     dict['max'] = str(max)
                     dict['min'] = str(min)
-                    # print(dict)
                     list.append(dict)
             dc.closeDB()
-            # not none
-            if list != []:
+            if list != []:# not none
                 return list
             else:
-                return 0
-                # 数据库无此数据
+                return 0# 数据库无此数据
         else:
             return -1 # 数据库连接异常

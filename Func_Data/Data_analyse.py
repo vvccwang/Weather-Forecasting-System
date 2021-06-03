@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 class Data_Analyse():
-    #温度7/30天可视化
+    #温度30、60天可视化
     def Quary_many(self,city, flag):
         timelist=[30,60]
         today = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -115,24 +115,17 @@ class Data_Analyse():
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         today_last1 = today[:3]+'0'+today[4:]
         today_last2 = today[:2]+'19'+today[4:]
-        # print(today_last1,today_last2)
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
-            #2019-2021三年的日期list
             datelist1 = dc.date_add(today, timelist[flag - 1])
             datelist2 = dc.date_add(today_last1, timelist[flag - 1])
             datelist3 = dc.date_add(today_last2, timelist[flag - 1])
-
-            # print(len(datelist1),len(datelist2),len(datelist3))
-
             weatype = dc.wealist
             weatype = np.array(weatype)
             key = np.unique(weatype)
-
             result = {}
             for k in key:
                 result[k] = 0
-            # 统计一天中各个天气类型的数量
             for t in datelist1:
                 data=dc.QuaryWeaData(city,t)
                 if data != -1:
@@ -145,9 +138,6 @@ class Data_Analyse():
                         v = list_new.size
                         result[k] += v
             d_order1 = result
-            # d_order1 = sorted(result.items(), key=lambda x: x[1], reverse=True)
-            # print(d_order)
-
             result = {}
             for k in key:
                 result[k] = 0
@@ -163,7 +153,6 @@ class Data_Analyse():
                         v = list_new.size
                         result[k] += v
             d_order2 = result
-
             result = {}
             for k in key:
                 result[k] = 0
@@ -179,8 +168,6 @@ class Data_Analyse():
                         v = list_new.size
                         result[k] += v
             d_order3 = result
-
-
             resultlist=[]
             resultlist.append(d_order1)
             resultlist.append(d_order2)
@@ -191,7 +178,6 @@ class Data_Analyse():
                 return resultlist
             else:
                 return 0
-                # 数据库无此数据
         else:
             return -1  # 数据库连接异常
     #天气类型历年对比
@@ -290,15 +276,9 @@ class Data_Analyse():
                         d='-28'
                     if m == 1 or m == 3 or m == 5 or m == 7 or m == 8 or m == 10 or m == 12:
                         d = '-31'
-
                     datelist_m = dc.getDatesByTimes(str(y)+'-'+str(m)+'-01', str(y)+'-'+str(m)+d)
                     datelist_y.append(datelist_m)
                 datelist.append(datelist_y)
-
-            # for y in datelist:
-            #     for m in y:
-            #         print(m)
-
             avetemp_y = []
             for y in datelist:#每年
                 avetemp_m = []
@@ -315,16 +295,11 @@ class Data_Analyse():
                     avetemp = round(at_d/len(m),2)
                     avetemp_m.append(avetemp)
                 avetemp_y.append(avetemp_m)
-
-            # for y in avetemp_y:
-            #     print(y)
             dc.closeDB()
-            # not none
             if avetemp_y != []:
                 return avetemp_y
             else:
                 return 0
-                # 数据库无此数据
         else:
             return -1  # 数据库连接异常
 

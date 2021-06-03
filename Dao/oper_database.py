@@ -3,7 +3,6 @@ import pymysql
 import datetime
 import json,urllib.request
 from urllib.parse import urlencode
-import numpy as np
 
 
 class ConnectDB():
@@ -11,7 +10,7 @@ class ConnectDB():
     def __init__(self):
         self.Error_flag = 0
         try:
-            self.db= pymysql.connect(host="localhost", user="root", password="v9ningmeng", database="weatherdata")
+            self.db= pymysql.connect(host="localhost", user="root", password="123456", database="weather")
             self.cursor = self.db.cursor()
         except:
             self.Error_flag = 1
@@ -37,6 +36,7 @@ class ConnectDB():
             for i in self.data:
                 list.append([str(item) for item in i])
             for i in list:
+                i[1]=i[1][:10]
                 i[2]=int(i[2])
                 if i[5] == '99':
                     i[5] = '无'
@@ -102,18 +102,14 @@ class ConnectDB():
                     value_list.append(wd_dict['weatid'])
                     value_list.append(wd_dict['wind'])
                     value_list.append(wd_dict['winp'][:-1])
-                    # print(value_list)
                     self.cursor.execute("INSERT INTO weatherinfo VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",value_list)
                     self.db.commit()
                     count+=1
-            else:
-                print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
+            else: # print(a_result['msgid'] + ' ' + a_result['msg']+'  ---ERROR'+hisdate)
                 if a_result['msgid']=='1000701':
-                    print(a_result['msgid']+'error')
-                    return -2
+                    return -2 #print(a_result['msgid']+'error')
         else:
-            print('Request nowapi fail.')
-            return -1
+            return -1 # print('Request nowapi fail.')
         return count
     # 更新数据库信息
     def UpdateWeaData(self):
@@ -161,12 +157,34 @@ class ConnectDB():
         self.cursor.execute(sql)
         self.db.commit()
 
+    def QuaryWeaDataSE(self,cityid,stime,etime):
+        sql = "SELECT * FROM weatherinfo WHERE cityid = " + cityid + " AND uptime BETWEEN '" + stime + " 00:00:00' AND '" + etime + " 23:59:59'"
+        self.cursor.execute(sql)
+        self.data = self.cursor.fetchall()
+        if self.data == None:
+            return -1
+        else:
+            list = []
+            for i in self.data:
+                list.append([str(item) for item in i])
+            for i in list:
+                i[2] = int(i[2])
+                if i[5] == '99':
+                    i[5] = '无'
+                else:
+                    i[5] = self.wealist[int(i[5]) - 1]
+            if list != []:
+                return list
+            else:
+                return -1
+
 
 # dc = ConnectDB()
 # if dc.Error_flag == 0:
-#     # datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
-#     # datelist = dc.getDatesByTimes('2019-01-01', '2019-07-20')
-#     # for date in datelist:
-#     #     dc.GetHisData(date,'2349')
-#     for c in dc.citylist:
-#         dc.GetHisData('2021-05-11', c )
+    # datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
+    # datelist = dc.getDatesByTimes('2019-01-01', '2019-07-20')
+    # for date in datelist:
+    #     dc.GetHisData(date,'2349')
+    # for c in dc.citylist:
+    #     dc.GetHisData('2021-05-11', c )
+    # dc.QuaryWeaDataSE('311','2021-01-01','2021-02-01')

@@ -339,8 +339,8 @@ class Ui_MainWindow(QMainWindow):
         self.tableWidget_quary = QtWidgets.QTableWidget(self.widget2)
         # self.tableWidget_quary.setMinimumSize(QtCore.QSize(780, 680))
         # self.tableWidget_quary.setMaximumSize(QtCore.QSize(780, 680))
-        self.tableWidget_quary.setMinimumSize(QtCore.QSize(1500, 920))
-        self.tableWidget_quary.setMaximumSize(QtCore.QSize(1500, 920))
+        self.tableWidget_quary.setMinimumSize(QtCore.QSize(1500, 800))
+        self.tableWidget_quary.setMaximumSize(QtCore.QSize(1500, 800))
         self.tableWidget_quary.setObjectName("tableWidget_quary")
         # 列宽自动调整
         self.tableWidget_quary.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -844,55 +844,13 @@ class Ui_MainWindow(QMainWindow):
                 # 画图
                 self.canvas.draw()
 
-                # # 将AgeList中的数据转化为int类型
-                # AgeList = list(map(int, AgeList))
-                # # tick_label后边跟x轴上的值，（可选选项：color后面跟柱型的颜色，width后边跟柱体的宽度）
-                # plt.bar(range(len(NameList)), AgeList, tick_label=NameList, color='green', width=0.5)
-                # # 在柱体上显示数据
-                # for a, b in zip(self.x, self.y):
-                #     plt.text(a - 1, b, '%d' % b, ha='center', va='bottom')
         else:
-            da = Data_analyse.Data_Analyse()
-            data = da.Year_contrast(city)
-            if data == 0:
-                QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-            elif data == -1:
-                QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-            else:
-                # 清理图像
-                plt.clf()
-                # plt.cla()
-
-                list1 = data[0]
-                list2 = data[1]
-                list3 = data[2]
-
-                ax = self.figure.add_subplot(1, 1, 1)
-
-                maxtemp1 = [t['max'] for t in list1]
-                maxtemp2 = [t['max'] for t in list2]
-                maxtemp3 = [t['max'] for t in list3]
-
-                # print(len(maxtemp2),len(maxtemp1),l)
-
-                # 变为矩阵
-                x1 = np.arange(len(maxtemp1)) + 1
-                x2 = np.arange(len(maxtemp2)) + 1
-                x3 = np.arange(len(maxtemp3)) + 1
-                y1 = np.array(maxtemp1)
-                y2 = np.array(maxtemp2)
-                y3 = np.array(maxtemp3)
-
-                ax.plot(x1, y1, ls="--", color="r", marker=",", lw=1, label="2019 TEMP")
-                ax.plot(x2, y2, ls=":", color="g", marker=",", lw=1, label="2020 TEMP")
-                ax.plot(x3, y3, ls="-", color="b", marker=",", lw=1, label="2021 TEMP")
-                # 设置标题
-                ax.set_xlabel('Date')
-                ax.set_xlabel('Temperature')
-                ax.legend()
-                ax.set_title("Line chart of temperature change")
-                # 画图
-                self.canvas.draw()
+            self.pushButton_temp.setEnabled(False)
+            # 多线程，前端不死机
+            self.thread6 = QuaryM(city)
+            self.thread6.start()
+            # 接收线程中的预测结果
+            self.thread6.sinout.connect(self.out_da)
 
     # 点击获取天气类型可视化分析
     def on_pushButton_weather_clicked(self):
@@ -904,7 +862,6 @@ class Ui_MainWindow(QMainWindow):
             data = da.Weather_type_days(city, timeflag)
         else:
             data = da.Weather_type_year(city)
-
         if data == 0:
             QMessageBox.critical(self, 'ERROR', '数据库无此数据')
         elif data == -1:
@@ -918,35 +875,27 @@ class Ui_MainWindow(QMainWindow):
             datatuple3 = [value for value in data[2].values()]
             # print(datatuple1)
             type = [key for key in data[0].keys()]
-
             # 变为矩阵
             x = np.arange(42) + 1
-
             y1 = np.array(datatuple1)
             y2 = np.array(datatuple2)
             y3 = np.array(datatuple3)
-
             axes = self.figure.subplots(nrows=3, ncols=1, sharex=True)
             self.figure.suptitle('Bar of Weather Type')
-
             ax1 = axes[0]
             ax2 = axes[1]
             ax3 = axes[2]
-
             ax3.set_xticks(x)
             ax3.set_xticklabels(type, rotation=70, fontsize='small', fontproperties=my_font)
-
             ax1.bar(x, y1, color='green', width=0.5, label='2021')
             ax2.bar(x, y2, color='red', width=0.5, label='2020')
             ax3.bar(x, y3, color='blue', width=0.5, label='2019')
-
             for a, b in zip(x, y1):
                 ax1.text(a, b, '%d' % b, ha='center', va='bottom')
             for a, b in zip(x, y2):
                 ax2.text(a, b, '%d' % b, ha='center', va='bottom')
             for a, b in zip(x, y3):
                 ax3.text(a, b, '%d' % b, ha='center', va='bottom')
-
             ax1.legend()
             ax2.legend()
             ax3.legend()
@@ -1082,14 +1031,57 @@ class Ui_MainWindow(QMainWindow):
         elif flag == 5:
             self.pushButton_pretom.setEnabled(True)
             if k1 != 'Error:':
-                self.process.append('预测明日平均湿度为：' + str(k1[0]))
-                self.process.append('预测明日平均湿度为：' + str(k1[1]))
+                self.process.append('预测明日最高温度为：' + str(k1[0]))
+                self.process.append('预测明日最低温度为：' + str(k1[1]))
                 self.process.append('预测明日平均湿度为：' + str(k1[2]))
                 self.process.append('用时：' + k2 + 's')
             else:
                 QMessageBox.critical(k1, k2)
                 self.process.append(k1 + k2)
         # self.pushButton_preweather.setEnabled(True)
+
+    def out_da(self, data, flag):
+        self.pushButton_temp.setEnabled(True)
+        if flag == 0:
+            QMessageBox.critical('ERROR:', '数据为空')
+        elif flag == -1:
+            QMessageBox.critical('ERROR:', '数据库连接错误')
+        else:
+            # 清理图像
+            plt.clf()
+            # plt.cla()
+
+            list1 = data[0]
+            list2 = data[1]
+            list3 = data[2]
+
+            ax = self.figure.add_subplot(1, 1, 1)
+
+            maxtemp1 = [t['max'] for t in list1]
+            maxtemp2 = [t['max'] for t in list2]
+            maxtemp3 = [t['max'] for t in list3]
+
+            # print(len(maxtemp2),len(maxtemp1),l)
+
+            # 变为矩阵
+            x1 = np.arange(len(maxtemp1)) + 1
+            x2 = np.arange(len(maxtemp2)) + 1
+            x3 = np.arange(len(maxtemp3)) + 1
+            y1 = np.array(maxtemp1)
+            y2 = np.array(maxtemp2)
+            y3 = np.array(maxtemp3)
+
+            ax.plot(x1, y1, ls="--", color="r", marker=",", lw=1, label="2019 TEMP")
+            ax.plot(x2, y2, ls=":", color="g", marker=",", lw=1, label="2020 TEMP")
+            ax.plot(x3, y3, ls="-", color="b", marker=",", lw=1, label="2021 TEMP")
+            # 设置标题
+            ax.set_xlabel('Date')
+            ax.set_xlabel('Temperature')
+            ax.legend()
+            ax.set_title("Line chart of temperature change")
+            # 画图
+            self.canvas.draw()
+
 
 
 class Updata(QThread):
@@ -1121,9 +1113,9 @@ class Predict_max(QThread):
         self.working = True
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
         if int(self.today[5:7]) <= 8:
-            self.t = 2
+            self.t = 3
         else:
-            self.t = -2
+            self.t = -1
 
     def run(self):
         start = time.time()
@@ -1208,7 +1200,25 @@ class Predict_tom(QThread):
         else:
             self.sinout.emit(5, 'Error:', '数据库连接错误', '')
 
+class QuaryM(QThread):
+    sinout = pyqtSignal(list,int)
 
+    def __init__(self, city,parent=None):
+        super(QuaryM, self).__init__(parent)
+        self.working = True
+        self.city = city
+
+    def run(self):
+        da = Data_analyse.Data_Analyse()
+        data = da.Year_contrast(self.city)
+        if data == 0:
+            # QMessageBox.critical(self, 'ERROR', '数据库无此数据')
+            self.sinout.emit([], 0)
+        elif data == -1:
+            # QMessageBox.critical(self, 'ERROR', '数据库连接异常')
+            self.sinout.emit([], -1)
+        else:
+            self.sinout.emit(data, 1)
 
 
 
