@@ -766,27 +766,13 @@ class Ui_MainWindow(QMainWindow):
         # 获取起始日期和终止日期，并转换格式
         startdate = self.dateEdit_start.date().toString("yyyy-MM-dd")
         enddate = self.dateEdit_end.date().toString("yyyy-MM-dd")
-        # 查询多天数据
-        dq = Data_quary.Data_Quary()
-        manydata = dq.Quary_many(city, startdate, enddate)
-        if manydata == 0:
-            QMessageBox.critical(self, 'ERROR', '数据库无此数据')
-        elif manydata == -1:
-            QMessageBox.critical(self, 'ERROR', '数据库连接异常')
-        else:
-            # print(manydata)
-            self.tableWidget_quary.setRowCount(len(manydata))
-            for index, item in enumerate(manydata):
-                timeItem = QTableWidgetItem(item['date'])
-                self.tableWidget_quary.setItem(index, 0, timeItem)
-                weaItem = QTableWidgetItem(item['weather'])
-                self.tableWidget_quary.setItem(index, 1, weaItem)
-                maxtempItem = QTableWidgetItem(item['max'])
-                self.tableWidget_quary.setItem(index, 2, maxtempItem)
-                mintempItem = QTableWidgetItem(item['min'])
-                self.tableWidget_quary.setItem(index, 3, mintempItem)
-                # 禁止编辑
-                self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+        self.pushButton_quarymany.setEnabled(False)
+        # 多线程，前端不死机
+        self.thread9 = QuaryM4(city, startdate, enddate)
+        self.thread9.start()
+        # 接收线程中的预测结果
+        self.thread9.sinout.connect(self.out_da4)
 
     # 点击更新数据库数据
     def on_pushButton_updataenter_clicked(self):
@@ -1087,6 +1073,26 @@ class Ui_MainWindow(QMainWindow):
             # 画图
             self.canvas.draw()
 
+    def out_da4(self, data, flag):
+        self.pushButton_quarymany.setEnabled(True)
+        if flag == 0:
+            QMessageBox.critical('ERROR:', '数据为空')
+        elif flag == -1:
+            QMessageBox.critical('ERROR:', '数据库连接错误')
+        else:
+            self.tableWidget_quary.setRowCount(len(data))
+            for index, item in enumerate(data):
+                timeItem = QTableWidgetItem(item['date'])
+                self.tableWidget_quary.setItem(index, 0, timeItem)
+                weaItem = QTableWidgetItem(item['weather'])
+                self.tableWidget_quary.setItem(index, 1, weaItem)
+                maxtempItem = QTableWidgetItem(item['max'])
+                self.tableWidget_quary.setItem(index, 2, maxtempItem)
+                mintempItem = QTableWidgetItem(item['min'])
+                self.tableWidget_quary.setItem(index, 3, mintempItem)
+                # 禁止编辑
+                self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
 
 
 class Updata(QThread):
@@ -1263,6 +1269,26 @@ class QuaryM3(QThread):
     def run(self):
         da = Data_analyse.Data_Analyse()
         data = da.AverageTemp_Month(self.city)
+
+        if data == 0:
+            self.sinout.emit([], 0)
+        elif data == -1:
+            self.sinout.emit([], -1)
+        else:
+            self.sinout.emit(data, 1)
+
+class QuaryM4(QThread):
+    sinout = pyqtSignal(list,int)
+    def __init__(self, city, startdate, enddate,parent=None):
+        super(QuaryM4, self).__init__(parent)
+        self.working = True
+        self.city = city
+        self.startdate = startdate
+        self.enddate = enddate
+
+    def run(self):
+        dq = Data_quary.Data_Quary()
+        data = dq.Quary_many(self.city, self.startdate, self.enddate)
 
         if data == 0:
             self.sinout.emit([], 0)
