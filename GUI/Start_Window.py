@@ -199,7 +199,7 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_mainpage.setObjectName("pushButton_mainpage")
         self.HLayout_func.addWidget(self.pushButton_mainpage)
         # 切换到主页
-        self.pushButton_login.clicked.connect(self.on_pushButton_login_clicked)
+        self.pushButton_mainpage.clicked.connect(self.on_pushButton_mainpage_clicked)
 
         self.pushButton_quary = QtWidgets.QPushButton(self.widget1)
         self.pushButton_quary.setObjectName("pushButton_quary")
@@ -234,9 +234,6 @@ class Ui_MainWindow(QMainWindow):
 
         # 设置主页widget
         self.widget_mainshow = QtWidgets.QWidget(self.widget_mainpage)
-        # self.widget_mainshow .setGeometry(QtCore.QRect(30, 70, 1031, 731))
-        # self.widget_mainshow .setMinimumSize(QtCore.QSize(1031, 731))
-        # self.widget_mainshow .setMaximumSize(QtCore.QSize(1031, 731))
 
         self.widget_mainshow.setGeometry(QtCore.QRect(15, 70, 1850, 950))
         self.widget_mainshow.setMinimumSize(QtCore.QSize(1850, 950))
@@ -1124,9 +1121,9 @@ class Predict_max(QThread):
         self.working = True
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
         if int(self.today[5:7]) <= 8:
-            self.t = 3
+            self.t = 0
         else:
-            self.t = -1
+            self.t = 0
 
     def run(self):
         start = time.time()
