@@ -238,19 +238,16 @@ class Data_Analyse():
                     datelist_y.append(datelist_m)
                 datelist.append(datelist_y)
             avetemp_y = []
+
             for y in datelist:#每年
                 avetemp_m = []
                 for m in y:#每月
-                    at_d = 0
-                    for d in m:
-                        data = dc.QuaryWeaData(city, d)
-                        if data != -1:
-                            at_h = 0
-                            for dl in data:
-                                at_h +=dl[2]
-                            at_d += round(at_h/len(data),2)#每天的平均气温
-
-                    avetemp = round(at_d/len(m),2)
+                    datam = dc.QuaryWeaDataSETemp(city,m[0],m[-1])
+                    if datam != -1:
+                        average_a = np.mean(datam)
+                    else:
+                        average_a = 0
+                    avetemp = round(average_a,2)
                     avetemp_m.append(avetemp)
                 avetemp_y.append(avetemp_m)
             dc.closeDB()

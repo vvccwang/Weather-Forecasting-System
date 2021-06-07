@@ -201,9 +201,24 @@ class ConnectDB():
             else:
                 return -1
 
+    def QuaryWeaDataSETemp(self,cityid,stime,etime):
+        sql="SELECT * FROM weatherinfo WHERE cityid = "+cityid+" AND uptime BETWEEN '"+stime+" 00:00:00' AND '"+etime+" 23:59:59'"
+        self.cursor.execute(sql)
+        self.data=self.cursor.fetchall()
+        if self.data == None:
+            return -1
+        else:
+            list = []
+            for i in self.data:
+                list.append(i[2])
+            if list != []:
+                return list
+            else:
+                return -1
 
-dc = ConnectDB()
-if dc.Error_flag == 0:
-    d = dc.QuaryWeaDataSEType('311','2021-01-01','2021-02-01')
-    for value in d:
-        print(value)
+
+# dc = ConnectDB()
+# if dc.Error_flag == 0:
+#     d = dc.QuaryWeaDataSETemp('311','2021-01-01','2021-02-01')
+#     for value in d:
+#         print(value)
