@@ -22,7 +22,7 @@ class Data_Predict():
     #-1：数据库连接错误
     #list：数据列表
     def __init__(self):
-        self.epochs = 700
+        self.epochs = 1000
         self.N = 7
     def GetData(self):
         today = datetime.datetime.now().strftime('%Y-%m-%d')
