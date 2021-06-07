@@ -643,7 +643,7 @@ class Ui_MainWindow(QMainWindow):
         self.label_city_predict.setText(_translate("MainWindow", "城市："))
         self.pushButton_pretempmax.setText(_translate("MainWindow", "预测今日最高温度"))
         self.pushButton_pretempmin.setText(_translate("MainWindow", "预测今日最低温度"))
-        self.pushButton_prehum.setText(_translate("MainWindow", "预测今日平均湿度"))
+        self.pushButton_prehum.setText(_translate("MainWindow", "预测今日湿度"))
         self.pushButton_pretom.setText(_translate("MainWindow", "预测明日气温、湿度"))
         # self.pushButton_preweather.setText(_translate("MainWindow", "预测天气类型"))
         self.groupBox_predict.setTitle(_translate("MainWindow", "Predict"))
@@ -821,7 +821,7 @@ class Ui_MainWindow(QMainWindow):
     # 点击预测最高温度
     def on_pushButton_pretempmax_clicked(self):
         self.pushButton_pretempmax.setEnabled(False)
-        self.process.append('预测今日最高温度开始：(估计耗时80s)')
+        self.process.append('预测今日最高温度开始：(估计耗时20s)')
         # 多线程预测，前端不死机
         self.thread2 = Predict_max()
         self.thread2.start()
@@ -831,7 +831,7 @@ class Ui_MainWindow(QMainWindow):
     # 点击预测最低温度
     def on_pushButton_pretempmin_clicked(self):
         self.pushButton_pretempmin.setEnabled(False)
-        self.process.append('预测今日最低温度开始：(估计耗时80s)')
+        self.process.append('预测今日最低温度开始：(估计耗时20s)')
         # 多线程预测，前端不死机
         self.thread3 = Predict_min()
         self.thread3.start()
@@ -841,7 +841,7 @@ class Ui_MainWindow(QMainWindow):
     # 点击预测湿度
     def on_pushButton_prehum_clicked(self):
         self.pushButton_prehum.setEnabled(False)
-        self.process.append('预测今日平均湿度开始：(估计耗时80s)')
+        self.process.append('预测今日平均湿度开始：(估计耗时20s)')
         # 多线程预测，前端不死机
         self.thread4 = Predict_hum()
         self.thread4.start()
@@ -851,7 +851,7 @@ class Ui_MainWindow(QMainWindow):
     # 点击预测明天
     def on_pushButton_pretom_clicked(self):
         self.pushButton_pretom.setEnabled(False)
-        self.process.append('预测明日温度、湿度开始：(估计耗时300s)')
+        self.process.append('预测明日温度、湿度开始：(估计耗时100s)')
         # 多线程预测，前端不死机
         self.thread5 = Predict_tom()
         self.thread5.start()

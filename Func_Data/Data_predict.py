@@ -24,31 +24,25 @@ class Data_Predict():
     def __init__(self):
         self.epochs = 1000
         self.N = 7
+        self.list=[]
     def GetData(self):
         print("开始获取数据集")
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
             self.list = []
-            datelist = dc.getDatesByTimes('2019-01-01', today)
-            # print(datelist)
-            for time in datelist:
-                data = dc.QuaryWeaData('311', time)
-                list_one = []
-                # not none
-                if data != -1:
-                    # print(data)
-                    temp = [t[2] for t in data]
-                    hum = np.array([int(h[3]) for h in data])
-                    aveh = int(np.average(hum))
-                    # print(aveh)
-                    temp.sort(reverse=True)
-                    max = temp[0]
-                    min = temp[len(temp) - 1]
-                    list_one.append(int(max))
-                    list_one.append(int(min))
-                    list_one.append(aveh)
+            # datelist = dc.getDatesByTimes('2019-01-01', today)
+            data = dc.QuaryWeaDataSE('311','2019-01-01', today)
+            if data != -1:
+                for index,value in data.items():
+                    list_one = []
+
+                    list_one.append(value[0])
+                    list_one.append(value[1])
+                    list_one.append(value[2])
+                    print(list_one)
                     self.list.append(list_one)
+
             dc.closeDB()
         else:
             return -1

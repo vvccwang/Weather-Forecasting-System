@@ -170,14 +170,17 @@ class ConnectDB():
             hllist={}
             for i in list:
                 date = i[1][:11]
-                hllist[date]=[-50,50]
+                hllist[date]=[-50,50,0]
             for i in list:
                 date = i[1][:11]
                 t = int(i[2])
+                hum = int(i[3])
                 if t > hllist[date][0]:
                     hllist[date][0] = t
                 if t < hllist[date][1]:
                     hllist[date][1] = t
+                if hum > hllist[date][2]:
+                    hllist[date][2] = hum
             if hllist != []:
                 return hllist
             else:
