@@ -96,7 +96,7 @@ class Data_Predict():
                 keras.layers.Dense(1)])  # 最后输出为一个结果，也就是预测的值
             # 定义损失函数loss，采用的优化器optimizer为Adam
             model.compile(loss='mean_absolute_error', optimizer='Adam')
-            model.fit(x_train, y_train, batch_size=128, epochs=self.epochs) # 开始训练模型 # 训练700批次，每个批次数据量为126   梯度下降 126个样本作为一批次
+            model.fit(x_train, y_train, batch_size=128, epochs=self.epochs) # 开始训练模型 # 训练1000批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测:对今天的预测
             y_ = model.predict(x_)
             return y_

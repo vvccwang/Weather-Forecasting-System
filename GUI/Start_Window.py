@@ -244,7 +244,7 @@ class Ui_MainWindow(QMainWindow):
         self.label_main = QtWidgets.QLabel(self.widget_mainshow)
         self.label_main.setGeometry(QtCore.QRect(350, 225, 1200, 400))
         self.label_main.setObjectName("label_main")
-        self.label_main.setText("Welcome\n欢迎使用SDUT大数据气象和分析预测系统")
+        self.label_main.setText("Welcome\n欢迎使用SDUT大数据气象分析和预测系统")
         self.label_main.setStyleSheet('''
             QLabel
             {
@@ -736,6 +736,7 @@ class Ui_MainWindow(QMainWindow):
         else:
             self.tableWidget_quary.setRowCount(len(onedata))
             for index, item in enumerate(onedata):
+                # print(item[0])
                 timeItem = QTableWidgetItem(item[0])
                 self.tableWidget_quary.setItem(index, 0, timeItem)
                 weaItem = QTableWidgetItem(item[1])

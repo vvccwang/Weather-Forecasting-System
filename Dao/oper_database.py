@@ -36,7 +36,7 @@ class ConnectDB():
             for i in self.data:
                 list.append([str(item) for item in i])
             for i in list:
-                i[1]=i[1][:10]
+                i[1]=i[1]
                 i[2]=int(i[2])
                 if i[5] == '99':
                     i[5] = '无'
