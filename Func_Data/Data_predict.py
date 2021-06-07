@@ -25,6 +25,7 @@ class Data_Predict():
         self.epochs = 1000
         self.N = 7
     def GetData(self):
+        print("开始获取数据集")
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
@@ -55,6 +56,7 @@ class Data_Predict():
     #预测最高温
     #数据库错误：return 100
     def Predict_max(self):
+        print('开始预测最高温度')
         list=self.list
         if list == -1:
             return 100
@@ -102,7 +104,7 @@ class Data_Predict():
     #预测最低温
     #数据库错误：return 100
     def Predict_min(self):
-
+        print('开始预测最低温度')
         list=self.list
         if list == -1:
             return 100
@@ -154,7 +156,7 @@ class Data_Predict():
     #预测最湿度
     #数据库错误：return 100
     def Predict_hum(self):
-
+        print('开始预测平均湿度')
         list=self.list
         if list == -1:
             return 100
