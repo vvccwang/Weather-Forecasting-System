@@ -167,24 +167,43 @@ class ConnectDB():
             list = []
             for i in self.data:
                 list.append([str(item) for item in i])
+            hllist={}
             for i in list:
-                i[2] = int(i[2])
-                if i[5] == '99':
-                    i[5] = '无'
+                date = i[1][:11]
+                hllist[date]=[-50,50]
+            for i in list:
+                date = i[1][:11]
+                t = int(i[2])
+                if t > hllist[date][0]:
+                    hllist[date][0] = t
+                if t < hllist[date][1]:
+                    hllist[date][1] = t
+            if hllist != []:
+                return hllist
+            else:
+                return -1
+
+    def QuaryWeaDataSEType(self,cityid,stime,etime):
+        sql="SELECT * FROM weatherinfo WHERE cityid = "+cityid+" AND uptime BETWEEN '"+stime+" 00:00:00' AND '"+etime+" 23:59:59'"
+        self.cursor.execute(sql)
+        self.data=self.cursor.fetchall()
+        if self.data == None:
+            return -1
+        else:
+            list = []
+            for i in self.data:
+                if i[5] == 99:
+                    list.append('无')
                 else:
-                    i[5] = self.wealist[int(i[5]) - 1]
+                    list.append(self.wealist[i[5]-1])
             if list != []:
                 return list
             else:
                 return -1
 
 
-# dc = ConnectDB()
-# if dc.Error_flag == 0:
-    # datelist=dc.getDatesByTimes('2019-07-21','2019-12-31')
-    # datelist = dc.getDatesByTimes('2019-01-01', '2019-07-20')
-    # for date in datelist:
-    #     dc.GetHisData(date,'2349')
-    # for c in dc.citylist:
-    #     dc.GetHisData('2021-05-11', c )
-    # dc.QuaryWeaDataSE('311','2021-01-01','2021-02-01')
+dc = ConnectDB()
+if dc.Error_flag == 0:
+    d = dc.QuaryWeaDataSEType('311','2021-01-01','2021-02-01')
+    for value in d:
+        print(value)

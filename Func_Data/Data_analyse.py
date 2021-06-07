@@ -15,22 +15,15 @@ class Data_Analyse():
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
             datelist = dc.date_add(today,timelist[flag-1])
-            # print(datelist)
+            start = datelist[0]
+            datam = dc.QuaryWeaDataSE(city,start,today)
             list = []
-            for time in datelist:
-                data = dc.QuaryWeaData(city, time)
+            for index,value in datam.items():
                 dict = {}
-                # not none
-                if data != -1:
-                    temp = [t[2] for t in data]
-                    temp.sort(reverse=True)
-                    max = temp[0]
-                    min = temp[len(temp) - 1]
-                    dict['date'] = str(time)
-                    dict['max'] = int(max)
-                    dict['min'] = int(min)
-                    # print(dict)
-                    list.append(dict)
+                dict['date'] = index
+                dict['max'] = value[0]
+                dict['min'] = value[1]
+                list.append(dict)
             dc.closeDB()
             # not none
             if list != []:
@@ -45,55 +38,36 @@ class Data_Analyse():
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         dc = oper_database.ConnectDB()
         if dc.Error_flag == 0:
-            datelist1 = dc.getDatesByTimes('2019-01-01','2019-12-31')
-            datelist2 = dc.getDatesByTimes('2020-01-01','2020-12-31')
-            datelist3 = dc.getDatesByTimes('2021-01-01', today)
+
+            datam1 = dc.QuaryWeaDataSE(city, '2019-01-01','2019-12-31')
+            datam2 = dc.QuaryWeaDataSE(city, '2020-01-01','2020-12-31')
+            datam3 = dc.QuaryWeaDataSE(city, '2021-01-01', today)
+
             list1 = []
             list2 = []
             list3 = []
-            for time in datelist1:
-                data = dc.QuaryWeaData(city, time)
-                dict = {}
-                # not none
-                if data != -1:
-                    temp = [t[2] for t in data]
-                    temp.sort(reverse=True)
-                    max = temp[0]
-                    min = temp[len(temp) - 1]
-                    dict['date'] = str(time)
-                    dict['max'] = int(max)
-                    dict['min'] = int(min)
-                    # print(dict)
-                    list1.append(dict)
-            for time in datelist2:
-                data = dc.QuaryWeaData(city, time)
-                dict = {}
-                # not none
-                if data != -1:
-                    temp = [t[2] for t in data]
-                    temp.sort(reverse=True)
-                    max = temp[0]
-                    min = temp[len(temp) - 1]
-                    dict['date'] = str(time)
-                    dict['max'] = int(max)
-                    dict['min'] = int(min)
-                    # print(dict)
-                    list2.append(dict)
 
-            for time in datelist3:
-                data = dc.QuaryWeaData(city, time)
+            for index,value in datam1.items():
                 dict = {}
-                # not none
-                if data != -1:
-                    temp = [t[2] for t in data]
-                    temp.sort(reverse=True)
-                    max = temp[0]
-                    min = temp[len(temp) - 1]
-                    dict['date'] = str(time)
-                    dict['max'] = int(max)
-                    dict['min'] = int(min)
-                    # print(dict)
-                    list3.append(dict)
+                dict['date'] = index
+                dict['max'] = value[0]
+                dict['min'] = value[1]
+                list1.append(dict)
+
+            for index,value in datam2.items():
+                dict = {}
+                dict['date'] = index
+                dict['max'] = value[0]
+                dict['min'] = value[1]
+                list2.append(dict)
+
+            for index,value in datam3.items():
+                dict = {}
+                dict['date'] = index
+                dict['max'] = value[0]
+                dict['min'] = value[1]
+                list3.append(dict)
+
             list=[]
             list.append(list1)
             list.append(list2)
@@ -123,56 +97,52 @@ class Data_Analyse():
             weatype = dc.wealist
             weatype = np.array(weatype)
             key = np.unique(weatype)
+
             result = {}
             for k in key:
                 result[k] = 0
-            for t in datelist1:
-                data=dc.QuaryWeaData(city,t)
-                if data != -1:
-                    # print(1)
-                    wea = [w[5] for w in data]
-                    wea = np.array(wea)
-                    for k in key:
-                        mask = (wea == k)
-                        list_new = wea[mask]
-                        v = list_new.size
-                        result[k] += v
+            data1 = dc.QuaryWeaDataSEType(city,datelist1[0],today)
+            if data1 != -1:
+                wea = np.array(data1)
+                for k in key:
+                    mask = (wea == k)
+                    list_new = wea[mask]
+                    v = list_new.size
+                    result[k] += v
             d_order1 = result
+
             result = {}
             for k in key:
                 result[k] = 0
-            for t in datelist2:
-                data=dc.QuaryWeaData(city,t)
-                if data != -1:
-                    # print(2)
-                    wea = [w[5] for w in data]
-                    wea = np.array(wea)
-                    for k in key:
-                        mask = (wea == k)
-                        list_new = wea[mask]
-                        v = list_new.size
-                        result[k] += v
+            data1 = dc.QuaryWeaDataSEType(city, datelist2[0], today_last1)
+            if data1 != -1:
+                wea = np.array(data1)
+                for k in key:
+                    mask = (wea == k)
+                    list_new = wea[mask]
+                    v = list_new.size
+                    result[k] += v
             d_order2 = result
+
             result = {}
             for k in key:
                 result[k] = 0
-            for t in datelist3:
-                data=dc.QuaryWeaData(city,t)
-                if data != -1:
-                    # print(3)
-                    wea = [w[5] for w in data]
-                    wea = np.array(wea)
-                    for k in key:
-                        mask = (wea == k)
-                        list_new = wea[mask]
-                        v = list_new.size
-                        result[k] += v
+            data1 = dc.QuaryWeaDataSEType(city, datelist3[0], today_last2)
+            if data1 != -1:
+                wea = np.array(data1)
+                for k in key:
+                    mask = (wea == k)
+                    list_new = wea[mask]
+                    v = list_new.size
+                    result[k] += v
             d_order3 = result
+
             resultlist=[]
             resultlist.append(d_order1)
             resultlist.append(d_order2)
             resultlist.append(d_order3)
             dc.closeDB()
+
             # not none
             if resultlist != []:
                 return resultlist
@@ -196,52 +166,40 @@ class Data_Analyse():
             result = {}
             for k in key:
                 result[k] = 0
-            # 统计一天中各个天气类型的数量
-            for t in datelist1:
-                data = dc.QuaryWeaData(city, t)
-                if data != -1:
-                    # print(1)
-                    wea = [w[5] for w in data]
-                    wea = np.array(wea)
-                    for k in key:
-                        mask = (wea == k)
-                        list_new = wea[mask]
-                        v = list_new.size
-                        result[k] += v
+            data1 = dc.QuaryWeaDataSEType(city, '2021-01-01', today)
+            if data1 != -1:
+                wea = np.array(data1)
+                for k in key:
+                    mask = (wea == k)
+                    list_new = wea[mask]
+                    v = list_new.size
+                    result[k] += v
             d_order1 = result
-            # d_order1 = sorted(result.items(), key=lambda x: x[1], reverse=True)
-            # print(d_order)
 
             result = {}
             for k in key:
                 result[k] = 0
-            for t in datelist2:
-                data = dc.QuaryWeaData(city, t)
-                if data != -1:
-                    # print(2)
-                    wea = [w[5] for w in data]
-                    wea = np.array(wea)
-                    for k in key:
-                        mask = (wea == k)
-                        list_new = wea[mask]
-                        v = list_new.size
-                        result[k] += v
+            data1 = dc.QuaryWeaDataSEType(city, '2020-01-01', '2020-12-31')
+            if data1 != -1:
+                wea = np.array(data1)
+                for k in key:
+                    mask = (wea == k)
+                    list_new = wea[mask]
+                    v = list_new.size
+                    result[k] += v
             d_order2 = result
 
             result = {}
             for k in key:
                 result[k] = 0
-            for t in datelist3:
-                data = dc.QuaryWeaData(city, t)
-                if data != -1:
-                    # print(3)
-                    wea = [w[5] for w in data]
-                    wea = np.array(wea)
-                    for k in key:
-                        mask = (wea == k)
-                        list_new = wea[mask]
-                        v = list_new.size
-                        result[k] += v
+            data1 = dc.QuaryWeaDataSEType(city, '2019-01-01', '2019-12-31')
+            if data1 != -1:
+                wea = np.array(data1)
+                for k in key:
+                    mask = (wea == k)
+                    list_new = wea[mask]
+                    v = list_new.size
+                    result[k] += v
             d_order3 = result
 
             resultlist = []
