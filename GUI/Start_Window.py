@@ -822,8 +822,10 @@ class Ui_MainWindow(QMainWindow):
     def on_pushButton_pretempmax_clicked(self):
         self.pushButton_pretempmax.setEnabled(False)
         self.process.append('预测今日最高温度开始：(估计耗时20s)')
+        city = self.comboBox_city_predict.currentText()[3:]
+
         # 多线程预测，前端不死机
-        self.thread2 = Predict_max()
+        self.thread2 = Predict_max(city)
         self.thread2.start()
         # 接收预测线程中的预测结果
         self.thread2.sinout.connect(self.out)
@@ -832,8 +834,9 @@ class Ui_MainWindow(QMainWindow):
     def on_pushButton_pretempmin_clicked(self):
         self.pushButton_pretempmin.setEnabled(False)
         self.process.append('预测今日最低温度开始：(估计耗时20s)')
+        city = self.comboBox_city_predict.currentText()[3:]
         # 多线程预测，前端不死机
-        self.thread3 = Predict_min()
+        self.thread3 = Predict_min(city)
         self.thread3.start()
         # 接收预测线程中的预测结果
         self.thread3.sinout.connect(self.out)
@@ -841,9 +844,10 @@ class Ui_MainWindow(QMainWindow):
     # 点击预测湿度
     def on_pushButton_prehum_clicked(self):
         self.pushButton_prehum.setEnabled(False)
-        self.process.append('预测今日平均湿度开始：(估计耗时20s)')
+        self.process.append('预测今日湿度开始：(估计耗时20s)')
+        city = self.comboBox_city_predict.currentText()[3:]
         # 多线程预测，前端不死机
-        self.thread4 = Predict_hum()
+        self.thread4 = Predict_hum(city)
         self.thread4.start()
         # 接收预测线程中的预测结果
         self.thread4.sinout.connect(self.out)
@@ -852,8 +856,9 @@ class Ui_MainWindow(QMainWindow):
     def on_pushButton_pretom_clicked(self):
         self.pushButton_pretom.setEnabled(False)
         self.process.append('预测明日温度、湿度开始：(估计耗时100s)')
+        city = self.comboBox_city_predict.currentText()[3:]
         # 多线程预测，前端不死机
-        self.thread5 = Predict_tom()
+        self.thread5 = Predict_tom(city)
         self.thread5.start()
         # 接收预测线程中的预测结果
         self.thread5.sinout.connect(self.out)
@@ -898,7 +903,7 @@ class Ui_MainWindow(QMainWindow):
         elif flag == 4:
             self.pushButton_prehum.setEnabled(True)
             if k1 != 'Error:':
-                self.process.append('预测今日平均湿度为：' + k1)
+                self.process.append('预测今日湿度为：' + k1)
                 self.process.append('用时：' + k2 + 's')
             else:
                 QMessageBox.critical(k1, k2)
@@ -908,7 +913,7 @@ class Ui_MainWindow(QMainWindow):
             if k1 != 'Error:':
                 self.process.append('预测明日最高温度为：' + str(k1[0]))
                 self.process.append('预测明日最低温度为：' + str(k1[1]))
-                self.process.append('预测明日平均湿度为：' + str(k1[2]))
+                self.process.append('预测明日湿度为：' + str(k1[2]))
                 self.process.append('用时：' + k2 + 's')
             else:
                 QMessageBox.critical(k1, k2)
@@ -925,19 +930,14 @@ class Ui_MainWindow(QMainWindow):
             # 清理图像
             plt.clf()
             # plt.cla()
-
             list1 = data[0]
             list2 = data[1]
             list3 = data[2]
-
             ax = self.figure.add_subplot(1, 1, 1)
-
             maxtemp1 = [t['max'] for t in list1]
             maxtemp2 = [t['max'] for t in list2]
             maxtemp3 = [t['max'] for t in list3]
-
             # print(len(maxtemp2),len(maxtemp1),l)
-
             # 变为矩阵
             x1 = np.arange(len(maxtemp1)) + 1
             x2 = np.arange(len(maxtemp2)) + 1
@@ -945,7 +945,6 @@ class Ui_MainWindow(QMainWindow):
             y1 = np.array(maxtemp1)
             y2 = np.array(maxtemp2)
             y3 = np.array(maxtemp3)
-
             ax.plot(x1, y1, ls="--", color="r", marker=",", lw=1, label="2019 TEMP")
             ax.plot(x2, y2, ls=":", color="g", marker=",", lw=1, label="2020 TEMP")
             ax.plot(x3, y3, ls="-", color="b", marker=",", lw=1, label="2021 TEMP")
@@ -966,21 +965,16 @@ class Ui_MainWindow(QMainWindow):
             # maxtemp=maxtemp[::-1]
             mintemp = [t['min'] for t in data]
             # mintemp=mintemp[::-1]
-
             # 变为矩阵
             x = np.arange(len(maxtemp)) + 1
             y1 = np.array(maxtemp)
             y2 = np.array(mintemp)
-
             ax = self.figure.add_subplot(1, 1, 1)
-
             ax.plot(x, y1, ls="-", color="r", marker="o", lw=1, label="MAX TEMP")
             ax.plot(x, y2, ls="--", color="g", marker="o", lw=1, label="MIN TEMP")
-
             for a, b, c in zip(x, y1, y2):
                 ax.text(a, b, '%d' % b, ha='center', va='bottom', rotation=-45)
                 ax.text(a, c, '%d' % c, ha='center', va='bottom', rotation=-45)
-
             ax.set_xticks(x)
             ax.set_xticklabels(time, rotation=70, fontsize='small')
             # 设置标题
@@ -1117,18 +1111,19 @@ class Updata(QThread):
 class Predict_max(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
-    def __init__(self, parent=None):
+    def __init__(self, city, parent=None):
         super(Predict_max, self).__init__(parent)
+        self.city = city
         self.working = True
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
         if int(self.today[5:7]) <= 8:
-            self.t = 0
+            self.t = 2
         else:
-            self.t = 0
+            self.t = 2
 
     def run(self):
         start = time.time()
-        dp = Data_predict.Data_Predict()
+        dp = Data_predict.Data_Predict(self.city)
         f = dp.GetData()
         if f != -1:
             max = dp.Predict_max()
@@ -1143,8 +1138,9 @@ class Predict_max(QThread):
 class Predict_min(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
-    def __init__(self, parent=None):
+    def __init__(self, city, parent=None):
         super(Predict_min, self).__init__(parent)
+        self.city = city
         self.working = True
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
         if int(self.today[5:7]) <= 8:
@@ -1154,7 +1150,7 @@ class Predict_min(QThread):
 
     def run(self):
         start = time.time()
-        dp = Data_predict.Data_Predict()
+        dp = Data_predict.Data_Predict(self.city)
         f = dp.GetData()
         if f != -1:
             min = dp.Predict_min()
@@ -1169,13 +1165,14 @@ class Predict_min(QThread):
 class Predict_hum(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
-    def __init__(self, parent=None):
+    def __init__(self, city,parent=None):
         super(Predict_hum, self).__init__(parent)
         self.working = True
+        self.city = city
 
     def run(self):
         start = time.time()
-        dp = Data_predict.Data_Predict()
+        dp = Data_predict.Data_Predict(self.city)
         f = dp.GetData()
         if f != -1:
             hum = dp.Predict_hum()
@@ -1190,13 +1187,14 @@ class Predict_hum(QThread):
 class Predict_tom(QThread):
     sinout = pyqtSignal(int, list, str, str)
 
-    def __init__(self, parent=None):
+    def __init__(self, city, parent=None):
+        self.city = city
         super(Predict_tom, self).__init__(parent)
         self.working = True
 
     def run(self):
         start = time.time()
-        dp = Data_predict.Data_Predict()
+        dp = Data_predict.Data_Predict(self.city)
         f = dp.GetData()
         if f != -1:
             tomlist = dp.Predict_tommorw()

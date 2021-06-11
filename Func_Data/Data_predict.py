@@ -21,10 +21,11 @@ class Data_Predict():
     #获取数据：最高温、最低温、湿度
     #-1：数据库连接错误
     #list：数据列表
-    def __init__(self):
+    def __init__(self,city):
         self.epochs = 1000
         self.N = 7
         self.list=[]
+        self.city = city
     def GetData(self):
         print("开始获取数据集")
         today = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -32,7 +33,7 @@ class Data_Predict():
         if dc.Error_flag == 0:
             self.list = []
             # datelist = dc.getDatesByTimes('2019-01-01', today)
-            data = dc.QuaryWeaDataSE('311','2019-01-01', today)
+            data = dc.QuaryWeaDataSE(self.city,'2019-01-01', today)
             if data != -1:
                 for index,value in data.items():
                     list_one = []
@@ -40,7 +41,7 @@ class Data_Predict():
                     list_one.append(value[0])
                     list_one.append(value[1])
                     list_one.append(value[2])
-                    print(list_one)
+                    # print(list_one)
                     self.list.append(list_one)
 
             dc.closeDB()

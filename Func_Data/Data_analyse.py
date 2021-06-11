@@ -29,8 +29,7 @@ class Data_Analyse():
             if list != []:
                 return list
             else:
-                return 0
-                # 数据库无此数据
+                return 0# 数据库无此数据
         else:
             return -1 # 数据库连接异常
     #温度历年对比
@@ -97,7 +96,6 @@ class Data_Analyse():
             weatype = dc.wealist
             weatype = np.array(weatype)
             key = np.unique(weatype)
-
             result = {}
             for k in key:
                 result[k] = 0
@@ -110,7 +108,6 @@ class Data_Analyse():
                     v = list_new.size
                     result[k] += v
             d_order1 = result
-
             result = {}
             for k in key:
                 result[k] = 0
@@ -136,13 +133,11 @@ class Data_Analyse():
                     v = list_new.size
                     result[k] += v
             d_order3 = result
-
             resultlist=[]
             resultlist.append(d_order1)
             resultlist.append(d_order2)
             resultlist.append(d_order3)
             dc.closeDB()
-
             # not none
             if resultlist != []:
                 return resultlist
