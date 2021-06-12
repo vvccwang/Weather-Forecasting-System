@@ -1086,7 +1086,7 @@ class Ui_MainWindow(QMainWindow):
                 self.tableWidget_quary.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
 
-
+# 更新数据多线程
 class Updata(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
@@ -1107,7 +1107,7 @@ class Updata(QThread):
         else:
             self.sinout.emit(1, '-2', 'Error:', '数据库连接异常')
 
-
+# 预测最高温多线程
 class Predict_max(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
@@ -1119,7 +1119,7 @@ class Predict_max(QThread):
         if int(self.today[5:7]) <= 8:
             self.t = 2
         else:
-            self.t = 2
+            self.t = 0
 
     def run(self):
         start = time.time()
@@ -1134,7 +1134,7 @@ class Predict_max(QThread):
         else:
             self.sinout.emit(2, 'Error:', '数据库连接错误', '')
 
-
+# 预测最低温多线程
 class Predict_min(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
@@ -1146,7 +1146,7 @@ class Predict_min(QThread):
         if int(self.today[5:7]) <= 8:
             self.t = 3
         else:
-            self.t = -2
+            self.t = 0
 
     def run(self):
         start = time.time()
@@ -1161,7 +1161,7 @@ class Predict_min(QThread):
         else:
             self.sinout.emit(3, 'Error:', '数据库连接错误', '')
 
-
+# 预测湿度多线程
 class Predict_hum(QThread):
     sinout = pyqtSignal(int, str, str, str)
 
@@ -1183,7 +1183,7 @@ class Predict_hum(QThread):
         else:
             self.sinout.emit(4, 'Error:', '数据库连接错误', '')
 
-
+# 预测明日数据多线程
 class Predict_tom(QThread):
     sinout = pyqtSignal(int, list, str, str)
 
@@ -1207,6 +1207,7 @@ class Predict_tom(QThread):
         else:
             self.sinout.emit(5, 'Error:', '数据库连接错误', '')
 
+# 可视化分析，温度趋势多天数据获取多线程
 class QuaryM(QThread):
     sinout = pyqtSignal(list,int,int)
 
@@ -1231,6 +1232,7 @@ class QuaryM(QThread):
         else:
             self.sinout.emit(data, 1,self.timeflag)
 
+# 可视化分析，天气类型统计 数据获取多线程
 class QuaryM2(QThread):
     sinout = pyqtSignal(list,int)
 
@@ -1254,6 +1256,7 @@ class QuaryM2(QThread):
         else:
             self.sinout.emit(data, 1)
 
+# 可视化分析， 月平均气温历年对比 数据获取多线程
 class QuaryM3(QThread):
     sinout = pyqtSignal(list,int)
 
@@ -1273,6 +1276,7 @@ class QuaryM3(QThread):
         else:
             self.sinout.emit(data, 1)
 
+# 数据查询 多天   多线程
 class QuaryM4(QThread):
     sinout = pyqtSignal(list,int)
     def __init__(self, city, startdate, enddate,parent=None):
