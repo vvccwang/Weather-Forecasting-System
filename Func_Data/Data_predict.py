@@ -71,7 +71,10 @@ class Data_Predict():
             for j in range(len(list)-N-1,len(list)-1):
                 X_.append(list[j][0])
             X_ = [X_]
-            # 数据均值化
+            # 数据均值化； Python中归一化特征到一定区间的函数；
+            # 函数原型：sklearn.preprocessing.MinMaxScaler(feature_range=(0, 1), copy=True)
+            # .fit(self, X[, y])：计算给定数据集X的最大/小值用于之后的放缩（这一步没有进行放缩）
+            # .transform(self, X)：将数据集X放缩至给定区间
             min_max_scaler = MinMaxScaler()
             min_max_scaler.fit(X_a)
             x = min_max_scaler.transform(X_a)  # 均值化处理
@@ -80,9 +83,19 @@ class Data_Predict():
             y = Y_a
             # 划分数据集,按训练集:测试集=8:2比例划分
             x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+
             # 模型结构，采用relu函数为激活函数，输入层为N个属性
             # 下面为4层隐含层，每层的神经元个数依次为500，500，250，250
             # 输入层对应N个属性
+
+            # 整流线性单元（ReLU）激活函数也被内置在 TensorFlow 库中。
+            # 这个激活函数类似于线性激活函数，但有一个大的改变：对于负的输入值，神经元不会激活（输出为零），对于正的输入值，神经元的输出与输入值相同
+            # 使用 ReLU 的主要优点之一是导致稀疏激活。在任何时刻，所有神经元的负的输入值都不会激活神经元。就计算量来说，这使得网络在计算方面更轻便。
+            # 一般来说，隐藏层最好使用 ReLU 神经元。
+
+            # ReLu激活函数的优点是：
+            #  使用梯度下降（GD）法时，收敛速度更快
+            # 相比Relu只需要一个门限值，即可以得到激活值，计算速度更快
             model = keras.Sequential([
                 keras.layers.Dense(500, activation='relu', input_shape=[N]),
                 keras.layers.Dense(500, activation='relu'),
@@ -90,6 +103,19 @@ class Data_Predict():
                 keras.layers.Dense(250, activation='relu'),
                 keras.layers.Dense(1)])  # 最后输出为一个结果，也就是预测的值
             # 定义损失函数loss，采用的优化器optimizer为Adam
+            # Adam优化器
+            # Adam优化器，结合AdaGrad和RMSProp两种优化算法的优点。
+            # 对梯度的一阶矩估计（First Moment Estimation，即梯度的均值）和二阶矩估计（SecondMoment Estimation，即梯度的未中心化的方差）进行综合考虑，计算出更新步长。
+            # 主要包含以下几个显著的优点：
+            # 实现简单，计算高效，对内存需求少
+            # 参数的更新不受梯度的伸缩变换影响
+            # 超参数具有很好的解释性，且通常无需调整或仅需很少的微调
+            # 更新的步长能够被限制在大致的范围内（初始学习率）
+            # 能自然地实现步长退火过程（自动调整学习率）
+            # 很适合应用于大规模的数据及参数的场景
+            # 适用于不稳定目标函数
+            # 适用于梯度稀疏或梯度存在很大噪声的问题
+            # 综合Adam在很多情况下算作默认工作性能比较优秀的优化器。
             model.compile(loss='mean_absolute_error', optimizer='Adam')
             model.fit(x_train, y_train, batch_size=128, epochs=self.epochs) # 开始训练模型 # 训练1000批次，每个批次数据量为126   梯度下降 126个样本作为一批次
             # 输出结果预测:对今天的预测
